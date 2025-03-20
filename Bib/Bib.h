@@ -45,7 +45,7 @@ typedef struct inode {
     char nom[32];
     uint8_t type;        // 0 = fichier, 1 = répertoire
     uint8_t ID;
-    uint8_t pére;              //ID du pére
+    uint8_t pere;              //ID du pére
     uint8_t permissions;
     union {
         fichier fichier;
