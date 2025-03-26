@@ -35,9 +35,9 @@ typedef struct { // Si c'est un fichier
     uint32_t taille;
 } fichier;
 
-struct inode;
+struct celluleInode;
 typedef  struct { // Si c'est un répertoire
-    struct inode *inodes; // Liste des inodes contenus
+    struct celluleInode *inodes; // Liste des inodes contenus
     uint32_t nb_inodes;
 } repertoire;
 
@@ -73,7 +73,7 @@ typedef struct {
 } Superbloc;
 
 
-/***********************Variales_Generales**************************/
+/****************************Variales_Generales****************************/
 
 
 #endif // BIB_H_INCLUDED
