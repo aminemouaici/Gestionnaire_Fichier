@@ -4,9 +4,7 @@ CFLAGS = -Wall -Wextra -g  # Options de compilation : warnings et debug
 
 # Définition des fichiers sources et objets
 SRC = main.c \
-      Bib/Bib.c \
-      ListeInode/ListeInode.c \
-	  ListePage/ListePage.c
+      Bib/Bib.c 
       
 
 OBJ = $(SRC:.c=.o)
