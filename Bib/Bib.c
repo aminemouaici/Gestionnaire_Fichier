@@ -120,7 +120,7 @@ int charger_systeme_fichier(SystemeFichier *fs) {
 
 
 // Ajoute cette fonction utilitaire pour trouver un répertoire à partir d'un chemin
-
+/*
 int trouver_inode_par_chemin(SystemeFichier *fs, const char *chemin) {
     if (strcmp(chemin, "/") == 0) return fs->racine.inode_id;
 
@@ -164,9 +164,9 @@ int trouver_inode_par_chemin(SystemeFichier *fs, const char *chemin) {
     }
 
     return inode_courant;
-}
-/*
-int trouver_inode_par_chemin(SystemeFichier fs, const charchemin) {
+}*/
+
+int trouver_inode_par_chemin(SystemeFichier *fs, const char *chemin) {
     if (strcmp(chemin, "/") == 0) return fs->racine.inode_id;
 
     char chemin_cpy[MAX_PATH_LENGTH];
@@ -178,11 +178,11 @@ int trouver_inode_par_chemin(SystemeFichier fs, const charchemin) {
 
 
 
-    char token = strtok(chemin_cpy, "/");
+    char *token = strtok(chemin_cpy, "/");
     while (token != NULL) {
 
 
-        Inodeinode = &fs->inodes[inode_courant];
+        Inode *inode = &fs->inodes[inode_courant];
         if (!inode->est_repertoire) {
             printf("Erreur : %s n'est pas un répertoire.\n", token);
             return -1;
@@ -195,7 +195,7 @@ int trouver_inode_par_chemin(SystemeFichier fs, const charchemin) {
             inode_courant = (inode_courant == fs->racine.inode_id) ? fs->racine.inode_id : inode->inode_pere;
         } else {
             // Recherche du fichier/dossier dans le répertoire courant
-            Repertoire rep = (Repertoire)&fs->data[inode->blocs[0] * BLOCK_SIZE];
+            Repertoire *rep = (Repertoire *)&fs->data[inode->blocs[0] * BLOCK_SIZE];
             int trouve = 0;
             for (int i = 0; i < rep->nb_fichiers; i++) {
                 if (strcmp(rep->fichiers[i].nom, token) == 0) {
@@ -214,7 +214,8 @@ int trouver_inode_par_chemin(SystemeFichier fs, const charchemin) {
 
 
     return inode_courant;
-}*/
+}
+
 
 void create_file_rep(SystemeFichier *fs, const char *chemin, int est_repertoire) {
     char chemin_cpy[MAX_PATH_LENGTH];
@@ -249,12 +250,12 @@ void create_file_rep(SystemeFichier *fs, const char *chemin, int est_repertoire)
 
     // Vérifier si le fichier existe déjà dans le répertoire parent
     for (int i = 0; i < rep_p->nb_fichiers; i++) {
-
-    if (strcmp(rep_p->fichiers[i].nom, nom) == 0) {
-        printf("Erreur : %s existe déjà.\n", nom);
-        return;
+        if (strcmp(rep_p->fichiers[i].nom, nom) == 0) {
+            printf("Erreur : %s existe déjà.\n", nom);
+            return;
+        }
     }
-}printf("Vérification de l'existence de %s dans %s\n", nom, chemin_parent);
+    printf("Vérification de l'existence de %s dans %s\n", nom, chemin_parent);
 
 
     // Allouer inode et bloc pour le fichier ou répertoire
@@ -292,6 +293,7 @@ void create_file_rep(SystemeFichier *fs, const char *chemin, int est_repertoire)
     rep_p->nb_fichiers++;
 
     printf("%s %s créé avec succès.\n", est_repertoire ? "Répertoire" : "Fichier", chemin);
+    sauvegarder_systeme_fichier(fs);
 }
 
 /*void create_file_rep(SystemeFichier *fs, const char *chemin, int est_repertoire) {
@@ -458,7 +460,8 @@ void cd(SystemeFichier *fs, const char *chemin) {
     }
 
     // Trouver l'inode du chemin demandé
-    int inode_cible = trouver_inode_par_cheminCd(fs, chemin);
+    //int inode_cible = trouver_inode_par_cheminCd(fs, chemin);
+    int inode_cible = resoudre_lien_symbolique(fs, chemin);
     if (inode_cible == -1 || !fs->inodes[inode_cible].est_repertoire) {
         printf("Erreur : répertoire introuvable : %s\n", chemin);
         return;
@@ -856,7 +859,7 @@ void ecrire_fichier(SystemeFichier *fs, const char *chemin)
     int taille_donnees = 0;
 
     // Lire les données jusqu'à EOF
-    while (fgets(buffer, BLOCK_SIZE, stdin) != NULL)
+/*    while (fgets(buffer, BLOCK_SIZE, stdin) != NULL)
     {
         int len = strlen(buffer);
         if (taille_donnees + len >= BLOCK_SIZE * 10 - 1)
@@ -867,7 +870,27 @@ void ecrire_fichier(SystemeFichier *fs, const char *chemin)
 
         strcat(donnees, buffer);
         taille_donnees += len;
+    }*/
+    while (fgets(buffer, BLOCK_SIZE, stdin) != NULL) {
+        
+    
+        // Vérifie si CTRL+X (ASCII 24) est présent dans la ligne
+        if (strchr(buffer, 24) != NULL) {
+            printf("CTRL+X détecté. Arrêt de la saisie.\n");
+            break;
+        }
+
+        int len = strlen(buffer);
+        if (taille_donnees + len >= BLOCK_SIZE * 10 - 1) {
+            printf("Erreur : taille maximale de fichier atteinte.\n");
+            break;
+        }
+    
+        // Ajout des données AVANT de vérifier CTRL+X
+        strcat(donnees, buffer);
+        taille_donnees += len;
     }
+    printf("\nDonnées écrites :\n%s\n", donnees);
 
     // Vérifier si l'utilisateur a bien entré des données
     if (taille_donnees == 0)
@@ -1548,7 +1571,7 @@ void pwd(SystemeFichier *fs) {
     int inode_actuel = fs->repertoire_courant;
 
     if (inode_actuel == fs->racine.inode_id) {
-        printf("/\n"); // Cas particulier pour la racine
+        printf("/"); // Cas particulier pour la racine
         return;
     }
 
@@ -1577,5 +1600,5 @@ void pwd(SystemeFichier *fs) {
         inode_actuel = parent_inode;
     }
 
-    printf("%s\n", chemin);
+    printf("%s", chemin);
 }

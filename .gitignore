@@ -1,0 +1,10 @@
+# Ignorer tout par défaut
+*.o
+
+# Autoriser les fichiers .c, .h et Makefile
+!*.c
+!*.h
+!Makefile
+
+# Ignorer tous les dossiers sauf ceux qui contiennent des fichiers autorisés
+!*/

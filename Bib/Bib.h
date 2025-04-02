@@ -104,7 +104,7 @@ void initialiser_systeme_fichier(SystemeFichier *fs);
 void sauvegarder_systeme_fichier(SystemeFichier *fs);
 int charger_systeme_fichier(SystemeFichier *fs);
 int trouver_inode_par_chemin(SystemeFichier *fs, const char *chemin);
-//int trouver_inode_par_chemin(SystemeFichier fs, const charchemin);
+//int trouver_inode_par_chemin(SystemeFichier *fs, const charchemin);
 void create_file_rep(SystemeFichier *fs, const char *chemin, int est_repertoire);
 int trouver_inode_par_cheminCd(SystemeFichier *fs, const char *chemin);
 void cd(SystemeFichier *fs, const char *chemin);

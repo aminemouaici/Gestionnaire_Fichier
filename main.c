@@ -24,8 +24,8 @@ int main() {
     
     while (running) {
         // Afficher l'invite de commande
-        printf("[root@myfs ");
-        //print_current_path(partition);
+        printf("\n[root@myfs ");
+        pwd(&fs);
         printf("]$ ");
         
         // Lire la commande
@@ -50,8 +50,6 @@ int main() {
             printf("  rm nom        - Supprime un fichier ou répertoire\n");
             printf("  ln -s src dst - Crée un lien symbolique\n");
             printf("  chmod mode nom- Change les permissions d'un fichier (mode en octal)\n");
-            printf("  chown uid:gid nom - Change le propriétaire d'un fichier\n");
-            printf("  su uid gid    - Change d'utilisateur\n");
             printf("  pwd           - Affiche le chemin courant\n");
             printf("  cp src dst    - Copie un fichier\n");
             printf("  mv src dst    - Déplace un fichier (supporte les chemins relatifs et absolus)\n");
@@ -99,7 +97,7 @@ int main() {
                 printf("Erreur : Syntaxe incorrect.\n");
             }
         }
-        else if (strncmp(command, "cd ", 2) == 0) {
+        else if (strncmp(command, "cd", 2) == 0) {
             if (command[2] == ' ') {  // Vérifie qu'il y a bien un espace après "mkdir"
                 sscanf(command + 3, "%s", param1);
                 cd(&fs,param1);
@@ -109,6 +107,18 @@ int main() {
             }
 
         }
+        else if (strncmp(command, "ln -s", 5) == 0) {
+            if (command[5] == ' ') {  // Vérifie qu'il y a bien un espace après "cp"
+                if (sscanf(command + 6, "%s %s", param1, param2) == 2) {  // Lire les deux paramètres
+                    // Appel de la fonction cp avec les paramètres extraits
+                    creer_lien_symbolique(&fs, param2, param1);
+                } else {
+                    printf("Erreur : Syntaxe incorrecte.\n");
+                }
+            } else {
+                printf("Erreur : Syntaxe incorrecte.\n");
+            }
+        }
         else if (strncmp(command, "rm", 2) == 0) {
             if (command[2] == ' ') {  // Vérifie qu'il y a bien un espace après "mkdir"
                 sscanf(command + 3, "%s", param1);
@@ -117,15 +127,6 @@ int main() {
             } else {
                 printf("Erreur : Syntaxe incorrect.\n");
             }
-        }
-        else if (strncmp(command, "ln -s ", 6) == 0) {
-            sscanf(command + 6, "%s %s", param1, param2);
-            //create_symlink(partition, param2, param1);
-        }
-        else if (strncmp(command, "chown", 6) == 0) {
-            int mode;
-            sscanf(command + 6, "%o %s", &mode, param1);
-            //chmod_file(partition, param1, mode);
         }
         else if (strncmp(command, "chmod", 5) == 0) {
             if (command[5] == ' ') {  // Vérifie qu'il y a bien un espace après "cp"
@@ -199,3 +200,46 @@ int main() {
     
     return 0;
 }
+/*
+#include <unistd.h>
+#include <fcntl.h>
+#include "Bib/Bib.h"
+int main()
+{
+    SystemeFichier fs;
+
+    if (!charger_systeme_fichier(&fs))
+    {
+        initialiser_systeme_fichier(&fs);
+    }
+
+    // Créer un fichier
+    create_file_rep(&fs, "/fichier3.txt", 0); // Crée un fichier normal
+
+    ecrire_fichier(&fs, "/fichier3.txt"); // L'utilisateur va saisir le contenu
+
+    // Lire à nouveau le fichier après ajout
+    lire_fichier(&fs, "/fichi3.txt");
+
+    // Ouvrir le fichier en mode lecture
+    int descripteur = open_file(&fs, "/fichier3.txt", MODE_WRITE);
+
+    // Test de lseek pour déplacer à l'offset 100
+    int nouveau_offset = lseek_file(&fs, descripteur, 100);
+    if (nouveau_offset != -1)
+    {
+        printf("Nouveau offset : %d\n", nouveau_offset);
+    }
+
+    // Test pour un offset au-delà de la taille actuelle
+    nouveau_offset = lseek_file(&fs, descripteur, 500);
+    if (nouveau_offset != -1)
+    {
+        printf("Nouveau offset : %d\n", nouveau_offset);
+    }
+
+    // Sauvegarder le système de fichiers
+    sauvegarder_systeme_fichier(&fs);
+
+    return 0;
+}*/
