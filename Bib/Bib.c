@@ -815,6 +815,7 @@ void close_file(SystemeFichier *fs, int descripteur)
     fs->racine.fichiers[descripteur].inode_id = 0;
     printf("Fichier avec descripteur %d fermé avec succès.\n", descripteur);
 }
+/*
 void ecrire_fichier(SystemeFichier *fs, const char *chemin)
 {
     // Ouvrir le fichier en mode écriture
@@ -854,12 +855,13 @@ void ecrire_fichier(SystemeFichier *fs, const char *chemin)
     }
     
     // Initialiser le buffer
-    memset(donnees, 0, BLOCK_SIZE * 10);
+    //memset(donnees, 0, BLOCK_SIZE * 10);
+    strncpy(donnees, &fs->data[inode->blocs[0] * BLOCK_SIZE], BLOCK_SIZE);
 
     int taille_donnees = 0;
 
     // Lire les données jusqu'à EOF
-/*    while (fgets(buffer, BLOCK_SIZE, stdin) != NULL)
+   while (fgets(buffer, BLOCK_SIZE, stdin) != NULL)
     {
         int len = strlen(buffer);
         if (taille_donnees + len >= BLOCK_SIZE * 10 - 1)
@@ -870,27 +872,9 @@ void ecrire_fichier(SystemeFichier *fs, const char *chemin)
 
         strcat(donnees, buffer);
         taille_donnees += len;
-    }*/
-    while (fgets(buffer, BLOCK_SIZE, stdin) != NULL) {
-        
-    
-        // Vérifie si CTRL+X (ASCII 24) est présent dans la ligne
-        if (strchr(buffer, 24) != NULL) {
-            printf("CTRL+X détecté. Arrêt de la saisie.\n");
-            break;
-        }
-
-        int len = strlen(buffer);
-        if (taille_donnees + len >= BLOCK_SIZE * 10 - 1) {
-            printf("Erreur : taille maximale de fichier atteinte.\n");
-            break;
-        }
-    
-        // Ajout des données AVANT de vérifier CTRL+X
-        strcat(donnees, buffer);
-        taille_donnees += len;
     }
-    printf("\nDonnées écrites :\n%s\n", donnees);
+
+
 
     // Vérifier si l'utilisateur a bien entré des données
     if (taille_donnees == 0)
@@ -932,8 +916,8 @@ void ecrire_fichier(SystemeFichier *fs, const char *chemin)
     free(donnees);
     close_file(fs, descripteur);
     printf("Écriture terminée et fichier fermé.\n");
-}
-/*
+}*/
+
 // Fonction pour écrire dans un fichier
 void ecrire_fichier(SystemeFichier *fs, const char *chemin)
 {
@@ -982,14 +966,32 @@ void ecrire_fichier(SystemeFichier *fs, const char *chemin)
     strncpy(donnees, &fs->data[inode->blocs[0] * BLOCK_SIZE], BLOCK_SIZE);
 
     // Lire les nouvelles données à ajouter
-    while (fgets(buffer, BLOCK_SIZE, stdin) != NULL)
+   /* while (fgets(buffer, BLOCK_SIZE, stdin) != NULL)
     {
         // Ajouter ces nouvelles données au buffer
         strncat(donnees, buffer, BLOCK_SIZE - strlen(donnees) - 1);
+    }*/
+    int taille_donnees = 0;
+    while (fgets(buffer, BLOCK_SIZE, stdin) != NULL) {
+        
+    
+        // Vérifie si CTRL+X (ASCII 24) est présent dans la ligne
+        if (strchr(buffer, 24) != NULL) {
+            printf("CTRL+X détecté. Arrêt de la saisie.\n");
+            break;
+        }
+
+        int len = strlen(buffer);
+        if (taille_donnees + len >= BLOCK_SIZE * 10 - 1) {
+            printf("Erreur : taille maximale de fichier atteinte.\n");
+            break;
+        }
+    
+        // Ajout des données AVANT de vérifier CTRL+X
+        strcat(donnees, buffer);
+        taille_donnees += len;
     }
 
-    // Calcul de la taille des nouvelles données
-    int taille_donnees = strlen(donnees);
 
     // Si les données dépassent la taille d'un bloc, on gère plusieurs blocs
     if (taille_donnees > BLOCK_SIZE)
@@ -1035,7 +1037,7 @@ void ecrire_fichier(SystemeFichier *fs, const char *chemin)
 
     printf("Écriture terminée et fichier fermé.\n");
 }
-*/
+
 /*
 void ecrire_fichier(SystemeFichier *fs, const char *chemin)
 {
