@@ -120,51 +120,7 @@ int charger_systeme_fichier(SystemeFichier *fs) {
 
 
 // Ajoute cette fonction utilitaire pour trouver un répertoire à partir d'un chemin
-/*
-int trouver_inode_par_chemin(SystemeFichier *fs, const char *chemin) {
-    if (strcmp(chemin, "/") == 0) return fs->racine.inode_id;
 
-    char chemin_cpy[MAX_PATH_LENGTH];
-    strncpy(chemin_cpy, chemin, MAX_PATH_LENGTH);
-
-    // Si le chemin commence par '/', il est absolu
-    int inode_courant = (chemin[0] == '/') ? fs->racine.inode_id : fs->repertoire_courant;
-
-    char *token = strtok(chemin_cpy, "/");
-
-    while (token != NULL) {
-        Inode *inode = &fs->inodes[inode_courant];
-        if (!inode->est_repertoire) return -1;  // Si ce n'est pas un répertoire, retournera une erreur
-
-        // Gestion de . (répertoire courant) et .. (répertoire parent)
-        if (strcmp(token, ".") == 0) {
-            // Pas de changement d'inode, on reste dans le répertoire courant
-        } else if (strcmp(token, "..") == 0) {
-            if (inode->inode_pere == inode_courant) {
-                // Si on est déjà à la racine, ne pas aller plus haut
-                inode_courant = fs->racine.inode_id;
-            } else {
-                inode_courant = inode->inode_pere;
-            }
-        } else {
-            // Recherche du fichier dans le répertoire courant
-            Repertoire *rep = (Repertoire *)&fs->data[inode->blocs[0] * BLOCK_SIZE];
-            int trouve = 0;
-            for (int i = 0; i < rep->nb_fichiers; i++) {
-                if (strcmp(rep->fichiers[i].nom, token) == 0) {
-                    inode_courant = rep->fichiers[i].inode_id;
-                    trouve = 1;
-                    break;
-                }
-            }
-            if (!trouve) return -1;  // Si le fichier n'est pas trouvé
-        }
-
-        token = strtok(NULL, "/");
-    }
-
-    return inode_courant;
-}*/
 
 int trouver_inode_par_chemin(SystemeFichier *fs, const char *chemin) {
     if (strcmp(chemin, "/") == 0) return fs->racine.inode_id;
@@ -295,85 +251,6 @@ void create_file_rep(SystemeFichier *fs, const char *chemin, int est_repertoire)
     printf("%s %s créé avec succès.\n", est_repertoire ? "Répertoire" : "Fichier", chemin);
     sauvegarder_systeme_fichier(fs);
 }
-
-/*void create_file_rep(SystemeFichier *fs, const char *chemin, int est_repertoire) {
-    if (chemin[0]!='\0'){
-
-        
-        char chemin_cpy[MAX_PATH_LENGTH];
-        strncpy(chemin_cpy, chemin, MAX_PATH_LENGTH);
-
-        // Séparer le chemin en répertoire parent + nom
-        char *dernier_slash = strrchr(chemin_cpy, '/');
-        char nom[NAME_SIZE];
-        const char *chemin_parent;
-
-        if (dernier_slash) {
-            strncpy(nom, dernier_slash + 1, NAME_SIZE);
-            *dernier_slash = '\0';
-            chemin_parent = (*chemin_cpy) ? chemin_cpy : "/";
-        } else {
-            strncpy(nom, chemin, NAME_SIZE);
-            chemin_parent = "";
-        }
-
-        // Trouver l'inode du répertoire parent à partir du chemin
-        int inode_parent = trouver_inode_par_chemin(fs, chemin_parent);
-        if (inode_parent == -1) {
-            printf("Erreur : chemin parent %s introuvable.\n", chemin_parent);
-            return;
-        }
-
-        Inode *inode_p = &fs->inodes[inode_parent];
-        Repertoire *rep_p = (Repertoire *)&fs->data[inode_p->blocs[0] * BLOCK_SIZE];
-
-        // Vérifier si le fichier existe déjà dans le répertoire parent
-        for (int i = 0; i < rep_p->nb_fichiers; i++) {
-
-            if (strcmp(rep_p->fichiers[i].nom, nom) == 0) {
-                printf("Erreur : %s existe déjà.\n", nom);
-                return;
-            }
-        }  
-
-
-        // Allouer inode et bloc pour le fichier ou répertoire
-        int inode_fichier = allouer_inode(fs);
-        int bloc_fichier = allouer_bloc(fs);
-        if (inode_fichier == -1 || bloc_fichier == -1) {
-            printf("Erreur : ressources insuffisantes pour créer %s\n", nom);
-            return;
-        }
-
-        Inode *new_inode = &fs->inodes[inode_fichier];
-        new_inode->id = inode_fichier;
-        new_inode->taille = 0;
-        new_inode->est_repertoire = est_repertoire;
-        new_inode->permissions = est_repertoire ? 0755 : 0777;  // Répertoire ou fichier avec permissions
-        new_inode->liens = 1;
-        new_inode->blocs[0] = bloc_fichier;
-        new_inode->date_creation = time(NULL);
-        new_inode->date_modification = new_inode->date_creation;
-        new_inode->inode_pere = inode_parent;
-
-        // Initialiser le contenu du répertoire si c'est un répertoire
-        if (est_repertoire) {
-            Repertoire *nouveau = (Repertoire *)&fs->data[bloc_fichier * BLOCK_SIZE];
-            nouveau->inode_id = inode_fichier;
-            nouveau->nb_fichiers = 0;
-        }
-
-        // Ajouter le fichier ou répertoire dans le répertoire parent
-        strncpy(rep_p->fichiers[rep_p->nb_fichiers].nom, nom, NAME_SIZE);
-        rep_p->fichiers[rep_p->nb_fichiers].inode_id = inode_fichier;
-        rep_p->nb_fichiers++;
-
-        printf("%s %s créé avec succès.\n", est_repertoire ? "Répertoire" : "Fichier", chemin);
-    }else{
-        printf("Paramétre invalide\n");
-    }
-}*/
-
 
 
 
@@ -584,16 +461,17 @@ void afficher_ls_chemin(SystemeFichier *fs, const char *chemin) {
         printf("Le répertoire est vide.\n");
     } else {
         printf("Contenu du répertoire %d (%d):\n", inode_id, fs->inodes[inode_id].id);
-        printf("Nom\t\tTaille\t\tPermissions\n");
+        printf("Nom\t\tTaille\t\tPermissions\t\tInodes\n");
 
         for (int i = 0; i < repertoire->nb_fichiers; i++) {
             int file_inode_id = repertoire->fichiers[i].inode_id;
             Inode *file_inode = &fs->inodes[file_inode_id];
 
-            printf("%s\t\t%d octets\t\t%o\n",
+            printf("%s\t\t%d octets\t\t%o\t\t%d\n",
                    repertoire->fichiers[i].nom,
                    file_inode->taille,
-                   file_inode->permissions);
+                   file_inode->permissions,
+                   file_inode_id);
         }
     }
 }
@@ -667,7 +545,7 @@ void supprimer_fichier(SystemeFichier *fs, const char *chemin)
     printf("Fichier %s supprimé avec succès.\n", nom);
 }
 
-// Fonction récursive pour supprimer un répertoire et son contenu
+
 // Fonction pour supprimer un répertoire donné (chemin absolu ou répertoire courant)
 void supprimer_repertoire(SystemeFichier *fs, const char *chemin)
 {
@@ -815,108 +693,6 @@ void close_file(SystemeFichier *fs, int descripteur)
     fs->racine.fichiers[descripteur].inode_id = 0;
     printf("Fichier avec descripteur %d fermé avec succès.\n", descripteur);
 }
-/*
-void ecrire_fichier(SystemeFichier *fs, const char *chemin)
-{
-    // Ouvrir le fichier en mode écriture
-    int descripteur = open_file(fs, chemin, MODE_WRITE);
-    if (descripteur == -1)
-    {
-        return; // Erreur lors de l'ouverture
-    }
-
-    int inode_id = resoudre_lien_symbolique(fs, chemin);
-    if (inode_id == -1)
-    {
-        printf("Erreur : fichier %s introuvable.\n", chemin);
-        close_file(fs, descripteur);
-        return;
-    }
-
-    Inode *inode = &fs->inodes[inode_id];
-
-    // Vérifier les permissions d'écriture
-    if (!verifier_permissions(inode, MODE_WRITE))
-    {
-        printf("Erreur : permission d'écriture refusée pour le fichier %s.\n", chemin);
-        close_file(fs, descripteur);
-        return;
-    }
-
-    printf("Entrez les données à ajouter au fichier (CTRL+D pour terminer) :\n");
-
-    char buffer[BLOCK_SIZE];
-    char *donnees = malloc(BLOCK_SIZE * 10); // Allocation pour 10 blocs max
-    if (!donnees)
-    {
-        printf("Erreur : impossible d'allouer de la mémoire.\n");
-        close_file(fs, descripteur);
-        return;
-    }
-    
-    // Initialiser le buffer
-    //memset(donnees, 0, BLOCK_SIZE * 10);
-    strncpy(donnees, &fs->data[inode->blocs[0] * BLOCK_SIZE], BLOCK_SIZE);
-
-    int taille_donnees = 0;
-
-    // Lire les données jusqu'à EOF
-   while (fgets(buffer, BLOCK_SIZE, stdin) != NULL)
-    {
-        int len = strlen(buffer);
-        if (taille_donnees + len >= BLOCK_SIZE * 10 - 1)
-        {
-            printf("Erreur : taille maximale de fichier atteinte.\n");
-            break;
-        }
-
-        strcat(donnees, buffer);
-        taille_donnees += len;
-    }
-
-
-
-    // Vérifier si l'utilisateur a bien entré des données
-    if (taille_donnees == 0)
-    {
-        printf("Aucune donnée entrée.\n");
-        free(donnees);
-        close_file(fs, descripteur);
-        return;
-    }
-
-    // Gestion des blocs nécessaires
-    int blocs_necessaires = (taille_donnees / BLOCK_SIZE) + (taille_donnees % BLOCK_SIZE != 0);
-    for (int i = 0; i < blocs_necessaires; i++)
-    {
-        if (i >= 10) // Max 10 blocs
-        {
-            printf("Erreur : dépassement de la taille du fichier.\n");
-            break;
-        }
-        inode->blocs[i] = allouer_bloc(fs);
-    }
-
-    // Écrire les données dans les blocs alloués
-    for (int i = 0; i < blocs_necessaires; i++)
-    {
-        int start = i * BLOCK_SIZE;
-        int end = (i + 1) * BLOCK_SIZE;
-        if (end > taille_donnees)
-            end = taille_donnees;
-
-        strncpy(&fs->data[inode->blocs[i] * BLOCK_SIZE], donnees + start, end - start);
-    }
-
-    inode->taille = taille_donnees;
-    inode->date_modification = time(NULL);
-
-    printf("Données ajoutées au fichier %s :\n%s\n", chemin, donnees);
-
-    free(donnees);
-    close_file(fs, descripteur);
-    printf("Écriture terminée et fichier fermé.\n");
-}*/
 
 // Fonction pour écrire dans un fichier
 void ecrire_fichier(SystemeFichier *fs, const char *chemin)
@@ -929,8 +705,6 @@ void ecrire_fichier(SystemeFichier *fs, const char *chemin)
     }
 
     // // Trouver l'inode du fichier
-    // int inode_id = fs->racine.fichiers[descripteur].inode_id;
-    // Inode *inode = &fs->inodes[inode_id];
 
     int inode_id = resoudre_lien_symbolique(fs, chemin);
     if (inode_id == -1)
@@ -966,11 +740,7 @@ void ecrire_fichier(SystemeFichier *fs, const char *chemin)
     strncpy(donnees, &fs->data[inode->blocs[0] * BLOCK_SIZE], BLOCK_SIZE);
 
     // Lire les nouvelles données à ajouter
-   /* while (fgets(buffer, BLOCK_SIZE, stdin) != NULL)
-    {
-        // Ajouter ces nouvelles données au buffer
-        strncat(donnees, buffer, BLOCK_SIZE - strlen(donnees) - 1);
-    }*/
+
     int taille_donnees = 0;
     while (fgets(buffer, BLOCK_SIZE, stdin) != NULL) {
         
@@ -1028,6 +798,7 @@ void ecrire_fichier(SystemeFichier *fs, const char *chemin)
 
     // Afficher le contenu ajouté
     printf("Données ajoutées au fichier %s :\n%s\n", chemin, donnees);
+    sauvegarder_systeme_fichier(fs);
 
     // Libérer la mémoire allouée
     free(donnees);
@@ -1038,107 +809,6 @@ void ecrire_fichier(SystemeFichier *fs, const char *chemin)
     printf("Écriture terminée et fichier fermé.\n");
 }
 
-/*
-void ecrire_fichier(SystemeFichier *fs, const char *chemin)
-{
-    // Ouvrir le fichier en mode écriture
-    int descripteur = open_file(fs, chemin, MODE_WRITE);
-    if (descripteur == -1)
-    {
-        return; // Erreur lors de l'ouverture
-    }
-
-    // // Trouver l'inode du fichier
-    // int inode_id = fs->racine.fichiers[descripteur].inode_id;
-    // Inode *inode = &fs->inodes[inode_id];
-
-    int inode_id = trouver_inode_par_chemin(fs, chemin);
-    if (inode_id == -1)
-    {
-        printf("Erreur : fichier %s introuvable.\n", chemin);
-        return;
-    }
-
-    Inode *inode = &fs->inodes[inode_id];
-
-    // Vérifier les permissions d'écriture
-    if (!verifier_permissions(inode, MODE_WRITE))
-    {
-        printf("Erreur : permission d'écriture refusée pour le fichier %s.\n", chemin);
-        close_file(fs, descripteur); // Fermer le fichier avant de quitter
-        return;
-    }
-
-    // Demander à l'utilisateur de saisir des données à ajouter
-    printf("Entrez les données à ajouter au fichier (CTRL+D pour terminer) :\n");
-
-    // Lecture de l'entrée de l'utilisateur
-    char buffer[BLOCK_SIZE];
-    char *donnees = malloc(BLOCK_SIZE); // Allocation pour le buffer de données
-    if (donnees == NULL)
-    {
-        printf("Erreur : impossible d'allouer de la mémoire.\n");
-        close_file(fs, descripteur); // Fermer le fichier avant de quitter
-        return;
-    }
-
-    // Ajouter l'ancien contenu à l'entrée (pour ne pas écraser)
-    strncpy(donnees, &fs->data[inode->blocs[0] * BLOCK_SIZE], BLOCK_SIZE);
-
-    // Lire les nouvelles données à ajouter
-    while (fgets(buffer, BLOCK_SIZE, stdin) != NULL)
-    {
-        // Ajouter ces nouvelles données au buffer
-        strncat(donnees, buffer, BLOCK_SIZE - strlen(donnees) - 1);
-    }
-
-    // Calcul de la taille des nouvelles données
-    int taille_donnees = strlen(donnees);
-
-    // Si les données dépassent la taille d'un bloc, on gère plusieurs blocs
-    if (taille_donnees > BLOCK_SIZE)
-    {
-        int blocs_necessaires = (taille_donnees / BLOCK_SIZE) + (taille_donnees % BLOCK_SIZE != 0);
-
-        for (int i = 1; i < blocs_necessaires; i++)
-        {
-            inode->blocs[i] = allouer_bloc(fs); // Allouer un nouveau bloc
-        }
-
-        // Écrire les données dans les blocs
-        for (int i = 0; i < blocs_necessaires; i++)
-        {
-            int start = i * BLOCK_SIZE;
-            int end = (i + 1) * BLOCK_SIZE;
-
-            // Si c'est le dernier bloc, on écrit uniquement la partie restante des données
-            if (end > taille_donnees)
-                end = taille_donnees;
-
-            strncpy(&fs->data[inode->blocs[i] * BLOCK_SIZE], donnees + start, end - start);
-        }
-    }
-    else
-    {
-        // Si tout tient dans un seul bloc
-        int bloc_fichier = inode->blocs[0];
-        strncpy(&fs->data[bloc_fichier * BLOCK_SIZE], donnees, BLOCK_SIZE);
-    }
-
-    inode->taille = taille_donnees;        // Met à jour la taille du fichier
-    inode->date_modification = time(NULL); // Mise à jour de la date de modification
-
-    // Afficher le contenu ajouté
-    printf("Données ajoutées au fichier %s :\n%s\n", chemin, donnees);
-
-    // Libérer la mémoire allouée
-    free(donnees);
-
-    // Fermer le fichier après l'écriture
-    close_file(fs, descripteur);
-
-    printf("Écriture terminée et fichier fermé.\n");
-}*/
 
 // Fonction pour lire le contenu d'un fichier
 void lire_fichier(SystemeFichier *fs, const char *chemin) {
@@ -1182,32 +852,6 @@ void lire_fichier(SystemeFichier *fs, const char *chemin) {
     printf("Fichier lu avec succès.\n");
 }
 
-/*void lire_fichier(SystemeFichier *fs, const char *chemin)
-{
-    // Trouver l'inode du fichier
-    int inode_id = trouver_inode_par_chemin(fs, chemin);
-    if (inode_id == -1)
-    {
-        printf("Erreur : fichier %s introuvable.\n", chemin);
-        return;
-    }
-
-    Inode *inode = &fs->inodes[inode_id];
-
-    // Vérifier les permissions de lecture
-    if (!verifier_permissions(inode, MODE_READ))
-    {
-        printf("Erreur : permission de lecture refusée pour le fichier %s.\n", chemin);
-        return;
-    }
-
-    // Lire le contenu du fichier (dans cet exemple, on suppose que le contenu est dans fs->data)
-    int bloc_fichier = inode->blocs[0]; // Utilisation du premier bloc du fichier
-    printf("Contenu du fichier %s :\n", chemin);
-    printf("%s\n", &fs->data[bloc_fichier * BLOCK_SIZE]); // Affichage du contenu du bloc
-
-    printf("Fichier lu avec succès.\n");
-}*/
 
 
 // Fonction pour créer un lien symbolique
@@ -1298,71 +942,6 @@ void creer_lien_symbolique(SystemeFichier *fs, const char *chemin, const char *c
 
 
 }
-/*
-void symboliclink(SystemeFichier *fs, const char *chemin_lien, const char *chemin_cible) {
-    // Récupérer le nom du lien et le répertoire parent
-    char chemin_lien_cpy[MAX_PATH_LENGTH];
-    strncpy(chemin_lien_cpy, chemin_lien, MAX_PATH_LENGTH);
-
-    char *dernier_slash = strrchr(chemin_lien_cpy, '/');
-    char nom[NAME_SIZE];
-    const char *chemin_parent;
-
-    if (dernier_slash) {
-        strncpy(nom, dernier_slash + 1, NAME_SIZE);
-        *dernier_slash = '\0';
-        chemin_parent = (*chemin_lien_cpy) ? chemin_lien_cpy : "/";
-    } else {
-        strncpy(nom, chemin_lien, NAME_SIZE);
-        chemin_parent = "";
-    }
-
-    // Trouver l'inode du répertoire parent
-    int inode_parent = trouver_inode_par_chemin(fs, chemin_parent);
-    if (inode_parent == -1) {
-        printf("Erreur : chemin parent %s introuvable.\n", chemin_parent);
-        return;
-    }
-
-    Inode *inode_p = &fs->inodes[inode_parent];
-    Repertoire *rep_p = (Repertoire *)&fs->data[inode_p->blocs[0] * BLOCK_SIZE];
-
-    // Vérifier si le lien existe déjà
-    for (int i = 0; i < rep_p->nb_fichiers; i++) {
-        if (strcmp(rep_p->fichiers[i].nom, nom) == 0) {
-            printf("Erreur : %s existe déjà.\n", nom);
-            return;
-        }
-    }
-
-    // Allouer inode et bloc pour le lien symbolique
-    int inode_lien = allouer_inode(fs);
-    if (inode_lien == -1) {
-        printf("Erreur : pas de ressources pour créer un lien symbolique.\n");
-        return;
-    }
-
-    Inode *new_inode = &fs->inodes[inode_lien];
-    new_inode->id = inode_lien;
-    new_inode->taille = strlen(chemin_cible) + 1;  // La taille est la longueur du chemin cible + 1 (pour le '\0')
-    new_inode->est_repertoire = 0;  // Ce n'est pas un répertoire
-    new_inode->liens = 1;
-    new_inode->date_creation = time(NULL);
-    new_inode->date_modification = new_inode->date_creation;
-    new_inode->inode_pere = inode_parent;
-
-    // Mettre à jour la cible du lien symbolique
-    LienSymbolique *lien = (LienSymbolique *)&fs->data[new_inode->blocs[0] * BLOCK_SIZE];
-    strncpy(lien->cible, chemin_cible, MAX_PATH_LENGTH);
-
-    // Ajouter le lien symbolique dans le répertoire parent
-    strncpy(rep_p->fichiers[rep_p->nb_fichiers].nom, nom, NAME_SIZE);
-    rep_p->fichiers[rep_p->nb_fichiers].inode_id = inode_lien;
-    rep_p->nb_fichiers++;
-
-    printf("Lien symbolique %s -> %s créé avec succès.\n", chemin_lien, chemin_cible);
-}
-*/
 
 // Fonction pour résoudre un lien symbolique
 int resoudre_lien_symbolique(SystemeFichier *fs, const char *chemin) {
@@ -1506,7 +1085,7 @@ int mv(SystemeFichier *fs, const char *source, const char *destination) {
 
     // Mettre à jour l'inode de la source pour pointer vers le nouveau parent
     inode_src->inode_pere = inode_dest;
-
+    sauvegarder_systeme_fichier(fs);
     printf("Déplacement réussi : %s → %s\n", source, destination);
     return 0;
 }
@@ -1564,6 +1143,7 @@ int cp(SystemeFichier *fs, const char *source, const char *destination) {
     // Mettre à jour l'inode de la source pour pointer vers le nouveau parent
     inode_src->inode_pere = inode_dest;
 
+    sauvegarder_systeme_fichier(fs);
     printf("Déplacement réussi : %s → %s\n", source, destination);
     return 0;
 }
@@ -1604,3 +1184,104 @@ void pwd(SystemeFichier *fs) {
 
     printf("%s", chemin);
 }
+
+// Fonction pour créer un lien dur
+int creer_lien_hard(SystemeFichier *fs, const char *chemin_source, const char *chemin_cible) {
+    // Trouver l'inode de la source
+    int inode_source = trouver_inode_par_chemin(fs, chemin_source);
+    if (inode_source == -1) {
+        printf("Erreur : Le fichier source n'existe pas.\n");
+        return -1;
+    }
+
+    // Vérifier que la source n'est pas un répertoire
+    if (fs->inodes[inode_source].est_repertoire) {
+        printf("Erreur : Impossible de créer un lien dur vers un répertoire.\n");
+        return -1;
+    }
+
+    // Trouver le répertoire parent de la cible
+    char chemin_parent[MAX_PATH_LENGTH];
+    char nom_fichier[NAME_SIZE];
+    strncpy(chemin_parent, chemin_cible, MAX_PATH_LENGTH);
+    char *dernier_slash = strrchr(chemin_parent, '/');
+    if (dernier_slash == NULL) {
+        printf("Erreur : Chemin cible invalide.\n");
+        return -1;
+    }
+
+    // Séparer le nom du fichier et son chemin parent
+    strcpy(nom_fichier, dernier_slash + 1);
+    *dernier_slash = '\0';
+
+    // Trouver l'inode du répertoire parent
+    int inode_parent = trouver_inode_par_chemin(fs, chemin_parent);
+    if (inode_parent == -1) {
+        printf("Erreur : Le répertoire parent n'existe pas.\n");
+        return -1;
+    }
+
+    // Vérifier que le répertoire parent a de la place
+    Repertoire *rep_parent = (Repertoire *)&fs->data[fs->inodes[inode_parent].blocs[0] * BLOCK_SIZE];
+    if (rep_parent->nb_fichiers >= MAX_FILES) {
+        printf("Erreur : Répertoire plein.\n");
+        return -1;
+    }
+
+    // Ajouter l'entrée du lien dur dans le répertoire parent
+    strncpy(rep_parent->fichiers[rep_parent->nb_fichiers].nom, nom_fichier, NAME_SIZE);
+    rep_parent->fichiers[rep_parent->nb_fichiers].inode_id = inode_source;
+    rep_parent->nb_fichiers++;
+
+    // Augmenter le compteur de liens de l'inode source
+    fs->inodes[inode_source].liens++;
+    fs->inodes[inode_source].date_modification = time(NULL);
+
+    printf("Lien dur créé : %s -> %s\n", chemin_cible, chemin_source);
+    sauvegarder_systeme_fichier(fs);
+    return 0;
+}
+
+/*int lseek_file(SystemeFichier *fs, int descripteur, int offset)
+{
+    // Vérifier si le descripteur est valide
+    if (descripteur < 0 || descripteur >= MAX_OPEN_FILES || fs->racine.fichiers[descripteur].inode_id == 0)
+    {
+        printf("Erreur : descripteur de fichier invalide.\n");
+        return -1;
+    }
+
+    FichierOuvert *fichier = &fs->racine.fichiers[descripteur];
+
+    // Vérifier si le fichier est ouvert en mode lecture/écriture
+    if (fichier->mode != MODE_READ && fichier->mode != MODE_WRITE)
+    {
+        printf("Erreur : fichier non ouvert en mode lecture ou écriture.\n");
+        return -1;
+    }
+
+    // Trouver l'inode du fichier
+    Inode *inode = &fs->inodes[fichier->inode_id];
+
+    // Si l'offset est inférieur à 0, c'est invalide
+    if (offset < 0)
+    {
+        printf("Erreur : l'offset ne peut pas être inférieur à 0.\n");
+        return -1;
+    }
+
+    // Si l'offset dépasse la taille du fichier, ajustez la taille du fichier pour l'ajouter
+    if (offset > inode->taille)
+    {
+        // Si on dépasse la taille actuelle du fichier, cela signifie que l'on veut ajouter des données.
+        // Vous pouvez ajuster ici pour ajouter de nouveaux blocs ou juste augmenter la taille du fichier.
+        inode->taille = offset;
+    }
+
+    // Mettre à jour l'offset
+    fichier->offset = offset;
+
+    // Retourner la nouvelle position
+    printf("Nouveau offset du fichier : %d\n", fichier->offset);
+    return fichier->offset;
+}*/

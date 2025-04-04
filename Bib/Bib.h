@@ -104,7 +104,6 @@ void initialiser_systeme_fichier(SystemeFichier *fs);
 void sauvegarder_systeme_fichier(SystemeFichier *fs);
 int charger_systeme_fichier(SystemeFichier *fs);
 int trouver_inode_par_chemin(SystemeFichier *fs, const char *chemin);
-//int trouver_inode_par_chemin(SystemeFichier *fs, const charchemin);
 void create_file_rep(SystemeFichier *fs, const char *chemin, int est_repertoire);
 int trouver_inode_par_cheminCd(SystemeFichier *fs, const char *chemin);
 void cd(SystemeFichier *fs, const char *chemin);
@@ -118,11 +117,12 @@ void close_file(SystemeFichier *fs, int descripteur);
 void ecrire_fichier(SystemeFichier *fs, const char *chemin);
 void lire_fichier(SystemeFichier *fs, const char *chemin);
 void creer_lien_symbolique(SystemeFichier *fs, const char *chemin, const char *cible);
-//void symboliclink(SystemeFichier *fs, const char *chemin_lien, const char *chemin_cible);
 int resoudre_lien_symbolique(SystemeFichier *fs, const char *chemin);
 void afficher_cible_lien_symbolique(SystemeFichier *fs, const char *chemin_lien);
 int mv(SystemeFichier *fs, const char *source, const char *destination);
 int cp(SystemeFichier *fs, const char *source, const char *destination);
 void pwd(SystemeFichier *fs);
+int creer_lien_hard(SystemeFichier *fs, const char *chemin_source, const char *chemin_cible) ;
+//int lseek_file(SystemeFichier *fs, int descripteur, int offset);
 
 #endif // BIB_H_INCLUDED
