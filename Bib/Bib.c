@@ -17,17 +17,31 @@
  * @param fs Pointeur vers le système de fichiers.
  * @return L'indice de l'inode alloué, ou -1 si aucun inode n'est disponible.
  */
-int allouer_inode(SystemeFichier *fs) 
-{
-    for (int i = 0; i < MAX_INODES; i++) {
-        if (!BIT_CHECK(fs->bitmap.inodes[i / 8], i % 8)) {
-            BIT_SET(fs->bitmap.inodes[i / 8], i % 8);
-            fs->superbloc.inode_libres--;
-            return i;
-        }
-    }
-    return -1; // Plus d'inodes disponibles
-}
+ int allouer_inode(SystemeFichier *fs) 
+ {
+     // Parcourt tous les inodes disponibles
+     for (int i = 0; i < MAX_INODES; i++) {
+         // Vérifie si l'inode à l'indice 'i' est libre (bit à 0)
+         if (!BIT_CHECK(fs->bitmap.inodes[i / 8], i % 8)) {
+             // Alloue l'inode en définissant son bit à 1 (inode utilisé)
+             BIT_SET(fs->bitmap.inodes[i / 8], i % 8);
+             
+             // Décrémente le compteur des inodes libres dans le superbloc
+             fs->superbloc.inode_libres--;
+             
+             // Retourne l'indice de l'inode nouvellement alloué
+             return i;
+         }
+     }
+ 
+     // Si aucun inode n'est libre, retourne -1 pour signaler l'absence d'inodes disponibles
+     return -1; // Plus d'inodes disponibles
+ }
+
+
+
+ /*************************************************************************************************************************************** */
+
 
 /**
  * @brief Alloue un bloc dans le système de fichiers.
@@ -39,16 +53,29 @@ int allouer_inode(SystemeFichier *fs)
  * @param fs Pointeur vers le système de fichiers.
  * @return L'indice du bloc alloué, ou -1 si aucun bloc n'est disponible.
  */
-int allouer_bloc(SystemeFichier *fs) {
+ int allouer_bloc(SystemeFichier *fs) {
+    // Parcourt tous les blocs disponibles
     for (int i = 0; i < MAX_BLOCKS; i++) {
+        // Vérifie si le bloc à l'indice 'i' est libre (bit à 0)
         if (!BIT_CHECK(fs->bitmap.blocs[i / 8], i % 8)) {
+            // Alloue le bloc en définissant son bit à 1 (bloc utilisé)
             BIT_SET(fs->bitmap.blocs[i / 8], i % 8);
+            
+            // Décrémente le compteur des blocs libres dans le superbloc
             fs->superbloc.blocs_libres--;
+            
+            // Retourne l'indice du bloc nouvellement alloué
             return i;
         }
     }
+
+    // Si aucun bloc n'est libre, retourne -1 pour signaler l'absence de blocs disponibles
     return -1; // Plus de blocs disponibles
 }
+
+
+/****************************************************************************************************************************************** */
+
 
 /**
  * @brief Initialise le système de fichiers.
@@ -59,61 +86,71 @@ int allouer_bloc(SystemeFichier *fs) {
  * 
  * @param fs Pointeur vers le système de fichiers.
  */
-void initialiser_systeme_fichier(SystemeFichier *fs) {
+ void initialiser_systeme_fichier(SystemeFichier *fs) {
+    // Initialisation de la structure du système de fichiers à zéro
     memset(fs, 0, sizeof(SystemeFichier));
 
-    // Initialisation des bitmaps à zéro
+    // Initialisation des bitmaps à zéro (aucun inode ni bloc n'est alloué)
     memset(fs->bitmap.inodes, 0, sizeof(fs->bitmap.inodes));
     memset(fs->bitmap.blocs, 0, sizeof(fs->bitmap.blocs));
 
-    fs->superbloc.taille_fs = PARTITION_SIZE;
-    fs->superbloc.nb_inodes = MAX_INODES;
-    fs->superbloc.nb_blocs = MAX_BLOCKS / 4;
-    fs->superbloc.inode_libres = MAX_INODES;
-    fs->superbloc.blocs_libres = MAX_BLOCKS / 4;
-    fs->superbloc.premier_bloc_libre = 0;
+    // Initialisation des informations du superbloc
+    fs->superbloc.taille_fs = PARTITION_SIZE; // Taille de la partition
+    fs->superbloc.nb_inodes = MAX_INODES;    // Nombre maximal d'inodes
+    fs->superbloc.nb_blocs = MAX_BLOCKS / 4; // Nombre maximal de blocs
+    fs->superbloc.inode_libres = MAX_INODES; // Nombre d'inodes libres disponibles
+    fs->superbloc.blocs_libres = MAX_BLOCKS / 4; // Nombre de blocs libres disponibles
+    fs->superbloc.premier_bloc_libre = 0;    // Indice du premier bloc libre
 
-    // Allouer le répertoire racine
+    // Allouer un inode pour le répertoire racine
     int inode_racine = allouer_inode(fs);
+    // Allouer un bloc pour le répertoire racine
     int bloc_racine = allouer_bloc(fs);
 
+    // Vérification si l'allocation a échoué pour l'inode ou le bloc racine
     if (inode_racine == -1 || bloc_racine == -1) {
         printf("Erreur: Impossible d'allouer le répertoire racine\n");
-        exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE);  // Terminer le programme si l'allocation échoue
     }
 
+    // Initialisation de l'inode pour le répertoire racine
     fs->inodes[inode_racine].id = inode_racine;
-    fs->inodes[inode_racine].taille = sizeof(Repertoire);
-    fs->inodes[inode_racine].est_repertoire = 1;
-    fs->inodes[inode_racine].permissions = 0755;
-    fs->inodes[inode_racine].liens = 1;
-    fs->inodes[inode_racine].blocs[0] = bloc_racine;
-    fs->inodes[inode_racine].date_creation = time(NULL);
-    fs->inodes[inode_racine].date_modification = fs->inodes[inode_racine].date_creation;
-    fs->inodes[inode_racine].inode_pere = inode_racine;
-    fs->inodes[inode_racine].est_lien = 0;
+    fs->inodes[inode_racine].taille = sizeof(Repertoire); // Taille de l'inode racine
+    fs->inodes[inode_racine].est_repertoire = 1;          // Indique que c'est un répertoire
+    fs->inodes[inode_racine].permissions = 0755;          // Permissions par défaut
+    fs->inodes[inode_racine].liens = 1;                   // Nombre de liens pointant vers cet inode
+    fs->inodes[inode_racine].blocs[0] = bloc_racine;     // Bloc du répertoire racine
+    fs->inodes[inode_racine].date_creation = time(NULL); // Date de création
+    fs->inodes[inode_racine].date_modification = fs->inodes[inode_racine].date_creation; // Date de modification
+    fs->inodes[inode_racine].inode_pere = inode_racine;  // Référence à l'inode parent
+    fs->inodes[inode_racine].est_lien = 0;                // Le répertoire racine n'est pas un lien symbolique
 
+    // Initialisation de l'entrée pour le répertoire racine dans la structure Repertoire
     fs->racine.inode_id = inode_racine;
 
-    fs->repertoire_courant = inode_racine; // Initialiser le répertoire courant à la racine
-     // Initialiser le répertoire racine
+    // Initialisation du répertoire courant (répertoire racine au départ)
+    fs->repertoire_courant = inode_racine;
 
-     fs->racine.nb_fichiers = 2;  // . et ..
+    // Initialisation des fichiers dans le répertoire racine (entrées . et ..)
+    fs->racine.nb_fichiers = 2;  // Les deux fichiers sont "." et ".."
 
-     // Initialiser les entrées . et .. dans le répertoire racine
-     strcpy(fs->racine.fichiers[0].nom, ".");  // Entrée pour le répertoire courant
-     fs->racine.fichiers[0].inode_id = inode_racine;  // L'inode du répertoire racine
+    // Entrée "." représentant le répertoire courant
+    strcpy(fs->racine.fichiers[0].nom, ".");
+    fs->racine.fichiers[0].inode_id = inode_racine;  // L'inode du répertoire racine
 
-     strcpy(fs->racine.fichiers[1].nom, "..");  // Entrée pour le répertoire parent
-     fs->racine.fichiers[1].inode_id = inode_racine;  // Le parent du répertoire racine est lui-même
+    // Entrée ".." représentant le répertoire parent
+    strcpy(fs->racine.fichiers[1].nom, "..");
+    fs->racine.fichiers[1].inode_id = inode_racine;  // Le parent du répertoire racine est lui-même
 
-     // Marquer l'inode racine comme utilisée dans le bitmap
-     BIT_SET(fs->bitmap.inodes[0 / 8], 0 % 8);  // Marquer le premier inode comme utilisé
-     fs->superbloc.inode_libres--;  // Décrémenter le nombre d'inodes libres
-
-
-
+    // Marquage de l'inode racine comme utilisé dans le bitmap des inodes
+    BIT_SET(fs->bitmap.inodes[0 / 8], 0 % 8);  // Marquer le premier inode comme utilisé
+    fs->superbloc.inode_libres--;  // Décrémenter le nombre d'inodes libres
 }
+
+
+/*************************************************************************************************************************************** */
+
+
 
 /**
  * @brief Sauvegarde le système de fichiers dans un fichier.
@@ -123,20 +160,34 @@ void initialiser_systeme_fichier(SystemeFichier *fs) {
  * 
  * @param fs Pointeur vers le système de fichiers à sauvegarder.
  */
-void sauvegarder_systeme_fichier(SystemeFichier *fs) {
+ void sauvegarder_systeme_fichier(SystemeFichier *fs) {
+    // Ouverture du fichier en mode écriture binaire ("wb")
     FILE *f = fopen(PARTITION_NAME, "wb");
+    
+    // Vérification si le fichier a été ouvert correctement
     if (!f) {
+        // Si l'ouverture échoue, afficher un message d'erreur et quitter le programme
         perror("Erreur lors de la sauvegarde de la partition");
-        exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE); // Terminer l'exécution si l'ouverture du fichier échoue
     }
-    if (fwrite(fs, sizeof(SystemeFichier), 1, f) != 1) {
-        perror("Erreur d'écriture du fichier système");
-        fclose(f);
-        exit(EXIT_FAILURE);
-    }
-    fclose(f);
 
+    // Écriture de l'intégralité de la structure du système de fichiers dans le fichier
+    if (fwrite(fs, sizeof(SystemeFichier), 1, f) != 1) {
+        // Si l'écriture échoue, afficher un message d'erreur et fermer le fichier
+        perror("Erreur d'écriture du fichier système");
+        fclose(f);  // Assurer que le fichier est fermé en cas d'erreur
+        exit(EXIT_FAILURE); // Terminer l'exécution si l'écriture échoue
+    }
+
+    // Fermeture du fichier après l'écriture réussie
+    fclose(f);
 }
+
+
+
+/********************************************************************************************************************************** */
+
+
 
 /**
  * @brief Charge le système de fichiers depuis un fichier.
@@ -147,24 +198,40 @@ void sauvegarder_systeme_fichier(SystemeFichier *fs) {
  * @param fs Pointeur vers le système de fichiers à charger.
  * @return 1 si le système de fichiers a été chargé avec succès, 0 sinon.
  */
-int charger_systeme_fichier(SystemeFichier *fs) {
+ int charger_systeme_fichier(SystemeFichier *fs) {
+    // Ouverture du fichier en mode lecture binaire ("rb")
     FILE *f = fopen(PARTITION_NAME, "rb");
+    
+    // Vérification si le fichier a été ouvert correctement
     if (!f) {
+        // Si le fichier n'existe pas, afficher un message et signaler qu'un nouveau système de fichiers doit être créé
         printf("Aucune partition existante, création d'un nouveau système de fichiers.\n");
-        return 0;
+        return 0; // Retourner 0 pour indiquer que le fichier n'a pas été trouvé et qu'une nouvelle création est nécessaire
     }
+    
+    // Lecture du contenu du fichier dans la structure du système de fichiers
     if (fread(fs, sizeof(SystemeFichier), 1, f) != 1) {
+        // Si la lecture échoue, afficher une erreur et fermer le fichier
         perror("Erreur de lecture du fichier système");
-        fclose(f);
-        return 0;
+        fclose(f);  // Fermer le fichier en cas d'erreur
+        return 0;   // Retourner 0 pour indiquer une erreur de lecture
     }
+    
+    // Fermeture du fichier après lecture réussie
     fclose(f);
+
+    // Afficher un message indiquant que le système de fichiers a été chargé avec succès
     printf("Système de fichiers chargé depuis %s\n", PARTITION_NAME);
+
+    // Initialiser le répertoire courant à l'inode du répertoire racine
     fs->repertoire_courant = fs->racine.inode_id;
+
+    // Retourner 1 pour indiquer que le système de fichiers a été chargé avec succès
     return 1;
 }
 
 
+/************************************************************************************************************************************** */
 
 
 /**
@@ -177,35 +244,41 @@ int charger_systeme_fichier(SystemeFichier *fs) {
  * @param chemin Le chemin du fichier ou répertoire à trouver. Il peut être absolu ou relatif.
  * @return L'inode correspondant au chemin spécifié, ou -1 si le chemin est invalide.
  */
-int trouver_inode_par_chemin(SystemeFichier *fs, const char *chemin) {
+ int trouver_inode_par_chemin(SystemeFichier *fs, const char *chemin) {
+    // Si le chemin est "/". Cela renvoie l'inode du répertoire racine.
     if (strcmp(chemin, "/") == 0) return fs->racine.inode_id;
 
+    // Copie du chemin pour pouvoir le modifier sans affecter l'original.
     char chemin_cpy[MAX_PATH_LENGTH];
     strncpy(chemin_cpy, chemin, MAX_PATH_LENGTH);
     chemin_cpy[MAX_PATH_LENGTH - 1] = '\0'; // Sécurité pour éviter les dépassements de tampon
 
-    // Initialisation du point de départ
+    // Initialisation du point de départ : si le chemin est absolu, commencer depuis la racine,
+    // sinon à partir du répertoire courant.
     int inode_courant = (chemin[0] == '/') ? fs->racine.inode_id : fs->repertoire_courant;
 
-
-
+    // Séparation du chemin en segments (nom de répertoire ou fichier).
     char *token = strtok(chemin_cpy, "/");
     while (token != NULL) {
 
-
+        // Accéder à l'inode du répertoire courant.
         Inode *inode = &fs->inodes[inode_courant];
+
+        // Vérification que l'inode actuel est un répertoire.
         if (!inode->est_repertoire) {
+            // Si l'inode n'est pas un répertoire, afficher une erreur.
             printf("Erreur : %s n'est pas un répertoire.\n", token);
-            return -1;
+            return -1;  // Retourner -1 pour signaler une erreur
         }
 
-        // Gestion des cas spéciaux . et ..
+        // Gestion des cas spéciaux "." et ".."
         if (strcmp(token, ".") == 0) {
-            // On reste dans le répertoire courant
+            // Si le token est ".", rester dans le répertoire courant.
         } else if (strcmp(token, "..") == 0) {
+            // Si le token est "..", se déplacer dans le répertoire parent.
             inode_courant = (inode_courant == fs->racine.inode_id) ? fs->racine.inode_id : inode->inode_pere;
         } else {
-            // Recherche du fichier/dossier dans le répertoire courant
+            // Recherche du fichier ou du répertoire spécifié dans le répertoire courant.
             Repertoire *rep = (Repertoire *)&fs->data[inode->blocs[0] * BLOCK_SIZE];
             int trouve = 0;
             for (int i = 0; i < rep->nb_fichiers; i++) {
@@ -215,17 +288,25 @@ int trouver_inode_par_chemin(SystemeFichier *fs, const char *chemin) {
                     break;
                 }
             }
+            // Si l'élément spécifié n'est pas trouvé, afficher une erreur.
             if (!trouve) {
                 printf("Erreur : %s introuvable dans le répertoire.\n", token);
-                return -1;
+                return -1;  // Retourner -1 pour signaler que le fichier ou répertoire n'a pas été trouvé.
             }
         }
+        // Passer au prochain segment du chemin.
         token = strtok(NULL, "/");
     }
 
-
+    // Retourner l'inode trouvé.
     return inode_courant;
 }
+
+
+/****************************************************************************************************************************************** */
+
+
+
 /**
  * Crée un fichier ou un répertoire dans le système de fichiers.
  * 
@@ -238,22 +319,25 @@ int trouver_inode_par_chemin(SystemeFichier *fs, const char *chemin) {
  * @param est_repertoire Indicateur si le nouvel objet est un répertoire (1) ou un fichier (0).
  */
 
-void create_file_rep(SystemeFichier *fs, const char *chemin, int est_repertoire) {
+ void create_file_rep(SystemeFichier *fs, const char *chemin, int est_repertoire) {
+    // Copier le chemin pour pouvoir le modifier sans affecter l'original
     char chemin_cpy[MAX_PATH_LENGTH];
     strncpy(chemin_cpy, chemin, MAX_PATH_LENGTH);
 
-    // Séparer le chemin en répertoire parent + nom
+    // Séparer le chemin en répertoire parent et nom de l'objet
     char *dernier_slash = strrchr(chemin_cpy, '/');
     char nom[NAME_SIZE];
     const char *chemin_parent;
 
     if (dernier_slash) {
+        // Le nom est après le dernier '/'
         strncpy(nom, dernier_slash + 1, NAME_SIZE);
-        *dernier_slash = '\0';
-        chemin_parent = (*chemin_cpy) ? chemin_cpy : "/";
+        *dernier_slash = '\0';  // Terminer le chemin parent par un '\0'
+        chemin_parent = (*chemin_cpy) ? chemin_cpy : "/";  // Le chemin parent est avant le '/'
     } else {
+        // Si aucun '/' n'est trouvé, tout est dans le nom
         strncpy(nom, chemin, NAME_SIZE);
-        chemin_parent = "";
+        chemin_parent = "";  // Pas de chemin parent
     }
     printf("Création de %s dans %s\n", nom, chemin_parent);
 
@@ -265,11 +349,11 @@ void create_file_rep(SystemeFichier *fs, const char *chemin, int est_repertoire)
     }
     printf("Inode parent: %d\n", inode_parent);
 
-
+    // Accéder au répertoire parent
     Inode *inode_p = &fs->inodes[inode_parent];
     Repertoire *rep_p = (Repertoire *)&fs->data[inode_p->blocs[0] * BLOCK_SIZE];
 
-    // Vérifier si le fichier existe déjà dans le répertoire parent
+    // Vérifier si le fichier ou répertoire existe déjà dans le répertoire parent
     for (int i = 0; i < rep_p->nb_fichiers; i++) {
         if (strcmp(rep_p->fichiers[i].nom, nom) == 0) {
             printf("Erreur : %s existe déjà.\n", nom);
@@ -278,8 +362,7 @@ void create_file_rep(SystemeFichier *fs, const char *chemin, int est_repertoire)
     }
     printf("Vérification de l'existence de %s dans %s\n", nom, chemin_parent);
 
-
-    // Allouer inode et bloc pour le fichier ou répertoire
+    // Allouer un inode et un bloc pour le fichier ou répertoire
     int inode_fichier = allouer_inode(fs);
     int bloc_fichier = allouer_bloc(fs);
     if (inode_fichier == -1 || bloc_fichier == -1) {
@@ -288,38 +371,48 @@ void create_file_rep(SystemeFichier *fs, const char *chemin, int est_repertoire)
     }
     printf("Allocation inode: %d, bloc: %d\n", inode_fichier, bloc_fichier);
 
-
+    // Initialiser le nouvel inode
     Inode *new_inode = &fs->inodes[inode_fichier];
     new_inode->id = inode_fichier;
-    new_inode->taille = 0;
-    new_inode->est_repertoire = est_repertoire;
-    new_inode->permissions = est_repertoire ? 0755 : 0777;  // Répertoire ou fichier avec permissions
-    new_inode->liens = 1;
+    new_inode->taille = 0;  // Initialiser la taille à 0
+    new_inode->est_repertoire = est_repertoire;  // Déterminer si c'est un répertoire ou un fichier
+    new_inode->permissions = est_repertoire ? 0755 : 0777;  // Permissions (répertoire ou fichier)
+    new_inode->liens = 1;  // Un seul lien au début
     new_inode->blocs[0] = bloc_fichier;
-    new_inode->date_creation = time(NULL);
-    new_inode->date_modification = new_inode->date_creation;
-    new_inode->inode_pere = inode_parent;
-    new_inode->est_lien = 0;
+    new_inode->indirect_block= -1;
+    for (int i = 1; i < NUM_DIRECT_BLOCKS; i++){
+        new_inode->blocs[i] = -1;
+    }
+    new_inode->date_creation = time(NULL);  // Initialiser la date de création
+    new_inode->date_modification = new_inode->date_creation;  // Initialiser la date de modification
+    new_inode->inode_pere = inode_parent;  // L'inode parent du nouveau fichier ou répertoire
+    new_inode->est_lien = 0;  // Indiquer que ce n'est pas un lien symbolique
 
     // Initialiser le contenu du répertoire si c'est un répertoire
     if (est_repertoire) {
         Repertoire *nouveau = (Repertoire *)&fs->data[bloc_fichier * BLOCK_SIZE];
         nouveau->inode_id = inode_fichier;
-        nouveau->nb_fichiers = 0;
+        nouveau->nb_fichiers = 0;  // Initialiser le nombre de fichiers à 0
     }
 
     // Ajouter le fichier ou répertoire dans le répertoire parent
     strncpy(rep_p->fichiers[rep_p->nb_fichiers].nom, nom, NAME_SIZE);
     rep_p->fichiers[rep_p->nb_fichiers].inode_id = inode_fichier;
-    rep_p->nb_fichiers++;
+    rep_p->nb_fichiers++;  // Augmenter le nombre de fichiers dans le répertoire
 
+    // Afficher un message de confirmation
     printf("%s %s créé avec succès.\n", est_repertoire ? "Répertoire" : "Fichier", chemin);
+
+    // Sauvegarder le système de fichiers après la création
     sauvegarder_systeme_fichier(fs);
 }
 
 
+/*********************************************************************************************************************************** */
+
+
 /**
- * Trouve l'inode correspondant à un chemin pour la commande "cd".
+ * @brief Trouve l'inode correspondant à un chemin pour la commande "cd".
  * 
  * Cette fonction permet de trouver l'inode associé à un chemin dans le système de fichiers. Elle gère
  * les répertoires, ainsi que les cas spéciaux comme "." pour le répertoire courant et ".." pour le répertoire parent.
@@ -329,22 +422,23 @@ void create_file_rep(SystemeFichier *fs, const char *chemin, int est_repertoire)
  * @param chemin Le chemin du fichier ou répertoire à trouver. Il peut être absolu ou relatif.
  * @return L'inode correspondant au chemin spécifié, ou -1 si le chemin est invalide.
  */
-int trouver_inode_par_cheminCd(SystemeFichier *fs, const char *chemin) {
-    if (!chemin || strlen(chemin) == 0) return -1;
+ int trouver_inode_par_cheminCd(SystemeFichier *fs, const char *chemin) {
+    if (!chemin || strlen(chemin) == 0) return -1;  // Si le chemin est vide ou invalide, retourner -1
 
     // Déterminer le point de départ (absolu ou relatif)
     int inode_courant = (chemin[0] == '/') ? fs->racine.inode_id : fs->repertoire_courant;
+    // Si le chemin commence par '/', on commence à la racine, sinon on part du répertoire courant.
 
-    // Copier le chemin pour le tokeniser
+    // Copier le chemin pour le tokeniser (analyser par segments)
     char chemin_cpy[MAX_PATH_LENGTH];
     strncpy(chemin_cpy, chemin, MAX_PATH_LENGTH - 1);
-    chemin_cpy[MAX_PATH_LENGTH - 1] = '\0';
+    chemin_cpy[MAX_PATH_LENGTH - 1] = '\0';  // Garantir la terminaison de chaîne
 
-    char *token = strtok(chemin_cpy, "/");
+    char *token = strtok(chemin_cpy, "/");  // Séparer le chemin par '/'
 
     while (token != NULL) {
         if (strcmp(token, ".") == 0) {
-            // "." ne change rien, on continue
+            // "." ne change rien, il indique le répertoire courant
             token = strtok(NULL, "/");
             continue;
         }
@@ -359,12 +453,12 @@ int trouver_inode_par_cheminCd(SystemeFichier *fs, const char *chemin) {
 
         // Récupérer l'inode courant
         Inode *inode = &fs->inodes[inode_courant];
-        if (!inode->est_repertoire) return -1; // On ne peut pas parcourir un fichier
+        if (!inode->est_repertoire) return -1;  // Si l'inode actuel n'est pas un répertoire, le chemin est invalide
 
-        // Charger le répertoire
+        // Charger le répertoire à partir du bloc associé à l'inode courant
         Repertoire *rep = (Repertoire *)&fs->data[inode->blocs[0] * BLOCK_SIZE];
 
-        // Rechercher le prochain élément du chemin
+        // Rechercher l'élément suivant du chemin dans le répertoire
         int trouve = 0;
         for (int i = 0; i < rep->nb_fichiers; i++) {
             if (strcmp(rep->fichiers[i].nom, token) == 0) {
@@ -373,13 +467,20 @@ int trouver_inode_par_cheminCd(SystemeFichier *fs, const char *chemin) {
                 break;
             }
         }
-        if (!trouve) return -1; // Chemin invalide
+        if (!trouve) return -1;  // Si l'élément n'est pas trouvé dans le répertoire, chemin invalide
 
+        // Passer au token suivant du chemin
         token = strtok(NULL, "/");
     }
 
-    return inode_courant;
+    return inode_courant;  // Retourner l'inode correspondant au chemin final
 }
+
+
+/************************************************************************************************************************************ */
+
+
+
 /**
  * @brief Change le répertoire courant du système de fichiers.
  * 
@@ -390,25 +491,30 @@ int trouver_inode_par_cheminCd(SystemeFichier *fs, const char *chemin) {
  * @param fs Pointeur vers le système de fichiers.
  * @param chemin Le chemin du répertoire cible. Peut être un chemin relatif ou absolu.
  */
-void cd(SystemeFichier *fs, const char *chemin) {
+ void cd(SystemeFichier *fs, const char *chemin) {
     if (strcmp(chemin, ".") == 0) {
+        // Si le chemin est ".", le répertoire courant ne change pas.
         printf("Déjà dans le répertoire courant.\n");
         return;
     }
 
     if (strcmp(chemin, "..") == 0) {
+        // Si le chemin est "..", on remonte d'un niveau dans l'arborescence
         if (fs->repertoire_courant == fs->racine.inode_id) {
+            // Si déjà à la racine, on ne peut pas remonter davantage.
             printf("Déjà à la racine, impossible de remonter.\n");
             return;
         }
 
-        // Trouver le parent en parcourant la structure (pas d'info directe)
+        // Trouver le parent en parcourant les inodes et les répertoires
         for (int i = 0; i < MAX_INODES; i++) {
             if (fs->inodes[i].est_repertoire) {
                 Repertoire *rep = (Repertoire *)&fs->data[fs->inodes[i].blocs[0] * BLOCK_SIZE];
+                // Chercher dans les fichiers du répertoire si le répertoire courant est un enfant
                 for (int j = 0; j < rep->nb_fichiers; j++) {
                     if (rep->fichiers[j].inode_id == fs->repertoire_courant) {
-                        fs->repertoire_courant = i;  // Trouvé, on remonte au parent
+                        // Remonter au répertoire parent si trouvé
+                        fs->repertoire_courant = i;
                         printf("Remonté au répertoire parent.\n");
                         return;
                     }
@@ -416,22 +522,31 @@ void cd(SystemeFichier *fs, const char *chemin) {
             }
         }
 
+        // Si aucun parent n'a été trouvé, erreur
         printf("Erreur : impossible de trouver le répertoire parent.\n");
         return;
     }
 
-    // Trouver l'inode du chemin demandé
-    //int inode_cible = trouver_inode_par_cheminCd(fs, chemin);
+    // Résolution du chemin pour trouver l'inode cible
+    // On résout d'abord les liens symboliques
     int inode_cible = resoudre_lien_symbolique(fs, chemin);
+    
+    // Si l'inode cible est invalide ou n'est pas un répertoire, afficher une erreur
     if (inode_cible == -1 || !fs->inodes[inode_cible].est_repertoire) {
         printf("Erreur : répertoire introuvable : %s\n", chemin);
         return;
     }
 
-    // Changement du répertoire courant
+    // Si le répertoire cible est trouvé et valide, on change le répertoire courant
     fs->repertoire_courant = inode_cible;
     printf("Répertoire courant changé vers : %s\n", chemin);
 }
+
+
+/***************************************************************************************************************************** */
+
+
+
 /**
  * @brief Modifie les droits d'un fichier ou d'un répertoire.
  * 
@@ -442,35 +557,48 @@ void cd(SystemeFichier *fs, const char *chemin) {
  * @param chemin Le chemin du fichier ou du répertoire dont les droits doivent être modifiés.
  * @param droits Une chaîne de caractères représentant les nouveaux droits au format octal (ex: "755").
  */
-void droit(SystemeFichier *fs, const char *chemin, const char *droits) {
+ void droit(SystemeFichier *fs, const char *chemin, const char *droits) {
     // Vérification que "droits" contient bien trois chiffres entre '0' et '7'
     if (strlen(droits) != 3 || !isdigit(droits[0]) || !isdigit(droits[1]) || !isdigit(droits[2])) {
         printf("Erreur : Les droits doivent être une valeur octale valide à 3 chiffres (ex: 744, 755)\n");
         return;
     }
+
+    // Vérification que chaque chiffre des droits est entre 0 et 7
     if (droits[0] < '0' || droits[0] > '7' || droits[1] < '0' || droits[1] > '7' || droits[2] < '0' || droits[2] > '7') {
         printf("Erreur : Chaque chiffre des droits doit être compris entre 0 et 7.\n");
         return;
     }
 
-    // Trouver l'inode correspondant au chemin
+    // Trouver l'inode correspondant au chemin spécifié
     int inode_index = trouver_inode_par_cheminCd(fs, chemin);
     if (inode_index == -1) {
+        // Si l'inode n'est pas trouvé, afficher une erreur
         printf("Erreur : Fichier ou dossier non trouvé\n");
         return;
     }
 
+    // Accéder à l'inode trouvé
     Inode *inode_courant = &fs->inodes[inode_index];
 
+    // Afficher les informations actuelles des droits du fichier
     printf("Fichier trouvé : %s\n", chemin);
     printf("Permissions actuelles : %o (octal)\n", inode_courant->permissions);
 
-    // Convertir en entier octal
+    // Convertir les droits octaux (chaîne de caractères) en entier
     int droits_octal = strtol(droits, NULL, 8);
+
+    // Modifier les droits de l'inode
     inode_courant->permissions = droits_octal;
 
+    // Afficher les nouveaux droits après modification
     printf("Permissions après modification : %o (octal)\n", inode_courant->permissions);
 }
+
+
+/********************************************************************************************************************************** */
+
+
 
 /**
  * @brief Affiche le contenu d'un répertoire spécifié par un chemin.
@@ -481,7 +609,7 @@ void droit(SystemeFichier *fs, const char *chemin, const char *droits) {
  * @param fs Pointeur vers le système de fichiers.
  * @param chemin Le chemin du répertoire dont le contenu doit être affiché.
  */
-void afficher_ls_chemin(SystemeFichier *fs, const char *chemin) {
+ void afficher_ls_chemin(SystemeFichier *fs, const char *chemin) {
     int inode_id = fs->repertoire_courant; // Par défaut, commencer à partir du répertoire courant
 
     // Si le chemin est absolu, commencer depuis la racine
@@ -576,6 +704,12 @@ void afficher_ls_chemin(SystemeFichier *fs, const char *chemin) {
         }
     }
 }
+
+
+/****************************************************************************************************************************** */
+
+
+
 /**
  * @brief Supprime un fichier du système de fichiers.
  * 
@@ -586,74 +720,83 @@ void afficher_ls_chemin(SystemeFichier *fs, const char *chemin) {
  * @param fs Pointeur vers le système de fichiers.
  * @param chemin Le chemin absolu ou relatif du fichier à supprimer.
  */
-void supprimer_fichier(SystemeFichier *fs, const char *chemin)
-{
-    // Trouver le répertoire parent et le nom du fichier
-    char chemin_cpy[MAX_PATH_LENGTH];
-    strncpy(chemin_cpy, chemin, MAX_PATH_LENGTH);
-    char *dernier_slash = strrchr(chemin_cpy, '/');
-    char nom[NAME_SIZE];
-    const char *chemin_parent;
+ void supprimer_fichier(SystemeFichier *fs, const char *chemin)
+ {
+     // Trouver le répertoire parent et le nom du fichier
+     char chemin_cpy[MAX_PATH_LENGTH];
+     strncpy(chemin_cpy, chemin, MAX_PATH_LENGTH);
+     char *dernier_slash = strrchr(chemin_cpy, '/');  // Recherche du dernier '/' dans le chemin
+     char nom[NAME_SIZE]; // Nom du fichier à supprimer
+     const char *chemin_parent; // Chemin du répertoire parent
+ 
+     // Si un '/' est trouvé, séparer le chemin parent et le nom du fichier
+     if (dernier_slash)
+     {
+         strncpy(nom, dernier_slash + 1, NAME_SIZE);
+         *dernier_slash = '\0';  // Remplacer le '/' par un caractère nul pour obtenir le chemin parent
+         chemin_parent = (*chemin_cpy) ? chemin_cpy : "/";  // Si le chemin parent est vide, le répertoire parent est la racine
+     }
+     else
+     {
+         strncpy(nom, chemin, NAME_SIZE);
+         chemin_parent = "";  // Si aucun '/', cela signifie que le fichier est dans le répertoire courant
+     }
+ 
+     // Trouver l'inode du répertoire parent
+     int inode_parent = trouver_inode_par_chemin(fs, chemin_parent);
+     if (inode_parent == -1)
+     {
+         printf("Erreur : chemin parent %s introuvable.\n", chemin_parent);
+         return;
+     }
+ 
+     // Récupérer l'inode et le répertoire parent
+     Inode *inode_p = &fs->inodes[inode_parent];
+     Repertoire *rep_p = (Repertoire *)&fs->data[inode_p->blocs[0] * BLOCK_SIZE];
+ 
+     // Chercher le fichier à supprimer dans le répertoire
+     int fichier_trouve = -1;
+     for (int i = 0; i < rep_p->nb_fichiers; i++)
+     {
+         if (strcmp(rep_p->fichiers[i].nom, nom) == 0)
+         {
+             fichier_trouve = i;  // Fichier trouvé, on retient son indice
+             break;
+         }
+     }
+ 
+     // Si le fichier n'a pas été trouvé, afficher une erreur
+     if (fichier_trouve == -1)
+     {
+         printf("Erreur : fichier %s introuvable.\n", nom);
+         return;
+     }
+ 
+     // Libérer l'inode et le bloc du fichier
+     int inode_fichier = rep_p->fichiers[fichier_trouve].inode_id;
+     int bloc_fichier = fs->inodes[inode_fichier].blocs[0];
+ 
+     // Libérer l'inode et le bloc du fichier dans le bitmap
+     BIT_CLEAR(fs->bitmap.inodes[inode_fichier / 8], inode_fichier % 8);
+     BIT_CLEAR(fs->bitmap.blocs[bloc_fichier / 8], bloc_fichier % 8);
+ 
+     // Mettre à jour le nombre d'inodes et de blocs libres dans le superbloc
+     fs->superbloc.inode_libres++;
+     fs->superbloc.blocs_libres++;
+ 
+     // Supprimer l'entrée du fichier dans le répertoire
+     for (int i = fichier_trouve; i < rep_p->nb_fichiers - 1; i++)
+     {
+         rep_p->fichiers[i] = rep_p->fichiers[i + 1];  // Décaler les fichiers suivants pour combler le vide
+     }
+     rep_p->nb_fichiers--;  // Réduire le nombre de fichiers dans le répertoire
+     
+     sauvegarder_systeme_fichier(fs); //sauvegarder la partition
+     printf("Fichier %s supprimé avec succès.\n", nom);
+ }
+ 
 
-    if (dernier_slash)
-    {
-        strncpy(nom, dernier_slash + 1, NAME_SIZE);
-        *dernier_slash = '\0';
-        chemin_parent = (*chemin_cpy) ? chemin_cpy : "/";
-    }
-    else
-    {
-        strncpy(nom, chemin, NAME_SIZE);
-        chemin_parent = "";
-    }
-
-    // Trouver l'inode du parent
-    int inode_parent = trouver_inode_par_chemin(fs, chemin_parent);
-    if (inode_parent == -1)
-    {
-        printf("Erreur : chemin parent %s introuvable.\n", chemin_parent);
-        return;
-    }
-
-    Inode *inode_p = &fs->inodes[inode_parent];
-    Repertoire *rep_p = (Repertoire *)&fs->data[inode_p->blocs[0] * BLOCK_SIZE];
-
-    // Chercher le fichier à supprimer
-    int fichier_trouve = -1;
-    for (int i = 0; i < rep_p->nb_fichiers; i++)
-    {
-        if (strcmp(rep_p->fichiers[i].nom, nom) == 0)
-        {
-            fichier_trouve = i;
-            break;
-        }
-    }
-
-    if (fichier_trouve == -1)
-    {
-        printf("Erreur : fichier %s introuvable.\n", nom);
-        return;
-    }
-
-    // Libérer le bloc et l'inode du fichier
-    int inode_fichier = rep_p->fichiers[fichier_trouve].inode_id;
-    int bloc_fichier = fs->inodes[inode_fichier].blocs[0];
-
-    // Libérer l'inode et le bloc
-    BIT_CLEAR(fs->bitmap.inodes[inode_fichier / 8], inode_fichier % 8);
-    BIT_CLEAR(fs->bitmap.blocs[bloc_fichier / 8], bloc_fichier % 8);
-    fs->superbloc.inode_libres++;
-    fs->superbloc.blocs_libres++;
-
-    // Supprimer l'entrée du fichier dans le répertoire
-    for (int i = fichier_trouve; i < rep_p->nb_fichiers - 1; i++)
-    {
-        rep_p->fichiers[i] = rep_p->fichiers[i + 1];
-    }
-    rep_p->nb_fichiers--;
-
-    printf("Fichier %s supprimé avec succès.\n", nom);
-}
+/************************************************************************************************************************************* */
 
 
 /**
@@ -666,86 +809,102 @@ void supprimer_fichier(SystemeFichier *fs, const char *chemin)
  * @param fs Pointeur vers le système de fichiers.
  * @param chemin Le chemin absolu ou relatif du répertoire à supprimer (peut être vide pour le répertoire courant).
  */
-void supprimer_repertoire(SystemeFichier *fs, const char *chemin)
-{
-    int inode_a_supprimer;
-    // Si un chemin est donné, on utilise ce chemin, sinon on prend le répertoire courant
-    if (chemin && strlen(chemin) > 0)
-    {
-        inode_a_supprimer = trouver_inode_par_chemin(fs, chemin); // Trouver le répertoire à supprimer
-        if (inode_a_supprimer == -1)
-        {
-            printf("Erreur : répertoire %s introuvable.\n", chemin);
-            return;
-        }
-    }
-    else
-    {
-        inode_a_supprimer = fs->repertoire_courant; // Sinon on supprime le répertoire courant
-    }
+ void supprimer_repertoire(SystemeFichier *fs, const char *chemin)
+ {
+     int inode_a_supprimer;
+     // Si un chemin est donné, on utilise ce chemin, sinon on prend le répertoire courant
+     if (chemin && strlen(chemin) > 0)
+     {
+         inode_a_supprimer = trouver_inode_par_chemin(fs, chemin); // Trouver l'inode du répertoire à supprimer
+         if (inode_a_supprimer == -1)
+         {
+             // Si le répertoire n'existe pas, afficher un message d'erreur et retourner
+             printf("Erreur : répertoire %s introuvable.\n", chemin);
+             return;
+         }
+     }
+     else
+     {
+         // Si aucun chemin n'est donné, supprimer le répertoire courant
+         inode_a_supprimer = fs->repertoire_courant;
+     }
+ 
+     // Récupérer l'inode du répertoire et son contenu
+     Inode *inode_r = &fs->inodes[inode_a_supprimer];
+     Repertoire *rep_r = (Repertoire *)&fs->data[inode_r->blocs[0] * BLOCK_SIZE];
+ 
+     // Vérifier si le répertoire est vide (le répertoire a plus de 2 liens => il n'est pas vide)
+     if (inode_r->liens > 2)
+     {
+         // Suppression récursive des fichiers et sous-répertoires
+         for (int i = 0; i < rep_r->nb_fichiers; i++)
+         {
+             int inode_fichier = rep_r->fichiers[i].inode_id;
+             Inode *fichier_inode = &fs->inodes[inode_fichier];
+ 
+             // Déclaration de chemin_sousdossier pour les sous-répertoires et fichiers
+             char chemin_sousdossier[MAX_PATH_LENGTH];
+ 
+             // Si c'est un répertoire, suppression récursive
+             if (fichier_inode->est_repertoire)
+             {
+                 snprintf(chemin_sousdossier, MAX_PATH_LENGTH, "%s/%s", chemin ? chemin : ".", rep_r->fichiers[i].nom);
+                 supprimer_repertoire(fs, chemin_sousdossier); // Appel récursif pour supprimer les sous-répertoires
+             }
+             else
+             {
+                 // Si c'est un fichier, suppression du fichier
+                 snprintf(chemin_sousdossier, MAX_PATH_LENGTH, "%s/%s", chemin ? chemin : ".", rep_r->fichiers[i].nom);
+                 supprimer_fichier(fs, chemin_sousdossier); // Appel à la fonction pour supprimer le fichier
+             }
+         }
+     }
+ 
+     // Libérer l'inode et le bloc du répertoire
+     int bloc_repertoire = inode_r->blocs[0];
+     BIT_CLEAR(fs->bitmap.inodes[inode_a_supprimer / 8], inode_a_supprimer % 8); // Marquer l'inode comme libre
+     BIT_CLEAR(fs->bitmap.blocs[bloc_repertoire / 8], bloc_repertoire % 8); // Marquer le bloc comme libre
+     fs->superbloc.inode_libres++; // Augmenter le nombre d'inodes libres
+     fs->superbloc.blocs_libres++; // Augmenter le nombre de blocs libres
+ 
+     // Supprimer l'entrée du répertoire dans le répertoire parent
+     int inode_parent = fs->racine.inode_id; // Par défaut, le répertoire parent est la racine
+     Inode *inode_p = &fs->inodes[inode_parent];
+     Repertoire *rep_p = (Repertoire *)&fs->data[inode_p->blocs[0] * BLOCK_SIZE];
+ 
+     // Chercher et supprimer l'entrée du répertoire à supprimer dans le répertoire parent
+     int repertoire_trouve = -1;
+     for (int i = 0; i < rep_p->nb_fichiers; i++)
+     {
+         if (rep_p->fichiers[i].inode_id == inode_a_supprimer)
+         {
+             repertoire_trouve = i;
+             break;
+         }
+     }
+ 
+     // Si le répertoire est trouvé, le supprimer de la liste
+     if (repertoire_trouve != -1)
+     {
+         for (int i = repertoire_trouve; i < rep_p->nb_fichiers - 1; i++)
+         {
+             rep_p->fichiers[i] = rep_p->fichiers[i + 1]; // Décaler les entrées
+         }
+         rep_p->nb_fichiers--; // Réduire le nombre de fichiers dans le répertoire parent
+     }
+ 
+     sauvegarder_systeme_fichier(fs); //sauvegarder la partition
+     // Afficher un message de succès
+     printf("Répertoire %s supprimé avec succès.\n", chemin ? chemin : "répertoire courant");
+ }
+ 
 
-    Inode *inode_r = &fs->inodes[inode_a_supprimer];
-    Repertoire *rep_r = (Repertoire *)&fs->data[inode_r->blocs[0] * BLOCK_SIZE];
 
-    // Vérifier si le répertoire est vide
-    if (inode_r->liens > 2)
-    { // Si le répertoire a plus de 2 liens, ce n'est pas vide
-        // Suppression récursive des sous-répertoires et fichiers
-        for (int i = 0; i < rep_r->nb_fichiers; i++)
-        {
-            int inode_fichier = rep_r->fichiers[i].inode_id;
-            Inode *fichier_inode = &fs->inodes[inode_fichier];
 
-            // Déclaration de chemin_sousdossier
-            char chemin_sousdossier[MAX_PATH_LENGTH];
+/************************************************************************************************************************************* */
 
-            if (fichier_inode->est_repertoire)
-            {
-                snprintf(chemin_sousdossier, MAX_PATH_LENGTH, "%s/%s", chemin ? chemin : ".", rep_r->fichiers[i].nom);
-                supprimer_repertoire(fs, chemin_sousdossier); // Appel récursif pour supprimer les sous-dossiers
-            }
-            else
-            {
-                snprintf(chemin_sousdossier, MAX_PATH_LENGTH, "%s/%s", chemin ? chemin : ".", rep_r->fichiers[i].nom);
-                supprimer_fichier(fs, chemin_sousdossier); // Supprimer le fichier
-            }
-        }
-    }
 
-    // Libérer l'inode et le bloc du répertoire
-    int bloc_repertoire = inode_r->blocs[0];
-    BIT_CLEAR(fs->bitmap.inodes[inode_a_supprimer / 8], inode_a_supprimer % 8);
-    BIT_CLEAR(fs->bitmap.blocs[bloc_repertoire / 8], bloc_repertoire % 8);
-    fs->superbloc.inode_libres++;
-    fs->superbloc.blocs_libres++;
 
-    // Supprimer l'entrée du répertoire dans le répertoire parent
-    int inode_parent = fs->racine.inode_id; // Par défaut, on suppose que le répertoire parent est racine
-    Inode *inode_p = &fs->inodes[inode_parent];
-    Repertoire *rep_p = (Repertoire *)&fs->data[inode_p->blocs[0] * BLOCK_SIZE];
-
-    // Chercher et supprimer l'entrée du répertoire dans le répertoire parent
-    int repertoire_trouve = -1;
-    for (int i = 0; i < rep_p->nb_fichiers; i++)
-    {
-        if (rep_p->fichiers[i].inode_id == inode_a_supprimer)
-        {
-            repertoire_trouve = i;
-            break;
-        }
-    }
-
-    if (repertoire_trouve != -1)
-    {
-        for (int i = repertoire_trouve; i < rep_p->nb_fichiers - 1; i++)
-        {
-            rep_p->fichiers[i] = rep_p->fichiers[i + 1];
-        }
-        rep_p->nb_fichiers--;
-    }
-
-    printf("Répertoire %s supprimé avec succès.\n", chemin ? chemin : "répertoire courant");
-}
 /**
  * @brief Vérifie si un inode a les permissions spécifiées.
  * 
@@ -757,18 +916,26 @@ void supprimer_repertoire(SystemeFichier *fs, const char *chemin)
  * 
  * @return 1 si l'inode a les permissions nécessaires, 0 sinon.
  */
-int verifier_permissions(Inode *inode, int mode)
-{
-    if (mode == MODE_READ)
-    {                                                                    // Mode lecture
-        return inode->permissions == 0755 || inode->permissions == 0777; // Vérifier si la permission de lecture (r) est donnée
-    }
-    else if (mode == MODE_WRITE)
-    {                                                                    // Mode écriture
-        return inode->permissions == 0755 || inode->permissions == 0777; // Vérifier si la permission d'écriture (w) est donnée
-    }
-    return 0;
-}
+ int verifier_permissions(Inode *inode, int mode)
+ {
+     if (mode == MODE_READ)
+     {                                                                    // Mode lecture
+         // Vérifie si les permissions sont soit 0755 (lecture permise) soit 0777 (lecture permise pour tous)
+         return inode->permissions == 0755 || inode->permissions == 0777;
+     }
+     else if (mode == MODE_WRITE)
+     {                                                                    // Mode écriture
+         // Vérifie si les permissions sont soit 0755 (écriture permise) soit 0777 (écriture permise pour tous)
+         return inode->permissions == 0755 || inode->permissions == 0777;
+     }
+     return 0;  // Si le mode n'est pas valide, retourner 0
+ }
+
+ 
+ /************************************************************************************************************************************** */
+
+
+
 /**
  * @brief Ouvre un fichier en fonction du chemin et du mode.
  * 
@@ -781,45 +948,50 @@ int verifier_permissions(Inode *inode, int mode)
  * 
  * @return Le descripteur de fichier en cas de succès, -1 en cas d'erreur.
  */
+ int open_file(SystemeFichier *fs, const char *chemin, int mode)
+ {
+     // Trouver l'inode du fichier à partir du chemin donné
+     int inode_id = trouver_inode_par_chemin(fs, chemin);
+     if (inode_id == -1)
+     {
+         // Si l'inode n'est pas trouvé, afficher un message d'erreur et retourner -1
+         printf("Erreur : fichier %s introuvable.\n", chemin);
+         return -1;
+     }
+ 
+     Inode *inode = &fs->inodes[inode_id];
+ 
+     // Vérifier les permissions d'accès en fonction du mode (lecture ou écriture)
+     if ((mode == MODE_READ && !verifier_permissions(inode, MODE_READ)) ||
+         (mode == MODE_WRITE && !verifier_permissions(inode, MODE_WRITE)))
+     {
+         // Si les permissions d'accès sont insuffisantes, afficher un message d'erreur et retourner -1
+         printf("Erreur : permission d'accès refusée pour le fichier %s.\n", chemin);
+         return -1;
+     }
+ 
+     // Chercher un espace libre pour ouvrir le fichier (trouver une place dans la liste des fichiers ouverts)
+     for (int i = 0; i < MAX_FILES; i++)
+     {
+         if (fs->racine.fichiers[i].inode_id == 0)  // Un descripteur libre (inode_id égal à 0)
+         {
+             // Initialiser le descripteur de fichier avec l'inode et le mode d'ouverture
+             fs->racine.fichiers[i].inode_id = inode_id;   // Associer le descripteur au fichier
+             fs->racine.fichiers[i].nom[0] = chemin[0];    // Stocker le premier caractère du nom du fichier (attention, il faudrait probablement gérer toute la chaîne de caractères)
+             fs->racine.fichiers[i].inode_id = mode;       // Associer le mode (lecture/écriture)
+             printf("Fichier %s ouvert avec succès en mode %d.\n", chemin, mode);
+             return i;  // Retourner l'indice du descripteur de fichier
+         }
+     }
+ 
+     // Si aucun espace libre n'est trouvé pour ouvrir un fichier, afficher un message d'erreur et retourner -1
+     printf("Erreur : trop de fichiers ouverts.\n");
+     return -1;
+ }
 
-int open_file(SystemeFichier *fs, const char *chemin, int mode)
-{
-    // Trouver l'inode du fichier
-    int inode_id = trouver_inode_par_chemin(fs, chemin);
-    if (inode_id == -1)
-    {
-        printf("Erreur : fichier %s introuvable.\n", chemin);
-        return -1;
-    }
+ /*********************************************************************************************************************************************** */
+ 
 
-    Inode *inode = &fs->inodes[inode_id];
-
-    // Vérifier les permissions d'accès
-    if ((mode == MODE_READ && !verifier_permissions(inode, MODE_READ)) ||
-        (mode == MODE_WRITE && !verifier_permissions(inode, MODE_WRITE)))
-    {
-        printf("Erreur : permission d'accès refusée pour le fichier %s.\n", chemin);
-        return -1;
-    }
-
-    // Chercher un espace libre pour ouvrir le fichier
-    for (int i = 0; i < MAX_FILES; i++)
-    {
-        if (fs->racine.fichiers[i].inode_id == 0)
-        {
-            // Initialiser un descripteur de fichier
-            fs->racine.fichiers[i].inode_id = inode_id;
-            fs->racine.fichiers[i].nom[0] = chemin[0]; // Ajoutez plus de détails ici pour gérer correctement le nom
-            fs->racine.fichiers[i].inode_id = mode;    // Mettre le mode d'ouverture (lecture/écriture)
-            printf("Fichier %s ouvert avec succès en mode %d.\n", chemin, mode);
-            return i;
-        }
-    }
-
-    // Si aucun espace libre n'est trouvé
-    printf("Erreur : trop de fichiers ouverts.\n");
-    return -1;
-}
 /**
  * @brief Ferme un fichier.
  * 
@@ -841,6 +1013,12 @@ void close_file(SystemeFichier *fs, int descripteur)
     fs->racine.fichiers[descripteur].inode_id = 0;
     printf("Fichier avec descripteur %d fermé avec succès.\n", descripteur);
 }
+
+
+/***************************************************************************************************************************** */
+
+
+
 /**
  * @brief Écrit dans un fichier.
  * 
@@ -852,119 +1030,133 @@ void close_file(SystemeFichier *fs, int descripteur)
  * @param chemin Le chemin du fichier à modifier.
  */
 
-void ecrire_fichier(SystemeFichier *fs, const char *chemin)
-{
-    // Ouvrir le fichier en mode écriture
-    int descripteur = open_file(fs, chemin, MODE_WRITE);
-    if (descripteur == -1)
-    {
-        return; // Erreur lors de l'ouverture
-    }
+ void ecrire_fichier(SystemeFichier *fs, const char *chemin)
+ {
+     // Ouvrir le fichier en mode écriture
+     int descripteur = open_file(fs, chemin, MODE_WRITE);
+     if (descripteur == -1)
+     {
+         return; // Erreur lors de l'ouverture
+     }
+ 
+     // Trouver l'inode du fichier
+     int inode_id = resoudre_lien_symbolique(fs, chemin);
+     if (inode_id == -1)
+     {
+         printf("Erreur : fichier %s introuvable.\n", chemin);
+         return;
+     }
+ 
+     Inode *inode = &fs->inodes[inode_id];
+ 
+     // Vérifier les permissions d'écriture
+     if (!verifier_permissions(inode, MODE_WRITE))
+     {
+         printf("Erreur : permission d'écriture refusée pour le fichier %s.\n", chemin);
+         close_file(fs, descripteur); // Fermer le fichier avant de quitter
+         return;
+     }
+ 
+     // Demander à l'utilisateur de saisir des données à ajouter
+     printf("Entrez les données à ajouter au fichier (CTRL+D pour terminer) :\n");
+ 
+     // Lecture de l'entrée de l'utilisateur
+     char buffer[BLOCK_SIZE];
+     char *donnees = malloc(BLOCK_SIZE * 10); // Allocation pour un plus grand buffer de données (ajusté)
+     if (donnees == NULL)
+     {
+         printf("Erreur : impossible d'allouer de la mémoire.\n");
+         close_file(fs, descripteur); // Fermer le fichier avant de quitter
+         return;
+     }
+ 
+     // Ajouter l'ancien contenu à l'entrée (pour ne pas écraser)
+     strncpy(donnees, &fs->data[inode->blocs[0] * BLOCK_SIZE], BLOCK_SIZE);
+ 
+     // Lire les nouvelles données à ajouter
+     int taille_donnees = strlen(donnees);  // Commence par la taille de l'ancien contenu
+     while (fgets(buffer, BLOCK_SIZE, stdin) != NULL)
+     {
+         // Vérifie si CTRL+X (ASCII 24) est présent dans la ligne
+         if (strchr(buffer, 24) != NULL)
+         {
+             printf("CTRL+X détecté. Arrêt de la saisie.\n");
+             break;
+         }
+ 
+         int len = strlen(buffer);
+         if (taille_donnees + len >= BLOCK_SIZE * 10 - 1)
+         {
+             printf("Erreur : taille maximale de fichier atteinte.\n");
+             break;
+         }
+ 
+         // Ajout des données avant de vérifier CTRL+X
+         strcat(donnees, buffer);
+         taille_donnees += len;
+     }
+ 
+     // Si les données dépassent la taille d'un bloc, on gère plusieurs blocs
+     int blocs_necessaires = (taille_donnees / BLOCK_SIZE) + (taille_donnees % BLOCK_SIZE != 0);
+     if (blocs_necessaires > 12) {
+         // Gestion de blocs indirects si plus de 12 blocs sont nécessaires
+         inode->indirect_block = allouer_bloc(fs);  // Allouer un bloc indirect
+         int *bloc_indirect = (int *)&fs->data[inode->indirect_block * BLOCK_SIZE];
+ 
+         // Allouer des blocs directs et enregistrer leurs indices dans le bloc indirect
+         for (int i = 0; i < blocs_necessaires - 12; i++) {
+             int bloc_fichier = allouer_bloc(fs);
+             bloc_indirect[i] = bloc_fichier; // Enregistrer dans le bloc indirect
+         }
+     }
+ 
+     // Écrire les données dans les blocs
+     int index_contenu = 0;
+     for (int i = 0; i < blocs_necessaires; i++)
+     {
+         int start = i * BLOCK_SIZE;
+         int end = (i + 1) * BLOCK_SIZE;
+ 
+         // Si c'est le dernier bloc, on écrit uniquement la partie restante des données
+         if (end > taille_donnees)
+             end = taille_donnees;
+ 
+         // Si le bloc est direct, on l'écrit directement
+         if (i < 12)
+         {
+             int bloc_fichier = inode->blocs[i];
+             strncpy(&fs->data[bloc_fichier * BLOCK_SIZE], donnees + start, end - start);
+         }
+         else
+         {
+             // Sinon, c'est un bloc indirect, on écrit dedans
+             int *bloc_indirect = (int *)&fs->data[inode->indirect_block * BLOCK_SIZE];
+             int bloc_fichier = bloc_indirect[i - 12];
+             strncpy(&fs->data[bloc_fichier * BLOCK_SIZE], donnees + start, end - start);
+         }
+     }
+ 
+     // Mise à jour de la taille du fichier et de la date de modification
+     inode->taille = taille_donnees;
+     inode->date_modification = time(NULL);  // Mise à jour de la date de modification
+ 
+     // Afficher le contenu ajouté
+     printf("Données ajoutées au fichier %s :\n%s\n", chemin, donnees);
+     sauvegarder_systeme_fichier(fs);  // Sauvegarder les changements
+ 
+     // Libérer la mémoire allouée
+     free(donnees);
+ 
+     // Fermer le fichier après l'écriture
+     close_file(fs, descripteur);
+ 
+     printf("Écriture terminée et fichier fermé.\n");
+ }
+ 
 
-    // // Trouver l'inode du fichier
 
-    int inode_id = resoudre_lien_symbolique(fs, chemin);
-    if (inode_id == -1)
-    {
-        printf("Erreur : fichier %s introuvable.\n", chemin);
-        return;
-    }
+/************************************************************************************************************************************* */
 
-    Inode *inode = &fs->inodes[inode_id];
-
-    // Vérifier les permissions d'écriture
-    if (!verifier_permissions(inode, MODE_WRITE))
-    {
-        printf("Erreur : permission d'écriture refusée pour le fichier %s.\n", chemin);
-        close_file(fs, descripteur); // Fermer le fichier avant de quitter
-        return;
-    }
-
-    // Demander à l'utilisateur de saisir des données à ajouter
-    printf("Entrez les données à ajouter au fichier (CTRL+D pour terminer) :\n");
-
-    // Lecture de l'entrée de l'utilisateur
-    char buffer[BLOCK_SIZE];
-    char *donnees = malloc(BLOCK_SIZE); // Allocation pour le buffer de données
-    if (donnees == NULL)
-    {
-        printf("Erreur : impossible d'allouer de la mémoire.\n");
-        close_file(fs, descripteur); // Fermer le fichier avant de quitter
-        return;
-    }
-
-    // Ajouter l'ancien contenu à l'entrée (pour ne pas écraser)
-    strncpy(donnees, &fs->data[inode->blocs[0] * BLOCK_SIZE], BLOCK_SIZE);
-
-    // Lire les nouvelles données à ajouter
-
-    int taille_donnees = 0;
-    while (fgets(buffer, BLOCK_SIZE, stdin) != NULL) {
-        
-    
-        // Vérifie si CTRL+X (ASCII 24) est présent dans la ligne
-        if (strchr(buffer, 24) != NULL) {
-            printf("CTRL+X détecté. Arrêt de la saisie.\n");
-            break;
-        }
-
-        int len = strlen(buffer);
-        if (taille_donnees + len >= BLOCK_SIZE * 10 - 1) {
-            printf("Erreur : taille maximale de fichier atteinte.\n");
-            break;
-        }
-    
-        // Ajout des données AVANT de vérifier CTRL+X
-        strcat(donnees, buffer);
-        taille_donnees += len;
-    }
-
-
-    // Si les données dépassent la taille d'un bloc, on gère plusieurs blocs
-    if (taille_donnees > BLOCK_SIZE)
-    {
-        int blocs_necessaires = (taille_donnees / BLOCK_SIZE) + (taille_donnees % BLOCK_SIZE != 0);
-
-        for (int i = 1; i < blocs_necessaires; i++)
-        {
-            inode->blocs[i] = allouer_bloc(fs); // Allouer un nouveau bloc
-        }
-
-        // Écrire les données dans les blocs
-        for (int i = 0; i < blocs_necessaires; i++)
-        {
-            int start = i * BLOCK_SIZE;
-            int end = (i + 1) * BLOCK_SIZE;
-
-            // Si c'est le dernier bloc, on écrit uniquement la partie restante des données
-            if (end > taille_donnees)
-                end = taille_donnees;
-
-            strncpy(&fs->data[inode->blocs[i] * BLOCK_SIZE], donnees + start, end - start);
-        }
-    }
-    else
-    {
-        // Si tout tient dans un seul bloc
-        int bloc_fichier = inode->blocs[0];
-        strncpy(&fs->data[bloc_fichier * BLOCK_SIZE], donnees, BLOCK_SIZE);
-    }
-
-    inode->taille = taille_donnees;        // Met à jour la taille du fichier
-    inode->date_modification = time(NULL); // Mise à jour de la date de modification
-
-    // Afficher le contenu ajouté
-    printf("Données ajoutées au fichier %s :\n%s\n", chemin, donnees);
-    sauvegarder_systeme_fichier(fs);
-
-    // Libérer la mémoire allouée
-    free(donnees);
-
-    // Fermer le fichier après l'écriture
-    close_file(fs, descripteur);
-
-    printf("Écriture terminée et fichier fermé.\n");
-}
 
 
 /**
@@ -976,7 +1168,7 @@ void ecrire_fichier(SystemeFichier *fs, const char *chemin)
  * @param fs Le système de fichiers dans lequel le fichier doit être lu.
  * @param chemin Le chemin du fichier à lire.
  */
-void lire_fichier(SystemeFichier *fs, const char *chemin) {
+ void lire_fichier(SystemeFichier *fs, const char *chemin) {
     // Trouver l'inode en résolvant les liens symboliques s'il y en a
     int inode_id = resoudre_lien_symbolique(fs, chemin);
     if (inode_id == -1) {
@@ -1011,42 +1203,69 @@ void lire_fichier(SystemeFichier *fs, const char *chemin) {
     }
 
     // Lire et afficher le contenu du fichier
-    int bloc_fichier = inode->blocs[0];
-    printf("Contenu du fichier %s :\n%s\n", chemin, &fs->data[bloc_fichier * BLOCK_SIZE]);
+    printf("Contenu du fichier %s :\n", chemin);
+    
+    // Lire les blocs directs
+    for (int i = 0; i < NUM_DIRECT_BLOCKS; i++) {
+        if (inode->blocs[i] != -1) {
+            printf("%s\n", &fs->data[inode->blocs[i] * BLOCK_SIZE]);
+        }
+    }
+
+    // Si le fichier utilise un bloc indirect, le lire
+    if (inode->indirect_block != -1) {
+        // Lecture du bloc indirect
+        int *bloc_indirect = (int *)&fs->data[inode->indirect_block * BLOCK_SIZE];
+        
+        // Parcourir les indices du bloc indirect et afficher les blocs de données associés
+        for (int i = 0; i < BLOCK_SIZE / sizeof(int); i++) {
+            if (bloc_indirect[i] != -1) {
+                printf("%s\n", &fs->data[bloc_indirect[i] * BLOCK_SIZE]);
+            }
+        }
+    }
 
     printf("Fichier lu avec succès.\n");
 }
 
 
 
+/********************************************************************************************************************************************** */
+
+
+
 /**
  * @brief Crée un lien symbolique dans un système de fichiers.
  * 
- * Cette fonction crée un lien symbolique dans le répertoire spécifié par le chemin. 
- * Elle alloue un inode pour le lien symbolique, vérifie si le lien existe déjà, 
- * et ajoute le lien symbolique au répertoire parent.
+ * Cette fonction permet de créer un lien symbolique dans le répertoire spécifié par le chemin. 
+ * Un inode est alloué pour le lien symbolique, les vérifications sont effectuées pour s'assurer que le lien n'existe pas déjà,
+ * et le lien est ajouté au répertoire parent. Le lien symbolique pointe vers un fichier cible.
  * 
  * @param fs Le système de fichiers dans lequel le lien symbolique doit être créé.
- * @param chemin Le chemin du lien symbolique à créer.
- * @param cible Le chemin de la cible du lien symbolique.
+ * @param chemin Le chemin complet où le lien symbolique doit être créé.
+ * @param cible Le chemin du fichier ou répertoire vers lequel le lien symbolique pointe.
  */
-void creer_lien_symbolique(SystemeFichier *fs, const char *chemin, const char *cible) {
+ void creer_lien_symbolique(SystemeFichier *fs, const char *chemin, const char *cible) {
+    // Copie du chemin pour éviter de modifier l'original
     char chemin_cpy[MAX_PATH_LENGTH];
     strncpy(chemin_cpy, chemin, MAX_PATH_LENGTH);
 
-    // Séparer le chemin en répertoire parent + nom du lien
-    char *dernier_slash = strrchr(chemin_cpy, '/');
-    char nom[NAME_SIZE];
-    const char *chemin_parent;
+    // Séparer le chemin en répertoire parent et le nom du lien symbolique
+    char *dernier_slash = strrchr(chemin_cpy, '/'); // Recherche le dernier '/' dans le chemin
+    char nom[NAME_SIZE];  // Nom du lien symbolique
+    const char *chemin_parent;  // Chemin du répertoire parent
 
+    // Si le chemin contient un '/', on sépare le nom du lien et le répertoire parent
     if (dernier_slash) {
-        strncpy(nom, dernier_slash + 1, NAME_SIZE);
-        *dernier_slash = '\0';
-        chemin_parent = (*chemin_cpy) ? chemin_cpy : "/";
+        strncpy(nom, dernier_slash + 1, NAME_SIZE);  // Nom du lien symbolique
+        *dernier_slash = '\0';  // Isoler le répertoire parent
+        chemin_parent = (*chemin_cpy) ? chemin_cpy : "/"; // Si le répertoire est vide, il faut utiliser "/"
     } else {
-        strncpy(nom, chemin, NAME_SIZE);
+        strncpy(nom, chemin, NAME_SIZE);  // Pas de '/' => le chemin est juste le nom
         chemin_parent = "";
     }
+
+    // Afficher des informations sur le lien symbolique à créer
     printf("Création du lien symbolique %s dans %s, cible : %s\n", nom, chemin_parent, cible);
 
     // Trouver l'inode du répertoire parent à partir du chemin
@@ -1055,34 +1274,31 @@ void creer_lien_symbolique(SystemeFichier *fs, const char *chemin, const char *c
         printf("Erreur : chemin parent %s introuvable.\n", chemin_parent);
         return;
     }
-    printf("Inode parent: %d\n", inode_parent);
 
-    Inode *inode_p = &fs->inodes[inode_parent];
-    Repertoire *rep_p = (Repertoire *)&fs->data[inode_p->blocs[0] * BLOCK_SIZE];
+    Inode *inode_p = &fs->inodes[inode_parent];  // Récupérer l'inode du répertoire parent
+    Repertoire *rep_p = (Repertoire *)&fs->data[inode_p->blocs[0] * BLOCK_SIZE];  // Récupérer le répertoire parent
 
     // Vérifier si le lien symbolique existe déjà dans le répertoire parent
     for (int i = 0; i < rep_p->nb_fichiers; i++) {
-        if (strcmp(rep_p->fichiers[i].nom, nom) == 0) {
+        if (strcmp(rep_p->fichiers[i].nom, nom) == 0) {  // Si le fichier existe déjà
             printf("Erreur : %s existe déjà.\n", nom);
-            return;
+            return;  // Le lien symbolique ne sera pas créé
         }
     }
 
-    // Allouer inode pour le lien symbolique
+    // Allouer un inode pour le lien symbolique
     int inode_lien = allouer_inode(fs);
     if (inode_lien == -1) {
         printf("Erreur : ressources insuffisantes pour créer le lien symbolique %s\n", nom);
-        return;
+        return;  // Si l'allocation échoue, on arrête
     }
 
     // Allouer un bloc pour le lien symbolique
     int bloc_lien = allouer_bloc(fs);
     if (bloc_lien == -1) {
         printf("Erreur : ressources insuffisantes pour créer le bloc du lien symbolique %s\n", nom);
-        return;
+        return;  // Si l'allocation échoue, on arrête
     }
-
-    printf("Allocation inode: %d, bloc: %d pour le lien symbolique\n", inode_lien, bloc_lien);
 
     // Initialiser l'inode du lien symbolique
     Inode *new_inode = &fs->inodes[inode_lien];
@@ -1090,96 +1306,120 @@ void creer_lien_symbolique(SystemeFichier *fs, const char *chemin, const char *c
     new_inode->taille = strlen(cible) + 1;  // La taille du lien symbolique est la taille de la chaîne cible
     new_inode->est_repertoire = 0;  // Ce n'est pas un répertoire
     new_inode->permissions = 0777;  // Permissions pour tous
-    new_inode->liens = 1;
+    new_inode->liens = 1;  // Il est pointé par un lien
     new_inode->blocs[0] = bloc_lien;
-    new_inode->date_creation = time(NULL);
-    new_inode->date_modification = new_inode->date_creation;
-    new_inode->inode_pere = inode_parent;
-    new_inode->est_lien = 1;
+    new_inode->date_creation = time(NULL);  // Date de création du lien symbolique
+    new_inode->date_modification = new_inode->date_creation;  // Date de modification
+    new_inode->inode_pere = inode_parent;  // L'inode parent du lien symbolique
+    new_inode->est_lien = 1;  // Cet inode est un lien symbolique
 
     // Initialiser le contenu du bloc du lien symbolique avec la cible
     char *lien_data = (char *)&fs->data[bloc_lien * BLOCK_SIZE];
-    strncpy(lien_data, cible, BLOCK_SIZE);
+    strncpy(lien_data, cible, BLOCK_SIZE);  // Le bloc contient la cible du lien symbolique
 
-    // Ajouter le lien symbolique dans le répertoire parent
+    // Ajouter le lien symbolique au répertoire parent
     Repertoire *rep_parent = (Repertoire *)&fs->data[inode_p->blocs[0] * BLOCK_SIZE];
-    if (rep_parent->nb_fichiers >= MAX_FILES) {
+    if (rep_parent->nb_fichiers >= MAX_FILES) {  // Si le répertoire est plein
         printf("Erreur : le répertoire parent est plein, impossible d'ajouter le lien symbolique.\n");
         return;
     }
 
+    // Ajouter le lien symbolique au répertoire
     strncpy(rep_parent->fichiers[rep_parent->nb_fichiers].nom, nom, NAME_SIZE);
     rep_parent->fichiers[rep_parent->nb_fichiers].inode_id = inode_lien;
-    rep_parent->nb_fichiers++;
+    rep_parent->nb_fichiers++;  // Incrémenter le nombre de fichiers du répertoire
 
+    // Afficher les informations de création
     printf("Lien symbolique %s créé avec succès dans %s\n", nom, chemin_parent);
     printf("Inode créé pour %s : id = %d, est_lien = %d\n", nom, inode_lien, new_inode->est_lien);
-
-
 }
+
+
+/************************************************************************************************************************************** */
+
+
 
 /**
  * @brief Résout un lien symbolique et retourne son inode.
  * 
  * Cette fonction résout récursivement un lien symbolique en suivant la chaîne de cibles
- * jusqu'à ce qu'un fichier ou répertoire normal soit trouvé.
+ * jusqu'à ce qu'un fichier ou répertoire normal soit trouvé. 
+ * Cela permet de retrouver le fichier ou répertoire réel vers lequel le lien symbolique pointe, 
+ * en résolvant tous les liens symboliques intermédiaires le cas échéant.
  * 
  * @param fs Le système de fichiers contenant le lien symbolique.
  * @param chemin Le chemin du lien symbolique à résoudre.
  * 
  * @return L'inode du fichier ou répertoire pointé par le lien symbolique, ou -1 en cas d'erreur.
  */
-int resoudre_lien_symbolique(SystemeFichier *fs, const char *chemin) {
+ int resoudre_lien_symbolique(SystemeFichier *fs, const char *chemin) {
+    // Trouver l'inode du chemin spécifié dans le système de fichiers
     int inode_id = trouver_inode_par_chemin(fs, chemin);
+    
+    // Vérifier si l'inode existe, si non, afficher une erreur et retourner -1
     if (inode_id == -1) {
         printf("Erreur : le chemin %s n'existe pas.\n", chemin);
         return -1;
     }
 
+    // Récupérer l'inode correspondant à l'ID trouvé
     Inode *inode = &fs->inodes[inode_id];
 
+    // Afficher un message pour indiquer si le fichier est un lien symbolique ou non
     printf("Vérification de inode->est_lien pour %s : %d\n", chemin, inode->est_lien);
 
+    // Si l'inode n'est pas un lien symbolique, retourner simplement l'inode trouvé
     if (!inode->est_lien) {
-        // Ici, ce n'est pas une erreur, on retourne l'inode trouvé.
+        // Ce n'est pas une erreur, le fichier ou répertoire est normal, on retourne son inode
         printf("Le chemin %s est un fichier ou un répertoire normal.\n", chemin);
         return inode_id;
     }
 
-    // Lire la cible du lien symbolique
+    // Si l'inode est un lien symbolique, récupérer sa cible
     char cible[MAX_PATH_LENGTH];
     char *lien_data = (char *)&fs->data[inode->blocs[0] * BLOCK_SIZE];
-    strncpy(cible, lien_data, MAX_PATH_LENGTH);
+    strncpy(cible, lien_data, MAX_PATH_LENGTH);  // Copier la cible dans la variable cible
 
+    // Afficher la cible du lien symbolique
     printf("Résolution du lien symbolique %s : cible = %s\n", chemin, cible);
 
-    // Résolution récursive
+    // Appeler récursivement la fonction pour résoudre le lien symbolique, si la cible est aussi un lien symbolique
     return resoudre_lien_symbolique(fs, cible);
 }
+
+
+
+/******************************************************************************************************************************************** */
+
+
 
 /**
  * @brief Affiche la cible d'un lien symbolique.
  * 
  * Cette fonction affiche la cible d'un lien symbolique. Elle vérifie d'abord que le fichier 
  * spécifié est bien un lien symbolique avant d'afficher sa cible.
+ * Si le fichier n'est pas un lien symbolique, la fonction affiche un message d'erreur.
  * 
  * @param fs Le système de fichiers contenant le lien symbolique.
  * @param chemin_lien Le chemin du lien symbolique dont la cible doit être affichée.
  */
-void afficher_cible_lien_symbolique(SystemeFichier *fs, const char *chemin_lien) {
-    // Récupérer le nom du lien et le répertoire parent
+ void afficher_cible_lien_symbolique(SystemeFichier *fs, const char *chemin_lien) {
+    // Créer une copie du chemin du lien symbolique pour manipuler sans modifier l'original
     char chemin_lien_cpy[MAX_PATH_LENGTH];
     strncpy(chemin_lien_cpy, chemin_lien, MAX_PATH_LENGTH);
 
+    // Extraire le répertoire parent et le nom du lien symbolique
     char *dernier_slash = strrchr(chemin_lien_cpy, '/');
     char nom[NAME_SIZE];
     const char *chemin_parent;
 
+    // Si un slash est trouvé, le chemin est divisé en parent et nom
     if (dernier_slash) {
-        strncpy(nom, dernier_slash + 1, NAME_SIZE);
-        *dernier_slash = '\0';
-        chemin_parent = (*chemin_lien_cpy) ? chemin_lien_cpy : "/";
+        strncpy(nom, dernier_slash + 1, NAME_SIZE); // Nom du lien symbolique
+        *dernier_slash = '\0'; // Terminer le chemin parent
+        chemin_parent = (*chemin_lien_cpy) ? chemin_lien_cpy : "/"; // Gérer le cas du répertoire racine
     } else {
+        // Si aucun slash, tout est dans le nom du lien
         strncpy(nom, chemin_lien, NAME_SIZE);
         chemin_parent = "";
     }
@@ -1187,30 +1427,35 @@ void afficher_cible_lien_symbolique(SystemeFichier *fs, const char *chemin_lien)
     // Trouver l'inode du répertoire parent
     int inode_parent = trouver_inode_par_chemin(fs, chemin_parent);
     if (inode_parent == -1) {
+        // Afficher une erreur si le répertoire parent est introuvable
         printf("Erreur : chemin parent %s introuvable.\n", chemin_parent);
         return;
     }
 
+    // Récupérer l'inode du répertoire parent
     Inode *inode_p = &fs->inodes[inode_parent];
     Repertoire *rep_p = (Repertoire *)&fs->data[inode_p->blocs[0] * BLOCK_SIZE];
 
-    // Chercher le fichier dans le répertoire
+    // Chercher le fichier (lien symbolique) dans le répertoire
     int inode_lien = -1;
     for (int i = 0; i < rep_p->nb_fichiers; i++) {
+        // Si le nom du fichier correspond, on récupère l'inode du lien symbolique
         if (strcmp(rep_p->fichiers[i].nom, nom) == 0) {
             inode_lien = rep_p->fichiers[i].inode_id;
             break;
         }
     }
 
+    // Si le lien symbolique n'est pas trouvé dans le répertoire, afficher une erreur
     if (inode_lien == -1) {
         printf("Erreur : %s n'existe pas dans le répertoire %s.\n", nom, chemin_parent);
         return;
     }
 
+    // Récupérer l'inode du lien symbolique
     Inode *inode_l = &fs->inodes[inode_lien];
 
-    // Vérifier si c'est bien un lien symbolique
+    // Vérifier si l'inode trouvé est bien un lien symbolique
     if (inode_l->est_repertoire) {
         printf("Erreur : %s n'est pas un lien symbolique.\n", chemin_lien);
         return;
@@ -1218,8 +1463,15 @@ void afficher_cible_lien_symbolique(SystemeFichier *fs, const char *chemin_lien)
 
     // Lire la cible du lien symbolique
     LienSymbolique *lien = (LienSymbolique *)&fs->data[inode_l->blocs[0] * BLOCK_SIZE];
+    // Afficher la cible du lien symbolique
     printf("Le lien symbolique %s pointe vers : %s\n", chemin_lien, lien->cible);
 }
+
+
+/**********************************************************************************************************************************************/
+
+
+
 /**
  * @brief Déplace un fichier ou un répertoire d'un emplacement source vers un emplacement de destination.
  * 
@@ -1235,40 +1487,58 @@ void afficher_cible_lien_symbolique(SystemeFichier *fs, const char *chemin_lien)
  * @note Cette fonction vérifie que la destination est bien un répertoire et que le répertoire parent de la source
  * existe avant de procéder.
  */
-int mv(SystemeFichier *fs, const char *source, const char *destination) {
-    // Trouver l'inode source
+/**
+ * @brief Déplace un fichier ou un répertoire d'un emplacement à un autre.
+ * 
+ * Cette fonction déplace un fichier ou un répertoire depuis un chemin source vers un chemin de destination.
+ * Le fichier ou répertoire source est retiré de son répertoire parent et ajouté au répertoire de destination.
+ * Si la destination n'est pas un répertoire ou si des erreurs surviennent, un message d'erreur est affiché.
+ * 
+ * @param fs Le système de fichiers contenant les fichiers à déplacer.
+ * @param source Le chemin du fichier/répertoire source à déplacer.
+ * @param destination Le chemin du répertoire destination où le fichier/répertoire sera déplacé.
+ * 
+ * @return 0 si le déplacement a réussi, -1 en cas d'erreur.
+ */
+ int mv(SystemeFichier *fs, const char *source, const char *destination) {
+    // Trouver l'inode du fichier/répertoire source
     int inode_source = trouver_inode_par_cheminCd(fs, source);
     if (inode_source == -1) {
+        // Si l'inode source n'existe pas, afficher une erreur
         printf("Erreur : Le fichier/répertoire source n'existe pas.\n");
         return -1;
     }
 
-    // Trouver l'inode destination
+    // Trouver l'inode du répertoire de destination
     int inode_dest = trouver_inode_par_cheminCd(fs, destination);
     if (inode_dest == -1) {
+        // Si l'inode destination n'existe pas, afficher une erreur
         printf("Erreur : Le dossier de destination n'existe pas.\n");
         return -1;
     }
 
-    // Récupérer les inodes correspondants
+    // Récupérer les inodes de la source et de la destination
     Inode *inode_src = &fs->inodes[inode_source];
     Inode *inode_dst = &fs->inodes[inode_dest];
 
-    // Vérifier que la destination est bien un répertoire
+    // Vérifier si la destination est un répertoire
     if (!inode_dst->est_repertoire) {
         printf("Erreur : La destination doit être un répertoire.\n");
         return -1;
     }
 
-    // Trouver le parent de la source pour la supprimer de son répertoire
+    // Trouver le parent du fichier/répertoire source pour pouvoir le retirer
     Inode *inode_parent_src = &fs->inodes[inode_src->inode_pere];
     Repertoire *rep_parent_src = (Repertoire *)&fs->data[inode_parent_src->blocs[0] * BLOCK_SIZE];
-    const char * src_name;
+    const char *src_name;
+
     // Retirer la source du répertoire parent
     for (int i = 0; i < rep_parent_src->nb_fichiers; i++) {
+        // Chercher le fichier dans le répertoire parent en comparant l'inode
         if (rep_parent_src->fichiers[i].inode_id == inode_source) {
-            src_name=rep_parent_src->fichiers[i].nom;
-            // Décalage pour supprimer l'entrée du fichier
+            // Conserver le nom du fichier pour pouvoir l'ajouter dans le répertoire destination
+            src_name = rep_parent_src->fichiers[i].nom;
+            // Décalage pour supprimer l'entrée du fichier du répertoire parent
             for (int j = i; j < rep_parent_src->nb_fichiers - 1; j++) {
                 rep_parent_src->fichiers[j] = rep_parent_src->fichiers[j + 1];
             }
@@ -1277,25 +1547,36 @@ int mv(SystemeFichier *fs, const char *source, const char *destination) {
         }
     }
 
-    // Ajouter la source dans le répertoire de destination
+    // Ajouter le fichier/répertoire source dans le répertoire de destination
     Repertoire *rep_dest = (Repertoire *)&fs->data[inode_dst->blocs[0] * BLOCK_SIZE];
 
+    // Vérifier si le répertoire de destination a de la place
     if (rep_dest->nb_fichiers >= MAX_FILES) {
         printf("Erreur : Le répertoire de destination est plein.\n");
         return -1;
     }
 
-    // Ajouter le fichier/répertoire dans la destination
+    // Ajouter le fichier/répertoire dans le répertoire de destination
     strncpy(rep_dest->fichiers[rep_dest->nb_fichiers].nom, src_name, NAME_SIZE);
     rep_dest->fichiers[rep_dest->nb_fichiers].inode_id = inode_source;
     rep_dest->nb_fichiers++;
 
-    // Mettre à jour l'inode de la source pour pointer vers le nouveau parent
+    // Mettre à jour l'inode de la source pour pointer vers le nouveau répertoire parent
     inode_src->inode_pere = inode_dest;
+
+    // Sauvegarder les changements dans le système de fichiers
     sauvegarder_systeme_fichier(fs);
+
+    // Afficher un message de réussite
     printf("Déplacement réussi : %s → %s\n", source, destination);
     return 0;
 }
+
+
+
+/*******************************************************************************************************************************************/
+
+
 /**
  * @brief Copie un fichier ou un répertoire d'un emplacement source vers un emplacement de destination.
  * 
@@ -1311,63 +1592,75 @@ int mv(SystemeFichier *fs, const char *source, const char *destination) {
  * @note Cette fonction vérifie que la destination est bien un répertoire et que le répertoire parent de la source
  * existe avant de procéder.
  */
-int cp(SystemeFichier *fs, const char *source, const char *destination) {
-    // Trouver l'inode source
+ int cp(SystemeFichier *fs, const char *source, const char *destination) {
+    // Trouver l'inode correspondant à la source à partir du chemin
     int inode_source = trouver_inode_par_cheminCd(fs, source);
     if (inode_source == -1) {
+        // Si l'inode source est introuvable, afficher une erreur et retourner -1
         printf("Erreur : Le fichier/répertoire source n'existe pas.\n");
         return -1;
     }
 
-    // Trouver l'inode destination
+    // Trouver l'inode correspondant à la destination à partir du chemin
     int inode_dest = trouver_inode_par_cheminCd(fs, destination);
     if (inode_dest == -1) {
+        // Si l'inode destination est introuvable, afficher une erreur et retourner -1
         printf("Erreur : Le dossier de destination n'existe pas.\n");
         return -1;
     }
 
-    // Récupérer les inodes correspondants
+    // Récupérer les inodes de la source et de la destination
     Inode *inode_src = &fs->inodes[inode_source];
     Inode *inode_dst = &fs->inodes[inode_dest];
 
     // Vérifier que la destination est bien un répertoire
     if (!inode_dst->est_repertoire) {
+        // Si la destination n'est pas un répertoire, afficher une erreur et retourner -1
         printf("Erreur : La destination doit être un répertoire.\n");
         return -1;
     }
 
-    // Trouver le parent de la source pour la supprimer de son répertoire
+    // Trouver le répertoire parent de la source pour accéder à son nom
     Inode *inode_parent_src = &fs->inodes[inode_src->inode_pere];
     Repertoire *rep_parent_src = (Repertoire *)&fs->data[inode_parent_src->blocs[0] * BLOCK_SIZE];
-    const char * src_name;
-    // Retirer la source du répertoire parent
+    const char *src_name;
+
+    // Chercher le nom du fichier/répertoire source dans le répertoire parent
     for (int i = 0; i < rep_parent_src->nb_fichiers; i++) {
         if (rep_parent_src->fichiers[i].inode_id == inode_source) {
-            src_name=rep_parent_src->fichiers[i].nom;
+            src_name = rep_parent_src->fichiers[i].nom;
             break;
         }
     }
 
-    // Ajouter la source dans le répertoire de destination
+    // Accéder au répertoire de destination pour y ajouter le fichier/répertoire copié
     Repertoire *rep_dest = (Repertoire *)&fs->data[inode_dst->blocs[0] * BLOCK_SIZE];
 
+    // Vérifier si le répertoire de destination est plein
     if (rep_dest->nb_fichiers >= MAX_FILES) {
+        // Si le répertoire de destination est plein, afficher une erreur et retourner -1
         printf("Erreur : Le répertoire de destination est plein.\n");
         return -1;
     }
 
-    // Ajouter le fichier/répertoire dans la destination
+    // Ajouter la source dans le répertoire de destination
     strncpy(rep_dest->fichiers[rep_dest->nb_fichiers].nom, src_name, NAME_SIZE);
     rep_dest->fichiers[rep_dest->nb_fichiers].inode_id = inode_source;
     rep_dest->nb_fichiers++;
 
-    // Mettre à jour l'inode de la source pour pointer vers le nouveau parent
+    // Mettre à jour l'inode de la source pour qu'il pointe vers le nouveau répertoire parent (destination)
     inode_src->inode_pere = inode_dest;
 
+    // Sauvegarder l'état du système de fichiers après l'opération de copie
     sauvegarder_systeme_fichier(fs);
+    // Afficher un message de succès
     printf("Déplacement réussi : %s → %s\n", source, destination);
     return 0;
 }
+
+
+/********************************************************************************************************************************** */
+
 /**
  * @brief Affiche le chemin absolu du répertoire courant.
  * 
@@ -1380,24 +1673,29 @@ int cp(SystemeFichier *fs, const char *source, const char *destination) {
  * 
  * @note Cette fonction gère le cas particulier de la racine du système de fichiers.
  */
-
-void pwd(SystemeFichier *fs) {
+ void pwd(SystemeFichier *fs) {
+    // Initialisation du chemin, commence comme une chaîne vide
     char chemin[MAX_PATH_LENGTH] = "";
+    // On commence par le répertoire courant
     int inode_actuel = fs->repertoire_courant;
 
+    // Cas particulier : Si le répertoire courant est la racine, afficher simplement "/"
     if (inode_actuel == fs->racine.inode_id) {
         printf("/"); // Cas particulier pour la racine
         return;
     }
 
+    // Tant que nous ne sommes pas à la racine, remonter dans les répertoires parents
     while (inode_actuel != fs->racine.inode_id) {
+        // Récupérer l'inode du répertoire actuel
         Inode *inode = &fs->inodes[inode_actuel];
 
-        // Trouver le répertoire parent
+        // Trouver l'inode du répertoire parent
         int parent_inode = inode->inode_pere;
+        // Récupérer les données du répertoire parent
         Repertoire *parent_rep = (Repertoire *)&fs->data[fs->inodes[parent_inode].blocs[0] * BLOCK_SIZE];
 
-        // Trouver le nom du répertoire actuel dans le parent
+        // Chercher le nom du répertoire actuel dans la liste des fichiers du répertoire parent
         char nom_rep[NAME_SIZE] = "";
         for (int i = 0; i < parent_rep->nb_fichiers; i++) {
             if (parent_rep->fichiers[i].inode_id == inode_actuel) {
@@ -1406,7 +1704,7 @@ void pwd(SystemeFichier *fs) {
             }
         }
 
-        // Insérer le nom du répertoire au début du chemin
+        // Ajouter le nom du répertoire actuel au début du chemin (format /nom_rep)
         char temp[MAX_PATH_LENGTH];
         snprintf(temp, sizeof(temp), "/%s%s", nom_rep, chemin);
         strcpy(chemin, temp);
@@ -1415,8 +1713,15 @@ void pwd(SystemeFichier *fs) {
         inode_actuel = parent_inode;
     }
 
+    // Afficher le chemin complet du répertoire courant
     printf("%s", chemin);
 }
+
+
+/************************************************************************************************************************************/
+
+
+
 
 /**
  * @brief Crée un lien dur vers un fichier existant dans un répertoire cible.
@@ -1433,102 +1738,68 @@ void pwd(SystemeFichier *fs) {
  * @note Cette fonction vérifie que le fichier source n'est pas un répertoire et que le répertoire parent cible existe 
  * avant de créer le lien dur. Le compteur de liens de l'inode source est également mis à jour.
  */
-int creer_lien_hard(SystemeFichier *fs, const char *chemin_source, const char *chemin_cible) {
-    // Trouver l'inode de la source
+ int creer_lien_hard(SystemeFichier *fs, const char *chemin_source, const char *chemin_cible) {
+    // Trouver l'inode du fichier source à partir de son chemin
     int inode_source = trouver_inode_par_chemin(fs, chemin_source);
     if (inode_source == -1) {
+        // Si le fichier source n'existe pas, retourner une erreur
         printf("Erreur : Le fichier source n'existe pas.\n");
         return -1;
     }
 
-    // Vérifier que la source n'est pas un répertoire
+    // Vérifier si le fichier source est un répertoire (un lien dur ne peut pas être créé pour un répertoire)
     if (fs->inodes[inode_source].est_repertoire) {
         printf("Erreur : Impossible de créer un lien dur vers un répertoire.\n");
         return -1;
     }
 
-    // Trouver le répertoire parent de la cible
+    // Extraire le chemin du répertoire parent et le nom du fichier cible à partir du chemin complet du fichier cible
     char chemin_parent[MAX_PATH_LENGTH];
     char nom_fichier[NAME_SIZE];
     strncpy(chemin_parent, chemin_cible, MAX_PATH_LENGTH);
     char *dernier_slash = strrchr(chemin_parent, '/');
     if (dernier_slash == NULL) {
+        // Si le chemin cible est invalide (aucun slash trouvé), retourner une erreur
         printf("Erreur : Chemin cible invalide.\n");
         return -1;
     }
 
-    // Séparer le nom du fichier et son chemin parent
+    // Séparer le nom du fichier cible du chemin parent
     strcpy(nom_fichier, dernier_slash + 1);
-    *dernier_slash = '\0';
+    *dernier_slash = '\0';  // Remplacer le dernier slash par la fin de chaîne pour obtenir le chemin parent
 
     // Trouver l'inode du répertoire parent
     int inode_parent = trouver_inode_par_chemin(fs, chemin_parent);
     if (inode_parent == -1) {
+        // Si le répertoire parent n'existe pas, retourner une erreur
         printf("Erreur : Le répertoire parent n'existe pas.\n");
         return -1;
     }
 
-    // Vérifier que le répertoire parent a de la place
+    // Vérifier si le répertoire parent a suffisamment de place pour ajouter un fichier (maximum de fichiers)
     Repertoire *rep_parent = (Repertoire *)&fs->data[fs->inodes[inode_parent].blocs[0] * BLOCK_SIZE];
     if (rep_parent->nb_fichiers >= MAX_FILES) {
+        // Si le répertoire est plein, retourner une erreur
         printf("Erreur : Répertoire plein.\n");
         return -1;
     }
 
-    // Ajouter l'entrée du lien dur dans le répertoire parent
+    // Ajouter l'entrée du fichier lié dur dans le répertoire parent
     strncpy(rep_parent->fichiers[rep_parent->nb_fichiers].nom, nom_fichier, NAME_SIZE);
     rep_parent->fichiers[rep_parent->nb_fichiers].inode_id = inode_source;
-    rep_parent->nb_fichiers++;
+    rep_parent->nb_fichiers++;  // Augmenter le nombre de fichiers dans le répertoire
 
-    // Augmenter le compteur de liens de l'inode source
+    // Incrémenter le compteur de liens de l'inode source pour refléter l'ajout du lien dur
     fs->inodes[inode_source].liens++;
-    fs->inodes[inode_source].date_modification = time(NULL);
+    fs->inodes[inode_source].date_modification = time(NULL);  // Mettre à jour la date de modification de l'inode
 
+    // Afficher un message indiquant que le lien dur a été créé avec succès
     printf("Lien dur créé : %s -> %s\n", chemin_cible, chemin_source);
+
+    // Sauvegarder le système de fichiers après avoir effectué l'opération
     sauvegarder_systeme_fichier(fs);
+    
+    // Retourner 0 pour indiquer que l'opération a réussi
     return 0;
 }
 
-/*int lseek_file(SystemeFichier *fs, int descripteur, int offset)
-{
-    // Vérifier si le descripteur est valide
-    if (descripteur < 0 || descripteur >= MAX_OPEN_FILES || fs->racine.fichiers[descripteur].inode_id == 0)
-    {
-        printf("Erreur : descripteur de fichier invalide.\n");
-        return -1;
-    }
-
-    FichierOuvert *fichier = &fs->racine.fichiers[descripteur];
-
-    // Vérifier si le fichier est ouvert en mode lecture/écriture
-    if (fichier->mode != MODE_READ && fichier->mode != MODE_WRITE)
-    {
-        printf("Erreur : fichier non ouvert en mode lecture ou écriture.\n");
-        return -1;
-    }
-
-    // Trouver l'inode du fichier
-    Inode *inode = &fs->inodes[fichier->inode_id];
-
-    // Si l'offset est inférieur à 0, c'est invalide
-    if (offset < 0)
-    {
-        printf("Erreur : l'offset ne peut pas être inférieur à 0.\n");
-        return -1;
-    }
-
-    // Si l'offset dépasse la taille du fichier, ajustez la taille du fichier pour l'ajouter
-    if (offset > inode->taille)
-    {
-        // Si on dépasse la taille actuelle du fichier, cela signifie que l'on veut ajouter des données.
-        // Vous pouvez ajuster ici pour ajouter de nouveaux blocs ou juste augmenter la taille du fichier.
-        inode->taille = offset;
-    }
-
-    // Mettre à jour l'offset
-    fichier->offset = offset;
-
-    // Retourner la nouvelle position
-    printf("Nouveau offset du fichier : %d\n", fichier->offset);
-    return fichier->offset;
-}*/

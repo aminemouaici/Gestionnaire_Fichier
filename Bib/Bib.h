@@ -99,12 +99,12 @@
  * @brief Structure représentant le superbloc du système de fichiers.
  */
 typedef struct {
-    int taille_fs;
-    int nb_inodes;
-    int nb_blocs;
-    int inode_libres;
-    int blocs_libres;
-    int premier_bloc_libre;
+    int taille_fs;    //taille de la partition
+    int nb_inodes;    //nombre maximal d'inodes dans la partition 
+    int nb_blocs;     //nombre maximal de blocs dans la partition 
+    int inode_libres;  //nombre d'inode non utilisés dans la partiton 
+    int blocs_libres;   //nombre d'inode non utilisés dans la partiton 
+    int premier_bloc_libre;   // numéro du premier bloc libre
 } Superbloc;
 
 /** 
@@ -116,27 +116,42 @@ typedef struct {
     unsigned char blocs[(MAX_BLOCKS + 7) / 8];   // Aligné sur 8
 } Bitmap;
 
+
+// Définit une macro pour activer (mettre à 1) le bit à la position "pos" dans la variable "byte"
 #define BIT_SET(byte, pos) (byte |= (1 << pos))
+// - (1 << pos) décale le bit "1" vers la gauche de "pos" positions (ex. : pos = 2 donne 00000100)
+// - |= effectue un OU binaire avec le byte d'origine → cela place le bit à 1 sans toucher aux autres
+
+// Définit une macro pour désactiver (mettre à 0) le bit à la position "pos" dans la variable "byte"
 #define BIT_CLEAR(byte, pos) (byte &= ~(1 << pos))
+// - (1 << pos) crée un masque avec un 1 à la position souhaitée
+// - ~ inverse tous les bits (donc un 0 à "pos", 1 ailleurs)
+// - &= applique ce masque en conservant les bits sauf celui à "pos" qui est mis à 0
+
+// Définit une macro pour tester si le bit à la position "pos" est à 1 dans "byte"
 #define BIT_CHECK(byte, pos) (byte & (1 << pos))
+// - (1 << pos) crée un masque avec un 1 à la position "pos"
+// - & vérifie si ce bit est activé → renvoie une valeur non nulle si le bit est à 1, 0 sinon
+
 
 /** 
  * @struct Inode
  * @brief Structure représentant un inode dans le système de fichiers.
  */
-typedef struct {
-    int id;
-    int taille;
-    int est_repertoire;
-    int permissions;
-    int liens;
-    int est_lien;
-    int blocs[NUM_DIRECT_BLOCKS];  // Blocs directs
-    int indirect_block;      // Bloc indirect
-    int inode_pere;                // Référence à l'inode parent
-    time_t date_creation;
-    time_t date_modification;
+ typedef struct {
+    int id;                          // Identifiant unique de l'inode (permet de l’identifier dans la table des inodes)
+    int taille;                      // Taille du fichier (en octets), ou nombre d’entrées s’il s’agit d’un répertoire
+    int est_repertoire;             // Booléen : 1 si c’est un répertoire, 0 si c’est un fichier classique
+    int permissions;                // Permissions d’accès (lecture, écriture, exécution) codées en binaire (type UNIX)
+    int liens;                      // Nombre de liens physiques (hard links) pointant vers cet inode
+    int est_lien;                   // Booléen : 1 si c’est un lien symbolique, 0 sinon
+    int blocs[NUM_DIRECT_BLOCKS];   // Tableau de blocs de données directs (stockage direct des données du fichier)
+    int indirect_block;             // Adresse d’un bloc indirect (pointeur vers d’autres blocs si les blocs directs sont pleins)
+    int inode_pere;                 // ID de l’inode parent (utile pour la navigation dans la hiérarchie)
+    time_t date_creation;           // Date de création de l’inode (format time_t)
+    time_t date_modification;       // Date de la dernière modification des données associées à cet inode
 } Inode;
+
 
 /** 
  * @struct Repertoire
