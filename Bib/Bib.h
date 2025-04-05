@@ -94,7 +94,10 @@
 
 /***********************structures_definitions**********************/
 
-// Définition du Superbloc
+/** 
+ * @struct Superbloc
+ * @brief Structure représentant le superbloc du système de fichiers.
+ */
 typedef struct {
     int taille_fs;
     int nb_inodes;
@@ -104,7 +107,10 @@ typedef struct {
     int premier_bloc_libre;
 } Superbloc;
 
-// Définition du Bitmap
+/** 
+ * @struct Bitmap
+ * @brief Structure représentant le bitmap pour les inodes et les blocs.
+ */
 typedef struct {
     unsigned char inodes[(MAX_INODES + 7) / 8];  // Aligné sur 8
     unsigned char blocs[(MAX_BLOCKS + 7) / 8];   // Aligné sur 8
@@ -114,7 +120,10 @@ typedef struct {
 #define BIT_CLEAR(byte, pos) (byte &= ~(1 << pos))
 #define BIT_CHECK(byte, pos) (byte & (1 << pos))
 
-// Définition de l'Inode
+/** 
+ * @struct Inode
+ * @brief Structure représentant un inode dans le système de fichiers.
+ */
 typedef struct {
     int id;
     int taille;
@@ -129,7 +138,10 @@ typedef struct {
     time_t date_modification;
 } Inode;
 
-// Définition du Répertoire
+/** 
+ * @struct Repertoire
+ * @brief Structure représentant un répertoire dans le système de fichiers.
+ */
 typedef struct {
     int inode_id;
     struct {
@@ -139,20 +151,29 @@ typedef struct {
     int nb_fichiers;
 } Repertoire;
 
-// Définition du Fichier Ouvert
+/** 
+ * @struct FichierOuvert
+ * @brief Structure représentant un fichier ouvert.
+ */
 typedef struct {
     int inode_id;
     int offset;
     int mode;
 } FichierOuvert;
 
-// Définition du Lien Symbolique
+/** 
+ * @struct LienSymbolique
+ * @brief Structure représentant un lien symbolique dans le système de fichiers.
+ */
 typedef struct {
     int inode_id;
     char cible[MAX_PATH_LENGTH];
 } LienSymbolique;
 
-// Structure principale du Système de Fichiers
+/** 
+ * @struct SystemeFichier
+ * @brief Structure représentant le système de fichiers complet.
+ */
 typedef struct {
     Superbloc superbloc;
     Bitmap bitmap;
@@ -164,6 +185,39 @@ typedef struct {
 
 
 /****************************Fonctions****************************/
+/**
+ * @brief Appels des fonctions définies dans `bib.c`.
+ * 
+ * Ce fichier contient la déclaration des fonctions qui seront utilisées dans
+ * `bib.c` pour gérer et manipuler le système de fichiers.
+ * 
+ * - `allouer_inode` : Alloue un inode dans le système de fichiers.
+ * - `allouer_bloc` : Alloue un bloc de données dans le système de fichiers.
+ * - `initialiser_systeme_fichier` : Initialise le système de fichiers.
+ * - `sauvegarder_systeme_fichier` : Sauvegarde l'état actuel du système de fichiers.
+ * - `charger_systeme_fichier` : Charge le système de fichiers depuis le fichier de partition.
+ * - `trouver_inode_par_chemin` : Trouve l'inode associé à un chemin donné.
+ * - `create_file_rep` : Crée un fichier ou un répertoire dans le système de fichiers.
+ * - `cd` : Change le répertoire courant dans le système de fichiers.
+ * - `droit` : Modifie les droits d'accès d'un fichier ou répertoire.
+ * - `afficher_ls_chemin` : Affiche le contenu du répertoire à un chemin donné.
+ * - `supprimer_fichier` : Supprime un fichier du système de fichiers.
+ * - `supprimer_repertoire` : Supprime un répertoire du système de fichiers.
+ * - `verifier_permissions` : Vérifie si un inode a les permissions adéquates.
+ * - `open_file` : Ouvre un fichier en lecture ou écriture.
+ * - `close_file` : Ferme un fichier ouvert.
+ * - `ecrire_fichier` : Écrit dans un fichier.
+ * - `lire_fichier` : Lit un fichier.
+ * - `creer_lien_symbolique` : Crée un lien symbolique.
+ * - `resoudre_lien_symbolique` : Résout un lien symbolique pour obtenir le chemin réel.
+ * - `afficher_cible_lien_symbolique` : Affiche la cible d'un lien symbolique.
+ * - `mv` : Déplace ou renomme un fichier ou un répertoire.
+ * - `cp` : Copie un fichier ou un répertoire.
+ * - `pwd` : Affiche le chemin du répertoire courant.
+ * - `creer_lien_hard` : Crée un lien dur entre deux fichiers.
+ * 
+ * @note Les fonctions ci-dessus sont implémentées dans le fichier `bib.c` et manipulées tout au long du projet pour gérer le système de fichiers.
+ */
 int allouer_inode(SystemeFichier *fs);
 int allouer_bloc(SystemeFichier *fs);
 void initialiser_systeme_fichier(SystemeFichier *fs);
