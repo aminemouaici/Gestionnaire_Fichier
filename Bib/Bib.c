@@ -576,7 +576,16 @@ void afficher_ls_chemin(SystemeFichier *fs, const char *chemin) {
         }
     }
 }
-
+/**
+ * @brief Supprime un fichier du système de fichiers.
+ * 
+ * Cette fonction supprime un fichier spécifié par son chemin. Elle cherche d'abord le répertoire
+ * parent, puis trouve le fichier dans ce répertoire. Ensuite, elle libère l'inode et le bloc du fichier,
+ * et met à jour la table des fichiers du répertoire parent.
+ * 
+ * @param fs Pointeur vers le système de fichiers.
+ * @param chemin Le chemin absolu ou relatif du fichier à supprimer.
+ */
 void supprimer_fichier(SystemeFichier *fs, const char *chemin)
 {
     // Trouver le répertoire parent et le nom du fichier
@@ -647,7 +656,16 @@ void supprimer_fichier(SystemeFichier *fs, const char *chemin)
 }
 
 
-// Fonction pour supprimer un répertoire donné (chemin absolu ou répertoire courant)
+/**
+ * @brief Supprime un répertoire du système de fichiers.
+ * 
+ * Cette fonction supprime un répertoire spécifié par son chemin. Si le répertoire n'est pas vide, 
+ * elle supprime récursivement tous les fichiers et sous-répertoires qu'il contient avant de libérer
+ * l'inode et le bloc du répertoire. Si aucun chemin n'est donné, le répertoire courant est supprimé.
+ * 
+ * @param fs Pointeur vers le système de fichiers.
+ * @param chemin Le chemin absolu ou relatif du répertoire à supprimer (peut être vide pour le répertoire courant).
+ */
 void supprimer_repertoire(SystemeFichier *fs, const char *chemin)
 {
     int inode_a_supprimer;
@@ -728,7 +746,17 @@ void supprimer_repertoire(SystemeFichier *fs, const char *chemin)
 
     printf("Répertoire %s supprimé avec succès.\n", chemin ? chemin : "répertoire courant");
 }
-
+/**
+ * @brief Vérifie si un inode a les permissions spécifiées.
+ * 
+ * Cette fonction vérifie si un inode a les permissions adéquates pour une opération donnée. 
+ * Les modes valides sont `MODE_READ` (lecture) et `MODE_WRITE` (écriture).
+ * 
+ * @param inode Pointeur vers l'inode dont les permissions doivent être vérifiées.
+ * @param mode Le mode de vérification des permissions (lecture ou écriture).
+ * 
+ * @return 1 si l'inode a les permissions nécessaires, 0 sinon.
+ */
 int verifier_permissions(Inode *inode, int mode)
 {
     if (mode == MODE_READ)
