@@ -1220,7 +1220,21 @@ void afficher_cible_lien_symbolique(SystemeFichier *fs, const char *chemin_lien)
     LienSymbolique *lien = (LienSymbolique *)&fs->data[inode_l->blocs[0] * BLOCK_SIZE];
     printf("Le lien symbolique %s pointe vers : %s\n", chemin_lien, lien->cible);
 }
-
+/**
+ * @brief Déplace un fichier ou un répertoire d'un emplacement source vers un emplacement de destination.
+ * 
+ * Cette fonction déplace un fichier ou répertoire dans le système de fichiers. Si la destination est un répertoire, 
+ * elle ajoutera le fichier/répertoire à ce répertoire, tout en retirant le fichier/répertoire de son répertoire parent.
+ * 
+ * @param fs Le système de fichiers sur lequel l'opération est effectuée.
+ * @param source Le chemin du fichier/répertoire source à déplacer.
+ * @param destination Le chemin du répertoire de destination.
+ * 
+ * @return Retourne 0 si le déplacement a réussi, sinon -1 en cas d'erreur.
+ * 
+ * @note Cette fonction vérifie que la destination est bien un répertoire et que le répertoire parent de la source
+ * existe avant de procéder.
+ */
 int mv(SystemeFichier *fs, const char *source, const char *destination) {
     // Trouver l'inode source
     int inode_source = trouver_inode_par_cheminCd(fs, source);
@@ -1282,7 +1296,21 @@ int mv(SystemeFichier *fs, const char *source, const char *destination) {
     printf("Déplacement réussi : %s → %s\n", source, destination);
     return 0;
 }
-
+/**
+ * @brief Copie un fichier ou un répertoire d'un emplacement source vers un emplacement de destination.
+ * 
+ * Cette fonction copie un fichier ou répertoire dans le système de fichiers. La source est dupliquée dans le répertoire 
+ * de destination sans supprimer l'original dans son répertoire d'origine.
+ * 
+ * @param fs Le système de fichiers sur lequel l'opération est effectuée.
+ * @param source Le chemin du fichier/répertoire source à copier.
+ * @param destination Le chemin du répertoire de destination.
+ * 
+ * @return Retourne 0 si la copie a réussi, sinon -1 en cas d'erreur.
+ * 
+ * @note Cette fonction vérifie que la destination est bien un répertoire et que le répertoire parent de la source
+ * existe avant de procéder.
+ */
 int cp(SystemeFichier *fs, const char *source, const char *destination) {
     // Trouver l'inode source
     int inode_source = trouver_inode_par_cheminCd(fs, source);
@@ -1340,6 +1368,18 @@ int cp(SystemeFichier *fs, const char *source, const char *destination) {
     printf("Déplacement réussi : %s → %s\n", source, destination);
     return 0;
 }
+/**
+ * @brief Affiche le chemin absolu du répertoire courant.
+ * 
+ * Cette fonction affiche le chemin complet du répertoire courant dans le système de fichiers,
+ * en remontant à partir du répertoire courant jusqu'à la racine.
+ * 
+ * @param fs Le système de fichiers sur lequel l'opération est effectuée.
+ * 
+ * @return Aucune valeur n'est retournée. L'affichage se fait directement dans la sortie standard.
+ * 
+ * @note Cette fonction gère le cas particulier de la racine du système de fichiers.
+ */
 
 void pwd(SystemeFichier *fs) {
     char chemin[MAX_PATH_LENGTH] = "";
@@ -1378,7 +1418,21 @@ void pwd(SystemeFichier *fs) {
     printf("%s", chemin);
 }
 
-// Fonction pour créer un lien dur
+/**
+ * @brief Crée un lien dur vers un fichier existant dans un répertoire cible.
+ * 
+ * Cette fonction crée un lien dur pour un fichier dans le répertoire cible, ce qui signifie que plusieurs noms
+ * de fichiers (chemins) peuvent pointer vers le même fichier dans le système de fichiers.
+ * 
+ * @param fs Le système de fichiers sur lequel l'opération est effectuée.
+ * @param chemin_source Le chemin du fichier source pour lequel le lien dur sera créé.
+ * @param chemin_cible Le chemin du fichier cible où le lien dur sera créé.
+ * 
+ * @return Retourne 0 si la création du lien dur a réussi, sinon -1 en cas d'erreur.
+ * 
+ * @note Cette fonction vérifie que le fichier source n'est pas un répertoire et que le répertoire parent cible existe 
+ * avant de créer le lien dur. Le compteur de liens de l'inode source est également mis à jour.
+ */
 int creer_lien_hard(SystemeFichier *fs, const char *chemin_source, const char *chemin_cible) {
     // Trouver l'inode de la source
     int inode_source = trouver_inode_par_chemin(fs, chemin_source);
