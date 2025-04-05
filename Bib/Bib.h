@@ -2,7 +2,13 @@
 #define BIB_H_INCLUDED
 
 /**************************inclusions*******************************/
-
+/** 
+ * @file bib.h
+ * @brief Déclarations des structures et des fonctions pour la gestion d'un système de fichiers.
+ * 
+ * Ce fichier définit les structures nécessaires à l'implémentation d'un système de fichiers de type Unix.
+ * Il contient également les prototypes des fonctions permettant la gestion des fichiers, répertoires, et liens symboliques.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -10,20 +16,80 @@
 #include <ctype.h>
 
 /**************************definitions******************************/
+/** 
+ * @def MAX_INODES
+ * @brief Nombre maximal d'inodes dans le système de fichiers.
+ */
 #define MAX_INODES 100   // Nombre maximal d'inodes
+/** 
+ * @def MAX_BLOCKS
+ * @brief Nombre maximal de blocs de données dans le système de fichiers.
+ */
 #define MAX_BLOCKS 1024  // Nombre maximal de blocs de données
+/** 
+ * @def BLOCK_SIZE
+ * @brief Taille d'un bloc en octets.
+ */
 #define BLOCK_SIZE 4096  // Taille d'un bloc en octets
+/** 
+ * @def MAX_LINKS
+ * @brief Nombre maximal de liens physiques pour un fichier.
+ */
 #define MAX_LINKS 10  // Nombre maximal de liens physiques
+/** 
+ * @def NUM_DIRECT_BLOCKS
+ * @brief Nombre de blocs directs par inode (comme dans Unix).
+ */
 #define NUM_DIRECT_BLOCKS 12  // Nombre de blocs directs par inode (comme dans Unix)
+/** 
+ * @def INDIRECT_BLOCKS
+ * @brief Nombre de blocs indirects par inode.
+ */
 #define INDIRECT_BLOCKS 1     // Nombre de blocs indirects par inode
+/** 
+ * @def MAX_FILES
+ * @brief Nombre maximal de fichiers dans un répertoire.
+ */
 #define MAX_FILES 32  // Nombre max de fichiers dans un répertoire
+/** 
+ * @def NAME_SIZE
+ * @brief Taille maximale d'un nom de fichier.
+ */
 #define NAME_SIZE 32  // Taille max d'un nom de fichier
+/** 
+ * @def MAX_PATH_LENGTH
+ * @brief Longueur maximale du chemin d'un lien symbolique.
+ */
 #define MAX_PATH_LENGTH 256 // Longueur max du chemin du lien
+/** 
+ * @def MAX_OPEN_FILES
+ * @brief Nombre maximal de fichiers ouverts simultanément.
+ */
 #define MAX_OPEN_FILES 16  // Nombre maximal de fichiers ouverts
+/** 
+ * @def Max_SIZE_PARAM
+ * @brief Taille maximale d'un paramètre pour certaines fonctions.
+ */
 #define Max_SIZE_PARAM 500  //taille maximal d'un paramétre
+/** 
+ * @def PARTITION_NAME
+ * @brief Nom du fichier représentant la partition.
+ */
 #define PARTITION_NAME "mnt.fs" // Nom du fichier de la partition
+/** 
+ * @def PARTITION_SIZE
+ * @brief Taille allouée à la partition (un quart de la taille totale).
+ */
 #define PARTITION_SIZE (MAX_BLOCKS / 4 * BLOCK_SIZE) // Taille allouée à la partition
+/** 
+ * @def MODE_READ
+ * @brief Mode de lecture pour les fichiers ouverts.
+ */
 #define MODE_READ 0
+/** 
+ * @def MODE_WRITE
+ * @brief Mode d'écriture pour les fichiers ouverts.
+ */
 #define MODE_WRITE 1
 
 /***********************structures_definitions**********************/
