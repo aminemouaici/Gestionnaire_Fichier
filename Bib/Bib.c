@@ -1,8 +1,22 @@
+/**
+ * @file Bib.c
+ * @brief Code pour la gestion d'un système de fichiers avec allocation d'inodes et de blocs.
+ */
+
 #include "Bib.h"
 
 
 
-// Fonction pour allouer un inode
+/**
+ * @brief Alloue un inode dans le système de fichiers.
+ * 
+ * Cette fonction recherche un inode libre dans le bitmap des inodes et l'alloue en mettant à jour 
+ * le bitmap et le superbloc. Elle renvoie l'indice de l'inode alloué ou -1 si aucun inode libre n'est 
+ * disponible.
+ * 
+ * @param fs Pointeur vers le système de fichiers.
+ * @return L'indice de l'inode alloué, ou -1 si aucun inode n'est disponible.
+ */
 int allouer_inode(SystemeFichier *fs) 
 {
     for (int i = 0; i < MAX_INODES; i++) {
@@ -15,7 +29,16 @@ int allouer_inode(SystemeFichier *fs)
     return -1; // Plus d'inodes disponibles
 }
 
-// Fonction pour allouer un bloc
+/**
+ * @brief Alloue un bloc dans le système de fichiers.
+ * 
+ * Cette fonction recherche un bloc libre dans le bitmap des blocs et l'alloue en mettant à jour 
+ * le bitmap et le superbloc. Elle renvoie l'indice du bloc alloué ou -1 si aucun bloc libre n'est 
+ * disponible.
+ * 
+ * @param fs Pointeur vers le système de fichiers.
+ * @return L'indice du bloc alloué, ou -1 si aucun bloc n'est disponible.
+ */
 int allouer_bloc(SystemeFichier *fs) {
     for (int i = 0; i < MAX_BLOCKS; i++) {
         if (!BIT_CHECK(fs->bitmap.blocs[i / 8], i % 8)) {
@@ -27,7 +50,15 @@ int allouer_bloc(SystemeFichier *fs) {
     return -1; // Plus de blocs disponibles
 }
 
-// Initialisation du système de fichiers
+/**
+ * @brief Initialise le système de fichiers.
+ * 
+ * Cette fonction initialise le système de fichiers en configurant les bitmaps, le superbloc, et 
+ * en allouant les ressources nécessaires, y compris l'inode et le bloc pour le répertoire racine.
+ * Elle crée également les entrées de répertoire pour le répertoire courant.
+ * 
+ * @param fs Pointeur vers le système de fichiers.
+ */
 void initialiser_systeme_fichier(SystemeFichier *fs) {
     memset(fs, 0, sizeof(SystemeFichier));
 
@@ -84,7 +115,14 @@ void initialiser_systeme_fichier(SystemeFichier *fs) {
 
 }
 
-// Fonction pour sauvegarder le système de fichiers dans un fichier
+/**
+ * @brief Sauvegarde le système de fichiers dans un fichier.
+ * 
+ * Cette fonction sauvegarde l'état du système de fichiers dans un fichier binaire pour persister 
+ * les données entre les exécutions du programme.
+ * 
+ * @param fs Pointeur vers le système de fichiers à sauvegarder.
+ */
 void sauvegarder_systeme_fichier(SystemeFichier *fs) {
     FILE *f = fopen(PARTITION_NAME, "wb");
     if (!f) {
@@ -100,7 +138,15 @@ void sauvegarder_systeme_fichier(SystemeFichier *fs) {
 
 }
 
-// Fonction pour charger le système de fichiers depuis un fichier
+/**
+ * @brief Charge le système de fichiers depuis un fichier.
+ * 
+ * Cette fonction charge un système de fichiers sauvegardé à partir d'un fichier binaire. Si le fichier 
+ * n'existe pas, elle retourne 0 et signale que le système de fichiers doit être initialisé.
+ * 
+ * @param fs Pointeur vers le système de fichiers à charger.
+ * @return 1 si le système de fichiers a été chargé avec succès, 0 sinon.
+ */
 int charger_systeme_fichier(SystemeFichier *fs) {
     FILE *f = fopen(PARTITION_NAME, "rb");
     if (!f) {
