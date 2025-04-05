@@ -1019,7 +1019,17 @@ void lire_fichier(SystemeFichier *fs, const char *chemin) {
 
 
 
-// Fonction pour créer un lien symbolique
+/**
+ * @brief Crée un lien symbolique dans un système de fichiers.
+ * 
+ * Cette fonction crée un lien symbolique dans le répertoire spécifié par le chemin. 
+ * Elle alloue un inode pour le lien symbolique, vérifie si le lien existe déjà, 
+ * et ajoute le lien symbolique au répertoire parent.
+ * 
+ * @param fs Le système de fichiers dans lequel le lien symbolique doit être créé.
+ * @param chemin Le chemin du lien symbolique à créer.
+ * @param cible Le chemin de la cible du lien symbolique.
+ */
 void creer_lien_symbolique(SystemeFichier *fs, const char *chemin, const char *cible) {
     char chemin_cpy[MAX_PATH_LENGTH];
     strncpy(chemin_cpy, chemin, MAX_PATH_LENGTH);
@@ -1108,7 +1118,17 @@ void creer_lien_symbolique(SystemeFichier *fs, const char *chemin, const char *c
 
 }
 
-// Fonction pour résoudre un lien symbolique
+/**
+ * @brief Résout un lien symbolique et retourne son inode.
+ * 
+ * Cette fonction résout récursivement un lien symbolique en suivant la chaîne de cibles
+ * jusqu'à ce qu'un fichier ou répertoire normal soit trouvé.
+ * 
+ * @param fs Le système de fichiers contenant le lien symbolique.
+ * @param chemin Le chemin du lien symbolique à résoudre.
+ * 
+ * @return L'inode du fichier ou répertoire pointé par le lien symbolique, ou -1 en cas d'erreur.
+ */
 int resoudre_lien_symbolique(SystemeFichier *fs, const char *chemin) {
     int inode_id = trouver_inode_par_chemin(fs, chemin);
     if (inode_id == -1) {
@@ -1137,7 +1157,15 @@ int resoudre_lien_symbolique(SystemeFichier *fs, const char *chemin) {
     return resoudre_lien_symbolique(fs, cible);
 }
 
-
+/**
+ * @brief Affiche la cible d'un lien symbolique.
+ * 
+ * Cette fonction affiche la cible d'un lien symbolique. Elle vérifie d'abord que le fichier 
+ * spécifié est bien un lien symbolique avant d'afficher sa cible.
+ * 
+ * @param fs Le système de fichiers contenant le lien symbolique.
+ * @param chemin_lien Le chemin du lien symbolique dont la cible doit être affichée.
+ */
 void afficher_cible_lien_symbolique(SystemeFichier *fs, const char *chemin_lien) {
     // Récupérer le nom du lien et le répertoire parent
     char chemin_lien_cpy[MAX_PATH_LENGTH];
