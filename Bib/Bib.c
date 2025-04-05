@@ -380,7 +380,16 @@ int trouver_inode_par_cheminCd(SystemeFichier *fs, const char *chemin) {
 
     return inode_courant;
 }
-
+/**
+ * @brief Change le répertoire courant du système de fichiers.
+ * 
+ * Cette fonction permet de naviguer dans le système de fichiers simulé en changeant 
+ * le répertoire courant. Elle prend en compte les chemins relatifs et absolus ainsi que
+ * les commandes spéciales comme '.' (répertoire courant) et '..' (répertoire parent).
+ * 
+ * @param fs Pointeur vers le système de fichiers.
+ * @param chemin Le chemin du répertoire cible. Peut être un chemin relatif ou absolu.
+ */
 void cd(SystemeFichier *fs, const char *chemin) {
     if (strcmp(chemin, ".") == 0) {
         printf("Déjà dans le répertoire courant.\n");
@@ -423,7 +432,16 @@ void cd(SystemeFichier *fs, const char *chemin) {
     fs->repertoire_courant = inode_cible;
     printf("Répertoire courant changé vers : %s\n", chemin);
 }
-
+/**
+ * @brief Modifie les droits d'un fichier ou d'un répertoire.
+ * 
+ * Cette fonction permet de modifier les droits d'un fichier ou d'un répertoire spécifié
+ * par le chemin donné. Les droits doivent être spécifiés en format octal à 3 chiffres (ex: 744, 755).
+ * 
+ * @param fs Pointeur vers le système de fichiers.
+ * @param chemin Le chemin du fichier ou du répertoire dont les droits doivent être modifiés.
+ * @param droits Une chaîne de caractères représentant les nouveaux droits au format octal (ex: "755").
+ */
 void droit(SystemeFichier *fs, const char *chemin, const char *droits) {
     // Vérification que "droits" contient bien trois chiffres entre '0' et '7'
     if (strlen(droits) != 3 || !isdigit(droits[0]) || !isdigit(droits[1]) || !isdigit(droits[2])) {
@@ -454,7 +472,15 @@ void droit(SystemeFichier *fs, const char *chemin, const char *droits) {
     printf("Permissions après modification : %o (octal)\n", inode_courant->permissions);
 }
 
-
+/**
+ * @brief Affiche le contenu d'un répertoire spécifié par un chemin.
+ * 
+ * Cette fonction parcourt le système de fichiers pour afficher le contenu d'un répertoire donné.
+ * Le chemin peut être absolu ou relatif. Si le répertoire est vide, un message sera affiché.
+ * 
+ * @param fs Pointeur vers le système de fichiers.
+ * @param chemin Le chemin du répertoire dont le contenu doit être affiché.
+ */
 void afficher_ls_chemin(SystemeFichier *fs, const char *chemin) {
     int inode_id = fs->repertoire_courant; // Par défaut, commencer à partir du répertoire courant
 
