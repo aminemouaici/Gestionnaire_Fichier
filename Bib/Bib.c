@@ -165,9 +165,18 @@ int charger_systeme_fichier(SystemeFichier *fs) {
 }
 
 
-// Ajoute cette fonction utilitaire pour trouver un répertoire à partir d'un chemin
 
 
+/**
+ * Trouve l'inode correspondant à un chemin donné.
+ * 
+ * Cette fonction permet de trouver l'inode associé à un chemin dans le système de fichiers.
+ * Elle prend en compte les répertoires et fichiers ainsi que les cas spéciaux "." (répertoire courant) et ".." (répertoire parent).
+ * 
+ * @param fs Le système de fichiers dans lequel la recherche doit être effectuée.
+ * @param chemin Le chemin du fichier ou répertoire à trouver. Il peut être absolu ou relatif.
+ * @return L'inode correspondant au chemin spécifié, ou -1 si le chemin est invalide.
+ */
 int trouver_inode_par_chemin(SystemeFichier *fs, const char *chemin) {
     if (strcmp(chemin, "/") == 0) return fs->racine.inode_id;
 
@@ -217,7 +226,17 @@ int trouver_inode_par_chemin(SystemeFichier *fs, const char *chemin) {
 
     return inode_courant;
 }
-
+/**
+ * Crée un fichier ou un répertoire dans le système de fichiers.
+ * 
+ * Cette fonction crée un fichier ou un répertoire à un emplacement spécifié par un chemin. Si le chemin est relatif,
+ * il est résolu à partir du répertoire courant. La fonction alloue un inode et un bloc pour le fichier ou répertoire,
+ * puis ajoute ce dernier dans le répertoire parent.
+ * 
+ * @param fs Le système de fichiers dans lequel la création doit avoir lieu.
+ * @param chemin Le chemin du fichier ou répertoire à créer.
+ * @param est_repertoire Indicateur si le nouvel objet est un répertoire (1) ou un fichier (0).
+ */
 
 void create_file_rep(SystemeFichier *fs, const char *chemin, int est_repertoire) {
     char chemin_cpy[MAX_PATH_LENGTH];
@@ -299,7 +318,17 @@ void create_file_rep(SystemeFichier *fs, const char *chemin, int est_repertoire)
 }
 
 
-
+/**
+ * Trouve l'inode correspondant à un chemin pour la commande "cd".
+ * 
+ * Cette fonction permet de trouver l'inode associé à un chemin dans le système de fichiers. Elle gère
+ * les répertoires, ainsi que les cas spéciaux comme "." pour le répertoire courant et ".." pour le répertoire parent.
+ * Elle retourne l'inode correspondant au chemin final ou -1 si le chemin est invalide.
+ * 
+ * @param fs Le système de fichiers dans lequel la recherche doit être effectuée.
+ * @param chemin Le chemin du fichier ou répertoire à trouver. Il peut être absolu ou relatif.
+ * @return L'inode correspondant au chemin spécifié, ou -1 si le chemin est invalide.
+ */
 int trouver_inode_par_cheminCd(SystemeFichier *fs, const char *chemin) {
     if (!chemin || strlen(chemin) == 0) return -1;
 
