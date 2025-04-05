@@ -769,6 +769,18 @@ int verifier_permissions(Inode *inode, int mode)
     }
     return 0;
 }
+/**
+ * @brief Ouvre un fichier en fonction du chemin et du mode.
+ * 
+ * Cette fonction cherche l'inode du fichier à partir du chemin donné, vérifie les permissions d'accès 
+ * et cherche un espace libre pour ouvrir le fichier. Le fichier est associé à un descripteur qui est retourné.
+ * 
+ * @param fs Le système de fichiers dans lequel le fichier doit être ouvert.
+ * @param chemin Le chemin d'accès du fichier à ouvrir.
+ * @param mode Le mode d'ouverture du fichier (lecture ou écriture).
+ * 
+ * @return Le descripteur de fichier en cas de succès, -1 en cas d'erreur.
+ */
 
 int open_file(SystemeFichier *fs, const char *chemin, int mode)
 {
@@ -808,7 +820,14 @@ int open_file(SystemeFichier *fs, const char *chemin, int mode)
     printf("Erreur : trop de fichiers ouverts.\n");
     return -1;
 }
-
+/**
+ * @brief Ferme un fichier.
+ * 
+ * Cette fonction libère le descripteur de fichier, le marquant comme disponible pour d'autres ouvertures.
+ * 
+ * @param fs Le système de fichiers contenant le fichier à fermer.
+ * @param descripteur Le descripteur de fichier à fermer.
+ */
 void close_file(SystemeFichier *fs, int descripteur)
 {
     // Vérifier si le descripteur est valide
@@ -822,8 +841,17 @@ void close_file(SystemeFichier *fs, int descripteur)
     fs->racine.fichiers[descripteur].inode_id = 0;
     printf("Fichier avec descripteur %d fermé avec succès.\n", descripteur);
 }
+/**
+ * @brief Écrit dans un fichier.
+ * 
+ * Cette fonction ouvre un fichier en mode écriture, vérifie les permissions d'écriture, 
+ * et permet à l'utilisateur d'ajouter des données au fichier. Si la taille du fichier dépasse la capacité d'un bloc,
+ * plusieurs blocs seront alloués pour contenir les données.
+ * 
+ * @param fs Le système de fichiers dans lequel le fichier doit être modifié.
+ * @param chemin Le chemin du fichier à modifier.
+ */
 
-// Fonction pour écrire dans un fichier
 void ecrire_fichier(SystemeFichier *fs, const char *chemin)
 {
     // Ouvrir le fichier en mode écriture
@@ -939,7 +967,15 @@ void ecrire_fichier(SystemeFichier *fs, const char *chemin)
 }
 
 
-// Fonction pour lire le contenu d'un fichier
+/**
+ * @brief Lit le contenu d'un fichier.
+ * 
+ * Cette fonction permet de lire un fichier en vérifiant que le fichier existe, qu'il n'est pas un répertoire, 
+ * et que l'utilisateur a les permissions nécessaires pour le lire. Le contenu du fichier est affiché à l'écran.
+ * 
+ * @param fs Le système de fichiers dans lequel le fichier doit être lu.
+ * @param chemin Le chemin du fichier à lire.
+ */
 void lire_fichier(SystemeFichier *fs, const char *chemin) {
     // Trouver l'inode en résolvant les liens symboliques s'il y en a
     int inode_id = resoudre_lien_symbolique(fs, chemin);
