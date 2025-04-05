@@ -1,7 +1,32 @@
+/**
+ * @file main.c
+ * @brief Système de fichiers simulé - Interface utilisateur en ligne de commande
+ *
+ * Ce fichier contient l'implémentation d'une interface utilisateur en ligne de commande permettant d'interagir avec un système de fichiers simulé. Les utilisateurs peuvent effectuer diverses opérations sur le système de fichiers, telles que l'affichage des fichiers, la création de répertoires, la manipulation des permissions, la gestion des fichiers et des liens, et bien plus encore.
+ *
+ * @author [Votre Nom]
+ * @date [Date]
+ */
+
+
 #include <unistd.h>
 #include <fcntl.h>
 #include "Bib/Bib.h"
-
+/**
+ * @brief Fonction principale de l'interface utilisateur.
+ * 
+ * La fonction `main` initialise le système de fichiers, charge ou crée une nouvelle partition, puis permet à l'utilisateur de saisir des commandes. Chaque commande est interprétée et exécutée en fonction des entrées de l'utilisateur. L'interface est de type ligne de commande (CLI), et l'utilisateur peut effectuer des actions telles que :
+ * - Afficher le contenu d'un répertoire
+ * - Créer un fichier ou un répertoire
+ * - Changer de répertoire
+ * - Supprimer des fichiers ou répertoires
+ * - Créer des liens physiques et symboliques
+ * - Modifier les permissions des fichiers
+ * - Afficher le chemin actuel
+ * - Copier et déplacer des fichiers
+ * 
+ * @return int Retourne 0 à la fin de l'exécution.
+ */
 
 
 // Interface utilisateur simple (fonction main)
