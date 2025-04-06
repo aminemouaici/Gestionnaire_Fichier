@@ -1,0 +1,103 @@
+1. Initialisation de l’environnement
+    À ce stade, le programme est supposé en cours d’exécution. Le répertoire courant est la racine du système de fichiers représenté par le symbole /.
+
+2. Création de l’arborescence
+    L’objectif est de créer la structure suivante :
+
+    /
+    ├── dir1
+    │   ├── file1.txt
+    │   └── file2.txt
+    ├── dir2
+    │   └── subdir
+    │       └── file3.txt
+    └── file_root.txt
+
+    . Commandes à exécuter :
+        mkdir dir1
+        mkdir dir2
+        touch file_root.txt
+        cd dir1
+        touch file1.txt
+        touch file2.txt
+        cd ..
+        cd dir2
+        mkdir subdir
+        cd subdir
+        touch file3.txt
+        cd /
+
+3. Test de navigation
+    Vérification de la commande cd et pwd :
+
+    . Commandes à exécuter :
+        cd dir1
+        pwd        # Affiche /dir1
+        cd ..
+        cd dir2/subdir
+        pwd        # Affiche /dir2/subdir
+        cd /
+
+4. Test de la commande ls: 
+    . Commandes à exécuter :
+        ls          # Affiche dir1, dir2, file_root.txt
+        cd dir1
+        ls          # Affiche file1.txt, file2.txt
+        cd ../dir2/subdir
+        ls          # Affiche file3.txt
+        cd /
+
+5. Test de la commande cp (copie)
+    Copier file1.txt dans dir2 
+    . Commandes à exécuter :
+        cp /dir1/file1.txt /dir2
+        cd dir2
+        ls          # Affiche subdir, file1.txt
+        cd /
+
+6. Test de la commande mv (déplacement)
+    Déplacer file2.txt vers /dir2/subdir 
+    . Commandes à exécuter :
+        mv /dir1/file2.txt /dir2/subdir
+        cd /dir2/subdir
+        ls          # Affiche file3.txt, file2.txt
+        cd /
+
+7. Test de la commande rm (suppression)
+    Supprimer file3.txt 
+    . Commandes à exécuter :
+        rm /dir2/subdir/file3.txt
+        cd /dir2/subdir
+        ls          # Affiche uniquement file2.txt
+        cd /
+
+8. Test de la commande hardlink
+    Créer un lien dur vers file1.txt dans la racine 
+    . Commandes à exécuter :
+        ln /dir2/file1.txt /link_to_file1.txt
+        ls          # Affiche dir1, dir2, file_root.txt, link_to_file1.txt
+
+9. Test de la commande symlink (lien symbolique)
+    Créer un lien symbolique vers /dir2/subdir/file2.txt 
+    . Commandes à exécuter :
+        symlink /dir2/subdir/file2.txt /lien_symb_file2
+        ls          # Affiche dir1, dir2, file_root.txt, link_to_file1.txt, lien_symb_file2
+        cat /lien_symb_file2         # Affiche le contenu de file2.txt
+
+11. Nettoyage final (optionnel)
+    . Commandes à exécuter :
+        rm /link_to_file1.txt
+        rm /lien_symb_file2
+        rm /file_root.txt
+        rm /dir2/file1.txt
+        rm /dir2/subdir/file2.txt
+        rm /dir1/file1.txt
+        rm /dir2/subdir
+        rm /dir2
+        rm /dir1
+
+Conclusion:
+Ce scénario de test couvre les principales fonctionnalités du système de fichiers : création, navigation, manipulation de fichiers et répertoires, liens durs, liens symboliques et suppression. Chaque commande a été testée dans des conditions normales d'utilisation pour s'assurer de leur bon fonctionnement.
+
+
+
