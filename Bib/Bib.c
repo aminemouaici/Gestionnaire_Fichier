@@ -1,3 +1,9 @@
+/*
+   - Amine MOUAICI: 33.33%
+   - Leticia ZAID: 33.33%
+   - Samy Islem OULED-YOUNES 33.33%
+*/
+
 /**
  * @file Bib.c
  * @brief Code pour la gestion d'un système de fichiers avec allocation d'inodes et de blocs.
@@ -1387,85 +1393,6 @@ void close_file(SystemeFichier *fs, int descripteur)
     return resoudre_lien_symbolique(fs, cible);
 }
 
-
-
-/******************************************************************************************************************************************** */
-
-
-
-/**
- * @brief Affiche la cible d'un lien symbolique.
- * 
- * Cette fonction affiche la cible d'un lien symbolique. Elle vérifie d'abord que le fichier 
- * spécifié est bien un lien symbolique avant d'afficher sa cible.
- * Si le fichier n'est pas un lien symbolique, la fonction affiche un message d'erreur.
- * 
- * @param fs Le système de fichiers contenant le lien symbolique.
- * @param chemin_lien Le chemin du lien symbolique dont la cible doit être affichée.
- */
- void afficher_cible_lien_symbolique(SystemeFichier *fs, const char *chemin_lien) {
-    // Créer une copie du chemin du lien symbolique pour manipuler sans modifier l'original
-    char chemin_lien_cpy[MAX_PATH_LENGTH];
-    strncpy(chemin_lien_cpy, chemin_lien, MAX_PATH_LENGTH);
-
-    // Extraire le répertoire parent et le nom du lien symbolique
-    char *dernier_slash = strrchr(chemin_lien_cpy, '/');
-    char nom[NAME_SIZE];
-    const char *chemin_parent;
-
-    // Si un slash est trouvé, le chemin est divisé en parent et nom
-    if (dernier_slash) {
-        strncpy(nom, dernier_slash + 1, NAME_SIZE); // Nom du lien symbolique
-        *dernier_slash = '\0'; // Terminer le chemin parent
-        chemin_parent = (*chemin_lien_cpy) ? chemin_lien_cpy : "/"; // Gérer le cas du répertoire racine
-    } else {
-        // Si aucun slash, tout est dans le nom du lien
-        strncpy(nom, chemin_lien, NAME_SIZE);
-        chemin_parent = "";
-    }
-
-    // Trouver l'inode du répertoire parent
-    int inode_parent = trouver_inode_par_chemin(fs, chemin_parent);
-    if (inode_parent == -1) {
-        // Afficher une erreur si le répertoire parent est introuvable
-        printf("Erreur : chemin parent %s introuvable.\n", chemin_parent);
-        return;
-    }
-
-    // Récupérer l'inode du répertoire parent
-    Inode *inode_p = &fs->inodes[inode_parent];
-    Repertoire *rep_p = (Repertoire *)&fs->data[inode_p->blocs[0] * BLOCK_SIZE];
-
-    // Chercher le fichier (lien symbolique) dans le répertoire
-    int inode_lien = -1;
-    for (int i = 0; i < rep_p->nb_fichiers; i++) {
-        // Si le nom du fichier correspond, on récupère l'inode du lien symbolique
-        if (strcmp(rep_p->fichiers[i].nom, nom) == 0) {
-            inode_lien = rep_p->fichiers[i].inode_id;
-            break;
-        }
-    }
-
-    // Si le lien symbolique n'est pas trouvé dans le répertoire, afficher une erreur
-    if (inode_lien == -1) {
-        printf("Erreur : %s n'existe pas dans le répertoire %s.\n", nom, chemin_parent);
-        return;
-    }
-
-    // Récupérer l'inode du lien symbolique
-    Inode *inode_l = &fs->inodes[inode_lien];
-
-    // Vérifier si l'inode trouvé est bien un lien symbolique
-    if (inode_l->est_repertoire) {
-        printf("Erreur : %s n'est pas un lien symbolique.\n", chemin_lien);
-        return;
-    }
-
-    // Lire la cible du lien symbolique
-    LienSymbolique *lien = (LienSymbolique *)&fs->data[inode_l->blocs[0] * BLOCK_SIZE];
-    // Afficher la cible du lien symbolique
-    printf("Le lien symbolique %s pointe vers : %s\n", chemin_lien, lien->cible);
-}
 
 
 /**********************************************************************************************************************************************/
