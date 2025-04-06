@@ -1,0 +1,291 @@
+\chapter{🧾 Manuel d\textquotesingle{}utilisation — Système de fichiers virtuel}
+\hypertarget{md_manuel__systeme__fichiers__titres}{}\label{md_manuel__systeme__fichiers__titres}\index{🧾 Manuel d\textquotesingle{}utilisation — Système de fichiers virtuel@{🧾 Manuel d\textquotesingle{}utilisation — Système de fichiers virtuel}}
+\label{md_manuel__systeme__fichiers__titres_autotoc_md0}%
+\Hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md0}%
+ Ce manuel présente pas à pas les instructions nécessaires pour utiliser le système de fichiers virtuel, depuis la décompression jusqu’à la navigation, la manipulation de fichiers et la fermeture de l’environnement.
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md2}{}\doxysection{\texorpdfstring{🛠️ Prérequis et environnement nécessaire}{🛠️ Prérequis et environnement nécessaire}}\label{md_manuel__systeme__fichiers__titres_autotoc_md2}
+Avant d’installer et d’utiliser le système de fichiers virtuel, assurez-\/vous de disposer de \+:
+
+
+\begin{DoxyItemize}
+\item Un système d’exploitation Linux (ou compatible POSIX)
+\item Le compilateur {\ttfamily gcc} installé \texorpdfstring{$\ast$}{*}(optionnel)\texorpdfstring{$\ast$}{*}
+\item L’outil {\ttfamily make}
+\item L’archive {\ttfamily systeme\+\_\+fichier.\+tgz}
+\end{DoxyItemize}
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md4}{}\doxysection{\texorpdfstring{1. 📁 Se positionner dans le répertoire contenant l\textquotesingle{}archive}{1. 📁 Se positionner dans le répertoire contenant l'archive}}\label{md_manuel__systeme__fichiers__titres_autotoc_md4}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cd\ \string~/chemin/vers/dossier}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md6}{}\doxysection{\texorpdfstring{2. 📦 Décompression de l\textquotesingle{}archive $<$tt$>$.\+tgz$<$/tt$>$}{2. 📦 Décompression de l'archive <tt>.tgz</tt>}}\label{md_manuel__systeme__fichiers__titres_autotoc_md6}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{tar\ -\/xvzf\ systeme\_fichier.tgz}
+
+\end{DoxyCode}
+
+
+{\bfseries{Explication des options \+:}}
+
+
+\begin{DoxyItemize}
+\item {\ttfamily -\/x} \+: extraire les fichiers
+\item {\ttfamily -\/v} \+: mode verbeux (affiche les fichiers extraits)
+\item {\ttfamily -\/z} \+: gzip
+\item {\ttfamily -\/f} \+: suivre du nom de l’archive
+\end{DoxyItemize}
+
+{\bfseries{Résultat \+:}} un dossier {\ttfamily systeme\+\_\+fichier/} est créé avec les fichiers du projet.
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md8}{}\doxysection{\texorpdfstring{3. 📂 Accéder au dossier du projet}{3. 📂 Accéder au dossier du projet}}\label{md_manuel__systeme__fichiers__titres_autotoc_md8}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cd\ systeme\_fichier}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md10}{}\doxysection{\texorpdfstring{4. ⚙️ Compilation du projet}{4. ⚙️ Compilation du projet}}\label{md_manuel__systeme__fichiers__titres_autotoc_md10}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md11}{}\doxysubsection{\texorpdfstring{Avec $<$tt$>$\+Makefile$<$/tt$>$ \+:}{Avec <tt>Makefile</tt> :}}\label{md_manuel__systeme__fichiers__titres_autotoc_md11}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{make}
+
+\end{DoxyCode}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md12}{}\doxysubsection{\texorpdfstring{Avec $<$tt$>$gcc$<$/tt$>$ \+:}{Avec <tt>gcc</tt> :}}\label{md_manuel__systeme__fichiers__titres_autotoc_md12}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{gcc\ -\/o\ programme\ main.c\ Bib/Bib.c}
+
+\end{DoxyCode}
+
+
+{\bfseries{Résultat \+:}} un exécutable {\ttfamily programme} est généré.
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md14}{}\doxysection{\texorpdfstring{5. 🚀 Lancement du système de fichiers}{5. 🚀 Lancement du système de fichiers}}\label{md_manuel__systeme__fichiers__titres_autotoc_md14}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./programme}
+
+\end{DoxyCode}
+
+
+{\bfseries{Résultat \+:}} vous entrez dans l’environnement du système de fichiers virtuel.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{[root@myfs\ /]\$}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md16}{}\doxysection{\texorpdfstring{6. 📚 Liste des commandes disponibles}{6. 📚 Liste des commandes disponibles}}\label{md_manuel__systeme__fichiers__titres_autotoc_md16}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md17}{}\doxysubsection{\texorpdfstring{🔹 $<$tt$>$help$<$/tt$>$}{🔹 <tt>help</tt>}}\label{md_manuel__systeme__fichiers__titres_autotoc_md17}
+Affiche la liste des commandes disponibles.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{help}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md19}{}\doxysubsection{\texorpdfstring{🔹 $<$tt$>$ls \mbox{[}chemin\mbox{]}$<$/tt$>$}{🔹 <tt>ls [chemin]</tt>}}\label{md_manuel__systeme__fichiers__titres_autotoc_md19}
+Liste le contenu d’un répertoire.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ls}
+\DoxyCodeLine{ls\ /dossier1}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md21}{}\doxysubsection{\texorpdfstring{🔹 $<$tt$>$link nom\+\_\+lien$<$/tt$>$}{🔹 <tt>link nom\_lien</tt>}}\label{md_manuel__systeme__fichiers__titres_autotoc_md21}
+Afficher la cible du lien symbolique dont le chemin est nom\+\_\+lien
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ls\ -\/l\ /chemin/vers/lien}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md23}{}\doxysubsection{\texorpdfstring{🔹 $<$tt$>$mkdir chemin\+\_\+vers\+\_\+répertoire$<$/tt$>$}{🔹 <tt>mkdir chemin\_vers\_répertoire</tt>}}\label{md_manuel__systeme__fichiers__titres_autotoc_md23}
+Crée un répertoire.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{mkdir\ /rep1/new\_rep}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md25}{}\doxysubsection{\texorpdfstring{🔹 $<$tt$>$touch chemin\+\_\+vers\+\_\+fichier$<$/tt$>$}{🔹 <tt>touch chemin\_vers\_fichier</tt>}}\label{md_manuel__systeme__fichiers__titres_autotoc_md25}
+Crée un fichier vide.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{touch\ ./rep1/fichier.txt}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md27}{}\doxysubsection{\texorpdfstring{🔹 $<$tt$>$cd chemin\+\_\+vers\+\_\+répertoire$<$/tt$>$}{🔹 <tt>cd chemin\_vers\_répertoire</tt>}}\label{md_manuel__systeme__fichiers__titres_autotoc_md27}
+Change de répertoire.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cd\ ./rep1}
+\DoxyCodeLine{cd\ ..}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md29}{}\doxysubsection{\texorpdfstring{🔹 $<$tt$>$rm chemin\+\_\+vers\+\_\+fichier\+\_\+ou\+\_\+répertoire$<$/tt$>$}{🔹 <tt>rm chemin\_vers\_fichier\_ou\_répertoire</tt>}}\label{md_manuel__systeme__fichiers__titres_autotoc_md29}
+Supprime un fichier ou un répertoire.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{rm\ ./rep1}
+\DoxyCodeLine{rm\ /rep1/fichier.txt}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md31}{}\doxysubsection{\texorpdfstring{🔹 $<$tt$>$ln -\/s src dest$<$/tt$>$}{🔹 <tt>ln -s src dest</tt>}}\label{md_manuel__systeme__fichiers__titres_autotoc_md31}
+Crée un lien symbolique. src \+: fichier ou répertoire cible. dst \+: nom du lien.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ln\ -\/s\ /data/org.txt\ ./nom\_lien}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md33}{}\doxysubsection{\texorpdfstring{🔹 $<$tt$>$chmod mode chemin$<$/tt$>$}{🔹 <tt>chmod mode chemin</tt>}}\label{md_manuel__systeme__fichiers__titres_autotoc_md33}
+Modifie les permissions d’un fichier. mode \+: numérique (3 chiffres). chemin \+: chemin complet du fichier ou répertoire.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{chmod\ 755\ ./script.sh}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md35}{}\doxysubsection{\texorpdfstring{🔹 $<$tt$>$pwd$<$/tt$>$}{🔹 <tt>pwd</tt>}}\label{md_manuel__systeme__fichiers__titres_autotoc_md35}
+Affiche le chemin courant.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{pwd}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md37}{}\doxysubsection{\texorpdfstring{🔹 $<$tt$>$cp src dest$<$/tt$>$}{🔹 <tt>cp src dest</tt>}}\label{md_manuel__systeme__fichiers__titres_autotoc_md37}
+Copie un fichier ou un répertoire. src \+: fichier ou répertoire cible. dest \+: chemin complet du répertoire destination.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cp\ ./notes.txt\ ./copie.txt}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md39}{}\doxysubsection{\texorpdfstring{🔹 $<$tt$>$mv src dest$<$/tt$>$}{🔹 <tt>mv src dest</tt>}}\label{md_manuel__systeme__fichiers__titres_autotoc_md39}
+Déplace ou renomme un fichier. src \+: fichier ou répertoire cible dest \+: chemin complet du répertoire destination
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{mv\ ./notes.txt\ ./dossier/}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md41}{}\doxysubsection{\texorpdfstring{🔹 $<$tt$>$write chemin\+\_\+vers\+\_\+répertoire$<$/tt$>$}{🔹 <tt>write chemin\_vers\_répertoire</tt>}}\label{md_manuel__systeme__fichiers__titres_autotoc_md41}
+Ouvre un fichier en mode écriture.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{write\ ./journal.txt}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md43}{}\doxysubsection{\texorpdfstring{🔹 $<$tt$>$cat chemin\+\_\+vers\+\_\+répertoire$<$/tt$>$}{🔹 <tt>cat chemin\_vers\_répertoire</tt>}}\label{md_manuel__systeme__fichiers__titres_autotoc_md43}
+Affiche le contenu d’un fichier.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cat\ /home/utilisateur/journal.txt}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md45}{}\doxysubsection{\texorpdfstring{🔹 $<$tt$>$ln src dest$<$/tt$>$}{🔹 <tt>ln src dest</tt>}}\label{md_manuel__systeme__fichiers__titres_autotoc_md45}
+Crée un lien physique. src\+: chemin absolu vers le le répertoire source. dest\+: chemin absolu vers le lien physique.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ln\ /data/org.txt\ /data/nom\_lien}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md47}{}\doxysubsection{\texorpdfstring{🔹 $<$tt$>$exit$<$/tt$>$}{🔹 <tt>exit</tt>}}\label{md_manuel__systeme__fichiers__titres_autotoc_md47}
+Sauvegarde et quitte l’environnement virtuel.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{exit}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md49}{}\doxysection{\texorpdfstring{✍️ Utilisation de la commande $<$tt$>$write$<$/tt$>$}{✍️ Utilisation de la commande <tt>write</tt>}}\label{md_manuel__systeme__fichiers__titres_autotoc_md49}
+Une fois la commande {\ttfamily write} tapée dans le terminal virtuel, une interface d’écriture s’affiche.
+
+\begin{quote}
+Après avoir terminé, revenir à une nouvelle ligne, taper {\bfseries{CTRL+X}}, puis appuyer sur {\bfseries{Entrée}} pour valider la sortie et sauvegarder. \end{quote}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md50}{}\doxysection{\texorpdfstring{$<$/blockquote$>$}{</blockquote>}}\label{md_manuel__systeme__fichiers__titres_autotoc_md50}
+\hypertarget{md_manuel__systeme__fichiers__titres_autotoc_md51}{}\doxysection{\texorpdfstring{7. 💾 Fermeture et sauvegarde}{7. 💾 Fermeture et sauvegarde}}\label{md_manuel__systeme__fichiers__titres_autotoc_md51}
+Quand vous avez terminé votre session, tapez \+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{exit}
+
+\end{DoxyCode}
+
+
+Toutes les modifications sont enregistrées dans le fichier de partition avant la fermeture du programme. 

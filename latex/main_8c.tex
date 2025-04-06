@@ -1,0 +1,64 @@
+\doxysection{main.\+c File Reference}
+\hypertarget{main_8c}{}\label{main_8c}\index{main.c@{main.c}}
+
+
+Système de fichiers simulé -\/ Interface utilisateur en ligne de commande.  
+
+
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include $<$fcntl.\+h$>$}\newline
+{\ttfamily \#include "{}Bib/\+Bib.\+h"{}}\newline
+Include dependency graph for main.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=280pt]{main_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{main_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
+\begin{DoxyCompactList}\small\item\em Fonction principale de l\textquotesingle{}interface utilisateur. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Système de fichiers simulé -\/ Interface utilisateur en ligne de commande. 
+
+Ce fichier contient l\textquotesingle{}implémentation d\textquotesingle{}une interface utilisateur en ligne de commande permettant d\textquotesingle{}interagir avec un système de fichiers simulé. Les utilisateurs peuvent effectuer diverses opérations sur le système de fichiers, telles que l\textquotesingle{}affichage des fichiers, la création de répertoires, la manipulation des permissions, la gestion des fichiers et des liens, et bien plus encore.
+
+\begin{DoxyAuthor}{Author}
+Amine MOUAICI , Leticia ZAID , Samy Islem OULED-\/\+YOUNES 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+06/04/2025 
+\end{DoxyDate}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{main_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{main_8c_ae66f6b31b5ad750f1fe042a706a4e3d4} 
+\index{main.c@{main.c}!main@{main}}
+\index{main@{main}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Fonction principale de l\textquotesingle{}interface utilisateur. 
+
+La fonction {\ttfamily main} initialise le système de fichiers, charge ou crée une nouvelle partition, puis permet à l\textquotesingle{}utilisateur de saisir des commandes. Chaque commande est interprétée et exécutée en fonction des entrées de l\textquotesingle{}utilisateur. L\textquotesingle{}interface est de type ligne de commande (CLI), et l\textquotesingle{}utilisateur peut effectuer des actions telles que \+:
+\begin{DoxyItemize}
+\item Afficher le contenu d\textquotesingle{}un répertoire
+\item Créer un fichier ou un répertoire
+\item Changer de répertoire
+\item Supprimer des fichiers ou répertoires
+\item Créer des liens physiques et symboliques
+\item Modifier les permissions des fichiers
+\item Afficher le chemin actuel
+\item Copier et déplacer des fichiers
+\end{DoxyItemize}
+
+\begin{DoxyReturn}{Returns}
+int Retourne 0 à la fin de l\textquotesingle{}exécution. 
+\end{DoxyReturn}
