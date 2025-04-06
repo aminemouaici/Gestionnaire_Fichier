@@ -219,7 +219,6 @@ typedef struct {
  * - `lire_fichier` : Lit un fichier.
  * - `creer_lien_symbolique` : Crée un lien symbolique.
  * - `resoudre_lien_symbolique` : Résout un lien symbolique pour obtenir le chemin réel.
- * - `afficher_cible_lien_symbolique` : Affiche la cible d'un lien symbolique.
  * - `mv` : Déplace ou renomme un fichier ou un répertoire.
  * - `cp` : Copie un fichier ou un répertoire.
  * - `pwd` : Affiche le chemin du répertoire courant.
@@ -248,7 +247,6 @@ void ecrire_fichier(SystemeFichier *fs, const char *chemin);
 void lire_fichier(SystemeFichier *fs, const char *chemin);
 void creer_lien_symbolique(SystemeFichier *fs, const char *chemin, const char *cible);
 int resoudre_lien_symbolique(SystemeFichier *fs, const char *chemin);
-void afficher_cible_lien_symbolique(SystemeFichier *fs, const char *chemin_lien);
 int mv(SystemeFichier *fs, const char *source, const char *destination);
 int cp(SystemeFichier *fs, const char *source, const char *destination);
 void pwd(SystemeFichier *fs);

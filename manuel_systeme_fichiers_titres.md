@@ -12,7 +12,7 @@ Avant d’installer et d’utiliser le système de fichiers virtuel, assurez-vou
 - Un système d’exploitation Linux (ou compatible POSIX)
 - Le compilateur `gcc` installé *(optionnel)*
 - L’outil `make`
-- L’archive `systeme_fichier.tgz`
+- L’archive `MOUAICI-ZAID-OULD YOUNES.tgz`
 
 ---
 
@@ -27,7 +27,7 @@ cd ~/chemin/vers/dossier
 ## 2. 📦 Décompression de l'archive `.tgz`
 
 ```bash
-tar -xvzf systeme_fichier.tgz
+tar -xvzf MOUAICI-ZAID-OULD YOUNES.tgz
 ```
 
 **Explication des options :**
@@ -37,14 +37,14 @@ tar -xvzf systeme_fichier.tgz
 - `-z` : gzip
 - `-f` : suivre du nom de l’archive
 
-**Résultat :** un dossier `systeme_fichier/` est créé avec les fichiers du projet.
+**Résultat :** un dossier `MOUAICI-ZAID-OULD YOUNES/` est créé avec les fichiers du projet.
 
 ---
 
 ## 3. 📂 Accéder au dossier du projet
 
 ```bash
-cd systeme_fichier
+cd MOUAICI-ZAID-OULD YOUNES
 ```
 
 ---

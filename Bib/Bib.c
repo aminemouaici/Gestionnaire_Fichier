@@ -151,6 +151,7 @@
     // Marquage de l'inode racine comme utilisé dans le bitmap des inodes
     BIT_SET(fs->bitmap.inodes[0 / 8], 0 % 8);  // Marquer le premier inode comme utilisé
     fs->superbloc.inode_libres--;  // Décrémenter le nombre d'inodes libres
+    sauvegarder_systeme_fichier(fs);
 }
 
 
