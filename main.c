@@ -1,7 +1,7 @@
 /*
    - Amine MOUAICI: 33.33%
    - Leticia ZAID: 33.33%
-   - Samy Islem OULED-YOUNES 33.33%
+   - Samy Islam OULED-YOUNES 33.33%
 */
 
 /**
