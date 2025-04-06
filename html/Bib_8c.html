@@ -163,9 +163,6 @@ Functions</h2></td></tr>
 <tr class="memitem:a4546e2ca5bd43d03be5a3894a057ba99" id="r_a4546e2ca5bd43d03be5a3894a057ba99"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Bib_8c.html#a4546e2ca5bd43d03be5a3894a057ba99">resoudre_lien_symbolique</a> (<a class="el" href="structSystemeFichier.html">SystemeFichier</a> *fs, const char *chemin)</td></tr>
 <tr class="memdesc:a4546e2ca5bd43d03be5a3894a057ba99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Résout un lien symbolique et retourne son inode.  <br /></td></tr>
 <tr class="separator:a4546e2ca5bd43d03be5a3894a057ba99"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeaf3c239993d3358b9146426994483b1" id="r_aeaf3c239993d3358b9146426994483b1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Bib_8c.html#aeaf3c239993d3358b9146426994483b1">afficher_cible_lien_symbolique</a> (<a class="el" href="structSystemeFichier.html">SystemeFichier</a> *fs, const char *chemin_lien)</td></tr>
-<tr class="memdesc:aeaf3c239993d3358b9146426994483b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Affiche la cible d'un lien symbolique.  <br /></td></tr>
-<tr class="separator:aeaf3c239993d3358b9146426994483b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73b18a3381a0fb2b930471a21c9192e0" id="r_a73b18a3381a0fb2b930471a21c9192e0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Bib_8c.html#a73b18a3381a0fb2b930471a21c9192e0">mv</a> (<a class="el" href="structSystemeFichier.html">SystemeFichier</a> *fs, const char *source, const char *destination)</td></tr>
 <tr class="memdesc:a73b18a3381a0fb2b930471a21c9192e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Déplace un fichier ou un répertoire d'un emplacement source vers un emplacement de destination.  <br /></td></tr>
 <tr class="separator:a73b18a3381a0fb2b930471a21c9192e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -185,44 +182,6 @@ Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Code pour la gestion d'un système de fichiers avec allocation d'inodes et de blocs. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="aeaf3c239993d3358b9146426994483b1" name="aeaf3c239993d3358b9146426994483b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeaf3c239993d3358b9146426994483b1">&#9670;&#160;</a></span>afficher_cible_lien_symbolique()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void afficher_cible_lien_symbolique </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemeFichier.html">SystemeFichier</a> *&#160;</td>
-          <td class="paramname"><em>fs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>chemin_lien</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Affiche la cible d'un lien symbolique. </p>
-<p>Cette fonction affiche la cible d'un lien symbolique. Elle vérifie d'abord que le fichier spécifié est bien un lien symbolique avant d'afficher sa cible. Si le fichier n'est pas un lien symbolique, la fonction affiche un message d'erreur.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">fs</td><td>Le système de fichiers contenant le lien symbolique. </td></tr>
-    <tr><td class="paramname">chemin_lien</td><td>Le chemin du lien symbolique dont la cible doit être affichée. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a id="ab5c456787d26f596c8e8ddf8e05aaa8c" name="ab5c456787d26f596c8e8ddf8e05aaa8c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab5c456787d26f596c8e8ddf8e05aaa8c">&#9670;&#160;</a></span>afficher_ls_chemin()</h2>
 

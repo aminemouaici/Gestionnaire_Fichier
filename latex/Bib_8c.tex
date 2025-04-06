@@ -6,8 +6,7 @@ Code pour la gestion d\textquotesingle{}un système de fichiers avec allocation 
 
 
 {\ttfamily \#include "{}Bib.\+h"{}}\newline
-Include dependency graph for Bib.\+c\+:
-\nopagebreak
+Include dependency graph for Bib.\+c\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -57,8 +56,6 @@ void \mbox{\hyperlink{Bib_8c_a5374a1c668ff140bf59789f7a1259bda}{creer\+\_\+lien\
 \begin{DoxyCompactList}\small\item\em Crée un lien symbolique dans un système de fichiers. \end{DoxyCompactList}\item 
 int \mbox{\hyperlink{Bib_8c_a4546e2ca5bd43d03be5a3894a057ba99}{resoudre\+\_\+lien\+\_\+symbolique}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}chemin)
 \begin{DoxyCompactList}\small\item\em Résout un lien symbolique et retourne son inode. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{Bib_8c_aeaf3c239993d3358b9146426994483b1}{afficher\+\_\+cible\+\_\+lien\+\_\+symbolique}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}chemin\+\_\+lien)
-\begin{DoxyCompactList}\small\item\em Affiche la cible d\textquotesingle{}un lien symbolique. \end{DoxyCompactList}\item 
 int \mbox{\hyperlink{Bib_8c_a73b18a3381a0fb2b930471a21c9192e0}{mv}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}source, const char \texorpdfstring{$\ast$}{*}destination)
 \begin{DoxyCompactList}\small\item\em Déplace un fichier ou un répertoire d\textquotesingle{}un emplacement source vers un emplacement de destination. \end{DoxyCompactList}\item 
 int \mbox{\hyperlink{Bib_8c_acc5830e0eb4bca1e9868ac76b77466de}{cp}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}source, const char \texorpdfstring{$\ast$}{*}destination)
@@ -77,25 +74,6 @@ Code pour la gestion d\textquotesingle{}un système de fichiers avec allocation 
 
 
 \doxysubsection{Function Documentation}
-\Hypertarget{Bib_8c_aeaf3c239993d3358b9146426994483b1}\label{Bib_8c_aeaf3c239993d3358b9146426994483b1} 
-\index{Bib.c@{Bib.c}!afficher\_cible\_lien\_symbolique@{afficher\_cible\_lien\_symbolique}}
-\index{afficher\_cible\_lien\_symbolique@{afficher\_cible\_lien\_symbolique}!Bib.c@{Bib.c}}
-\doxysubsubsection{\texorpdfstring{afficher\_cible\_lien\_symbolique()}{afficher\_cible\_lien\_symbolique()}}
-{\footnotesize\ttfamily void afficher\+\_\+cible\+\_\+lien\+\_\+symbolique (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{chemin\+\_\+lien }\end{DoxyParamCaption})}
-
-
-
-Affiche la cible d\textquotesingle{}un lien symbolique. 
-
-Cette fonction affiche la cible d\textquotesingle{}un lien symbolique. Elle vérifie d\textquotesingle{}abord que le fichier spécifié est bien un lien symbolique avant d\textquotesingle{}afficher sa cible. Si le fichier n\textquotesingle{}est pas un lien symbolique, la fonction affiche un message d\textquotesingle{}erreur.
-
-
-\begin{DoxyParams}{Parameters}
-{\em fs} & Le système de fichiers contenant le lien symbolique. \\
-\hline
-{\em chemin\+\_\+lien} & Le chemin du lien symbolique dont la cible doit être affichée. \\
-\hline
-\end{DoxyParams}
 \Hypertarget{Bib_8c_ab5c456787d26f596c8e8ddf8e05aaa8c}\label{Bib_8c_ab5c456787d26f596c8e8ddf8e05aaa8c} 
 \index{Bib.c@{Bib.c}!afficher\_ls\_chemin@{afficher\_ls\_chemin}}
 \index{afficher\_ls\_chemin@{afficher\_ls\_chemin}!Bib.c@{Bib.c}}

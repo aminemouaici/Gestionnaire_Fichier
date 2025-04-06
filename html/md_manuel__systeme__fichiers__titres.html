@@ -81,7 +81,7 @@ $(function() {
 <li>Un système d’exploitation Linux (ou compatible POSIX)</li>
 <li>Le compilateur <code>gcc</code> installé *(optionnel)*</li>
 <li>L’outil <code>make</code></li>
-<li>L’archive <code>systeme_fichier.tgz</code></li>
+<li>L’archive <code>MOUAICI-ZAID-OULD YOUNES.tgz</code></li>
 </ul>
 <hr  />
 <h1><a class="anchor" id="autotoc_md4"></a>
@@ -90,7 +90,7 @@ $(function() {
 </div><!-- fragment --><hr  />
 <h1><a class="anchor" id="autotoc_md6"></a>
 2. 📦 Décompression de l'archive &lt;tt&gt;.tgz&lt;/tt&gt;</h1>
-<div class="fragment"><div class="line">tar -xvzf systeme_fichier.tgz</div>
+<div class="fragment"><div class="line">tar -xvzf MOUAICI-ZAID-OULD YOUNES.tgz</div>
 </div><!-- fragment --><p><b>Explication des options :</b></p>
 <ul>
 <li><code>-x</code> : extraire les fichiers</li>
@@ -98,11 +98,11 @@ $(function() {
 <li><code>-z</code> : gzip</li>
 <li><code>-f</code> : suivre du nom de l’archive</li>
 </ul>
-<p><b>Résultat :</b> un dossier <code>systeme_fichier/</code> est créé avec les fichiers du projet.</p>
+<p><b>Résultat :</b> un dossier <code>MOUAICI-ZAID-OULD YOUNES/</code> est créé avec les fichiers du projet.</p>
 <hr  />
 <h1><a class="anchor" id="autotoc_md8"></a>
 3. 📂 Accéder au dossier du projet</h1>
-<div class="fragment"><div class="line">cd systeme_fichier</div>
+<div class="fragment"><div class="line">cd MOUAICI-ZAID-OULD YOUNES</div>
 </div><!-- fragment --><hr  />
 <h1><a class="anchor" id="autotoc_md10"></a>
 4. ⚙️ Compilation du projet</h1>
@@ -134,86 +134,81 @@ Avec &lt;tt&gt;gcc&lt;/tt&gt; :</h2>
 <div class="line">ls /dossier1</div>
 </div><!-- fragment --><hr  />
 <h2><a class="anchor" id="autotoc_md21"></a>
-🔹 &lt;tt&gt;link nom_lien&lt;/tt&gt;</h2>
-<p>Afficher la cible du lien symbolique dont le chemin est nom_lien</p>
-<div class="fragment"><div class="line">ls -l /chemin/vers/lien</div>
-</div><!-- fragment --><hr  />
-<h2><a class="anchor" id="autotoc_md23"></a>
 🔹 &lt;tt&gt;mkdir chemin_vers_répertoire&lt;/tt&gt;</h2>
 <p>Crée un répertoire.</p>
 <div class="fragment"><div class="line">mkdir /rep1/new_rep</div>
 </div><!-- fragment --><hr  />
-<h2><a class="anchor" id="autotoc_md25"></a>
+<h2><a class="anchor" id="autotoc_md23"></a>
 🔹 &lt;tt&gt;touch chemin_vers_fichier&lt;/tt&gt;</h2>
 <p>Crée un fichier vide.</p>
 <div class="fragment"><div class="line">touch ./rep1/fichier.txt</div>
 </div><!-- fragment --><hr  />
-<h2><a class="anchor" id="autotoc_md27"></a>
+<h2><a class="anchor" id="autotoc_md25"></a>
 🔹 &lt;tt&gt;cd chemin_vers_répertoire&lt;/tt&gt;</h2>
 <p>Change de répertoire.</p>
 <div class="fragment"><div class="line">cd ./rep1</div>
 <div class="line">cd ..</div>
 </div><!-- fragment --><hr  />
-<h2><a class="anchor" id="autotoc_md29"></a>
+<h2><a class="anchor" id="autotoc_md27"></a>
 🔹 &lt;tt&gt;rm chemin_vers_fichier_ou_répertoire&lt;/tt&gt;</h2>
 <p>Supprime un fichier ou un répertoire.</p>
 <div class="fragment"><div class="line">rm ./rep1</div>
 <div class="line">rm /rep1/fichier.txt</div>
 </div><!-- fragment --><hr  />
-<h2><a class="anchor" id="autotoc_md31"></a>
+<h2><a class="anchor" id="autotoc_md29"></a>
 🔹 &lt;tt&gt;ln -s src dest&lt;/tt&gt;</h2>
 <p>Crée un lien symbolique. src : fichier ou répertoire cible. dst : nom du lien.</p>
 <div class="fragment"><div class="line">ln -s /data/org.txt ./nom_lien</div>
 </div><!-- fragment --><hr  />
-<h2><a class="anchor" id="autotoc_md33"></a>
+<h2><a class="anchor" id="autotoc_md31"></a>
 🔹 &lt;tt&gt;chmod mode chemin&lt;/tt&gt;</h2>
 <p>Modifie les permissions d’un fichier. mode : numérique (3 chiffres). chemin : chemin complet du fichier ou répertoire.</p>
 <div class="fragment"><div class="line">chmod 755 ./script.sh</div>
 </div><!-- fragment --><hr  />
-<h2><a class="anchor" id="autotoc_md35"></a>
+<h2><a class="anchor" id="autotoc_md33"></a>
 🔹 &lt;tt&gt;pwd&lt;/tt&gt;</h2>
 <p>Affiche le chemin courant.</p>
 <div class="fragment"><div class="line">pwd</div>
 </div><!-- fragment --><hr  />
-<h2><a class="anchor" id="autotoc_md37"></a>
+<h2><a class="anchor" id="autotoc_md35"></a>
 🔹 &lt;tt&gt;cp src dest&lt;/tt&gt;</h2>
 <p>Copie un fichier ou un répertoire. src : fichier ou répertoire cible. dest : chemin complet du répertoire destination.</p>
 <div class="fragment"><div class="line">cp ./notes.txt ./copie.txt</div>
 </div><!-- fragment --><hr  />
-<h2><a class="anchor" id="autotoc_md39"></a>
+<h2><a class="anchor" id="autotoc_md37"></a>
 🔹 &lt;tt&gt;mv src dest&lt;/tt&gt;</h2>
 <p>Déplace ou renomme un fichier. src : fichier ou répertoire cible dest : chemin complet du répertoire destination</p>
 <div class="fragment"><div class="line">mv ./notes.txt ./dossier/</div>
 </div><!-- fragment --><hr  />
-<h2><a class="anchor" id="autotoc_md41"></a>
+<h2><a class="anchor" id="autotoc_md39"></a>
 🔹 &lt;tt&gt;write chemin_vers_répertoire&lt;/tt&gt;</h2>
 <p>Ouvre un fichier en mode écriture.</p>
 <div class="fragment"><div class="line">write ./journal.txt</div>
 </div><!-- fragment --><hr  />
-<h2><a class="anchor" id="autotoc_md43"></a>
+<h2><a class="anchor" id="autotoc_md41"></a>
 🔹 &lt;tt&gt;cat chemin_vers_répertoire&lt;/tt&gt;</h2>
 <p>Affiche le contenu d’un fichier.</p>
 <div class="fragment"><div class="line">cat /home/utilisateur/journal.txt</div>
 </div><!-- fragment --><hr  />
-<h2><a class="anchor" id="autotoc_md45"></a>
+<h2><a class="anchor" id="autotoc_md43"></a>
 🔹 &lt;tt&gt;ln src dest&lt;/tt&gt;</h2>
 <p>Crée un lien physique. src: chemin absolu vers le le répertoire source. dest: chemin absolu vers le lien physique.</p>
 <div class="fragment"><div class="line">ln /data/org.txt /data/nom_lien</div>
 </div><!-- fragment --><hr  />
-<h2><a class="anchor" id="autotoc_md47"></a>
+<h2><a class="anchor" id="autotoc_md45"></a>
 🔹 &lt;tt&gt;exit&lt;/tt&gt;</h2>
 <p>Sauvegarde et quitte l’environnement virtuel.</p>
 <div class="fragment"><div class="line">exit</div>
 </div><!-- fragment --><hr  />
-<h1><a class="anchor" id="autotoc_md49"></a>
+<h1><a class="anchor" id="autotoc_md47"></a>
 ✍️ Utilisation de la commande &lt;tt&gt;write&lt;/tt&gt;</h1>
 <p>Une fois la commande <code>write</code> tapée dans le terminal virtuel, une interface d’écriture s’affiche.</p>
 <blockquote class="doxtable">
 <p>&zwj;Après avoir terminé, revenir à une nouvelle ligne, taper <b>CTRL+X</b>, puis appuyer sur <b>Entrée</b> pour valider la sortie et sauvegarder. </p>
 </blockquote>
-<h1><a class="anchor" id="autotoc_md50"></a>
+<h1><a class="anchor" id="autotoc_md48"></a>
 &lt;/blockquote&gt;</h1>
-<h1><a class="anchor" id="autotoc_md51"></a>
+<h1><a class="anchor" id="autotoc_md49"></a>
 7. 💾 Fermeture et sauvegarde</h1>
 <p>Quand vous avez terminé votre session, tapez :</p>
 <div class="fragment"><div class="line">exit</div>
