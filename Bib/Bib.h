@@ -140,9 +140,9 @@ typedef struct {
  */
  typedef struct {
     int id;                          // Identifiant unique de l'inode (permet de l’identifier dans la table des inodes)
-    int taille;                      // Taille du fichier (en octets), ou nombre d’entrées s’il s’agit d’un répertoire
+    int taille;                      // Taille du fichier ou répertoire (en octets) 
     int est_repertoire;             // Booléen : 1 si c’est un répertoire, 0 si c’est un fichier classique
-    int permissions;                // Permissions d’accès (lecture, écriture, exécution) codées en binaire (type UNIX)
+    int permissions;                // Permissions d’accès (lecture, écriture, exécution) codées sur 3 chiffre (755)
     int liens;                      // Nombre de liens physiques (hard links) pointant vers cet inode
     int est_lien;                   // Booléen : 1 si c’est un lien symbolique, 0 sinon
     int blocs[NUM_DIRECT_BLOCKS];   // Tableau de blocs de données directs (stockage direct des données du fichier)
@@ -157,45 +157,39 @@ typedef struct {
  * @struct Repertoire
  * @brief Structure représentant un répertoire dans le système de fichiers.
  */
-typedef struct {
-    int inode_id;
+ typedef struct {
+    int inode_id;  // ID de l'inode associé à ce répertoire (lui-même représenté dans la table des inodes)
+
     struct {
-        char nom[NAME_SIZE];
-        int inode_id;
-    } fichiers[MAX_FILES];
-    int nb_fichiers;
+        char nom[NAME_SIZE];  // Nom du fichier ou sous-répertoire (limité à NAME_SIZE caractères)
+        int inode_id;         // ID de l’inode pointant vers le fichier ou répertoire réel
+    } fichiers[MAX_FILES];    // Tableau contenant jusqu’à MAX_FILES fichiers ou sous-répertoires
+
+    int nb_fichiers;  // Nombre actuel d’entrées (fichiers ou sous-répertoires) dans le répertoire
 } Repertoire;
 
-/** 
- * @struct FichierOuvert
- * @brief Structure représentant un fichier ouvert.
- */
-typedef struct {
-    int inode_id;
-    int offset;
-    int mode;
-} FichierOuvert;
+
 
 /** 
  * @struct LienSymbolique
  * @brief Structure représentant un lien symbolique dans le système de fichiers.
  */
-typedef struct {
-    int inode_id;
-    char cible[MAX_PATH_LENGTH];
+ typedef struct {
+    int inode_id;                          // ID de l’inode du lien symbolique lui-même
+    char cible[MAX_PATH_LENGTH];          // Chemin absolu ou relatif vers la cible du lien
 } LienSymbolique;
 
 /** 
  * @struct SystemeFichier
  * @brief Structure représentant le système de fichiers complet.
  */
-typedef struct {
-    Superbloc superbloc;
-    Bitmap bitmap;
-    Inode inodes[MAX_INODES];
-    Repertoire racine;
-    char data[PARTITION_SIZE];  // Zone de stockage des blocs de données
-    int repertoire_courant; // Inode du répertoire courant
+ typedef struct {
+    Superbloc superbloc;                // Structure contenant les métadonnées globales du système de fichiers (taille, nombre de blocs, etc.)
+    Bitmap bitmap;                      // Structure représentant la carte des blocs libres/occupés (bitmap pour la gestion de l’espace disque)
+    Inode inodes[MAX_INODES];           // Tableau contenant tous les inodes du système (chaque inode représente un fichier ou un répertoire)
+    Repertoire racine;                  // Répertoire racine du système de fichiers, point d’entrée principal
+    char data[PARTITION_SIZE];          // Zone de données contenant les blocs où sont stockés les fichiers et répertoires (simulation de l’espace disque)
+    int repertoire_courant;             // Inode du répertoire courant (utilisé pour suivre le dossier actif lors de la navigation)
 } SystemeFichier;
 
 
@@ -230,6 +224,7 @@ typedef struct {
  * - `cp` : Copie un fichier ou un répertoire.
  * - `pwd` : Affiche le chemin du répertoire courant.
  * - `creer_lien_hard` : Crée un lien dur entre deux fichiers.
+ * - `est_repertoire_par_chemin` : Indiquez si le chemin represente un répertoire ou non 
  * 
  * @note Les fonctions ci-dessus sont implémentées dans le fichier `bib.c` et manipulées tout au long du projet pour gérer le système de fichiers.
  */
@@ -258,6 +253,6 @@ int mv(SystemeFichier *fs, const char *source, const char *destination);
 int cp(SystemeFichier *fs, const char *source, const char *destination);
 void pwd(SystemeFichier *fs);
 int creer_lien_hard(SystemeFichier *fs, const char *chemin_source, const char *chemin_cible) ;
-//int lseek_file(SystemeFichier *fs, int descripteur, int offset);
+int est_repertoire_par_chemin(SystemeFichier *fs, const char *chemin);
 
 #endif // BIB_H_INCLUDED

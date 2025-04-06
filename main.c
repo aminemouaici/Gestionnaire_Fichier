@@ -4,8 +4,8 @@
  *
  * Ce fichier contient l'implémentation d'une interface utilisateur en ligne de commande permettant d'interagir avec un système de fichiers simulé. Les utilisateurs peuvent effectuer diverses opérations sur le système de fichiers, telles que l'affichage des fichiers, la création de répertoires, la manipulation des permissions, la gestion des fichiers et des liens, et bien plus encore.
  *
- * @author [Votre Nom]
- * @date [Date]
+ * @author Amine MOUAICI , Leticia ZAID  , Samy Islem OULED-YOUNES
+ * @date 06/04/2025
  */
 
 
@@ -67,20 +67,21 @@ int main() {
         }
         else if (strcmp(command, "help") == 0) {
             printf("Commandes disponibles:\n");
-            printf("  help          - Affiche cette aide\n");
-            printf("  ls            - Liste le contenu du répertoire courant\n");
-            printf("  mkdir nom     - Crée un répertoire\n");
-            printf("  touch nom     - Crée un fichier vide\n");
-            printf("  cd nom        - Change de répertoire\n");
-            printf("  rm nom        - Supprime un fichier ou répertoire\n");
-            printf("  ln -s src dst - Crée un lien symbolique\n");
-            printf("  ln  src dst - Crée un lien physique\n");
-            printf("  chmod mode nom- Change les permissions d'un fichier (mode en octal)\n");
-            printf("  pwd           - Affiche le chemin courant\n");
-            printf("  cp src dst    - Copie un fichier\n");
-            printf("  mv src dst    - Déplace un fichier (supporte les chemins relatifs et absolus)\n");
-            printf("  write cible nom_lien          - Création d'un lien symbolique\n");
-            printf("  exit          - Quitte le programme\n");
+            printf("  help                 - Affiche cette aide\n");
+            printf("  ls                   - Liste le contenu du répertoire courant\n");
+            printf("  mkdir nom            - Crée un répertoire\n");
+            printf("  touch nom            - Crée un fichier vide\n");
+            printf("  cd nom               - Change de répertoire\n");
+            printf("  rm nom               - Supprime un fichier ou répertoire\n");
+            printf("  ln -s src dst        - Crée un lien symbolique\n");
+            printf("  ln  src dst          - Crée un lien physique\n");
+            printf("  link  lien           - Affiche la cible du lien symbolique  \n");
+            printf("  chmod mode nom       - Change les permissions d'un fichier (mode en octal)\n");
+            printf("  pwd                  - Affiche le chemin courant\n");
+            printf("  cp src dst           - Copie un fichier\n");
+            printf("  mv src dst           - Déplace un fichier (supporte les chemins relatifs et absolus)\n");
+            printf("  write nom_fichier    - Création d'un lien symbolique\n");
+            printf("  exit                 - Quitte le programme\n");
         }
         else if (strncmp(command, "ls", 2) == 0) {
             
@@ -134,6 +135,16 @@ int main() {
             }
 
         }
+        else if (strncmp(command, "link", 4) == 0) {
+            if (command[4] == ' ') {                        // Vérifie qu'il y a bien un espace après "cd"
+                sscanf(command + 5, "%s", param1);           //récuperation du paramétre
+                afficher_cible_lien_symbolique(&fs,param1);  //execution de la commande ls -l
+                memset(param1, 0, sizeof(param1));      //réanitialiser le parametre
+            } else {
+                printf("Erreur : Syntaxe incorrect.\n");
+            }
+
+        }
         else if (strncmp(command, "ln -s", 5) == 0) {
             if (command[5] == ' ') {  // Vérifie qu'il y a bien un espace après "cp"
                 if (sscanf(command + 6, "%s %s", param1, param2) == 2) {  // Lire les deux paramètres
@@ -158,28 +169,16 @@ int main() {
                 printf("Erreur : Syntaxe incorrecte.\n");
             }
         }
-        /*else if (strncmp(command, "lseek", 5) == 0) {
-            if (command[5] == ' ') {  // Vérifie qu'il y a bien un espace après "ln"
-                if (sscanf(command + 6, "%s %s", param1, param2) == 2) {  // Lire les deux paramètres
-                    // Appel de la fonction lseek avec les paramètres extraits
-                    int descripteur = open_file(&fs, param1, MODE_WRITE);
-                    int offset = atoi(param2);   //generer un entier à partir d'une chaine de caractére
-                    int nouveau_offset = lseek_file(&fs, descripteur,offset);
-                    if (nouveau_offset != -1)
-                    {
-                        printf("Nouveau offset : %d\n", nouveau_offset);
-                    }
-                } else {
-                    printf("Erreur : Syntaxe incorrecte.\n");
-                }
-            } else {
-                printf("Erreur : Syntaxe incorrecte.\n");
-            }
-        }*/
         else if (strncmp(command, "rm", 2) == 0) {
             if (command[2] == ' ') {  // Vérifie qu'il y a bien un espace après "mkdir"
                 sscanf(command + 3, "%s", param1);  //récuperation du paramétre
-                supprimer_fichier(&fs,param1);     //execution de la commande rm
+                int est_repertoire= est_repertoire_par_chemin(&fs,param1);
+                if(est_repertoire==1){
+                    supprimer_repertoire(&fs,param1);   //execution de la commande rm pour un répertoire
+                }else{
+                    supprimer_fichier(&fs,param1);     //execution de la commande rm pour un fichier
+                }
+               
                 memset(param1, 0, sizeof(param1)); //réanitialiser le parametre
             } else {
                 printf("Erreur : Syntaxe incorrect.\n");

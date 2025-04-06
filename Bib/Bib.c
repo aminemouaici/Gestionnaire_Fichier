@@ -1803,3 +1803,39 @@ void close_file(SystemeFichier *fs, int descripteur)
     return 0;
 }
 
+/****************************************************************************************************************************** */
+
+
+/**
+ * @brief Vérifie si l'inode, représenté par son chemin, est un répertoire.
+ * 
+ * Cette fonction prend en entrée un chemin de fichier ou de répertoire, cherche l'inode correspondant
+ * dans le système de fichiers, et vérifie si cet inode est un répertoire.
+ * 
+ * Si l'inode existe et est un répertoire, la fonction retourne 1. Sinon, elle retourne 0.
+ * 
+ * @param fs Le système de fichiers sur lequel l'opération est effectuée.
+ * @param chemin Le chemin du fichier ou répertoire à vérifier. Il s'agit du chemin absolu ou relatif à partir de la racine.
+ * 
+ * @return 1 si l'inode est un répertoire, 0 sinon.
+ * 
+ * @note Cette fonction dépend de la présence d'une fonction externe `trouver_inode_par_chemin` pour 
+ * localiser l'inode à partir du chemin fourni.
+ */
+
+int est_repertoire_par_chemin(SystemeFichier *fs, const char *chemin) {
+    // Trouver l'inode correspondant au chemin
+    int inode_id = trouver_inode_par_chemin(fs, chemin);
+    if (inode_id == -1) {
+        // Si l'inode n'existe pas, retourner 0
+        return 0;
+    }
+
+    // Vérifier si l'inode trouvé est un répertoire
+    if (fs->inodes[inode_id].est_repertoire) {
+        return 1;  // C'est un répertoire
+    } else {
+        return 0;  // Ce n'est pas un répertoire
+    }
+}
+
