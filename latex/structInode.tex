@@ -1,0 +1,55 @@
+\doxysection{Inode Struct Reference}
+\hypertarget{structInode}{}\label{structInode}\index{Inode@{Inode}}
+
+
+Structure représentant un inode dans le système de fichiers.  
+
+
+
+
+{\ttfamily \#include $<$Bib.\+h$>$}
+
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structInode_a7d95495e5b2c9ef43d05b187783557f0}\label{structInode_a7d95495e5b2c9ef43d05b187783557f0} 
+int {\bfseries id}
+\item 
+\Hypertarget{structInode_aebbc02e4d2ad42c9ed76f5d701d771f4}\label{structInode_aebbc02e4d2ad42c9ed76f5d701d771f4} 
+int {\bfseries taille}
+\item 
+\Hypertarget{structInode_a6153241ea63032efdf3c83ef8b247296}\label{structInode_a6153241ea63032efdf3c83ef8b247296} 
+int {\bfseries est\+\_\+repertoire}
+\item 
+\Hypertarget{structInode_aa26bf7000bbf2816f02288ccfe9006d5}\label{structInode_aa26bf7000bbf2816f02288ccfe9006d5} 
+int {\bfseries permissions}
+\item 
+\Hypertarget{structInode_adbf43380a34993e3573239d89fb8cdc3}\label{structInode_adbf43380a34993e3573239d89fb8cdc3} 
+int {\bfseries liens}
+\item 
+\Hypertarget{structInode_a902c1a725c1fdd8be09d2989f29f71c6}\label{structInode_a902c1a725c1fdd8be09d2989f29f71c6} 
+int {\bfseries est\+\_\+lien}
+\item 
+\Hypertarget{structInode_acd0c1bed30413b9a1b464a87917f6f2f}\label{structInode_acd0c1bed30413b9a1b464a87917f6f2f} 
+int {\bfseries blocs} \mbox{[}NUM\+\_\+\+DIRECT\+\_\+\+BLOCKS\mbox{]}
+\item 
+\Hypertarget{structInode_aab0f39bba3ffabaa413494b82da266e3}\label{structInode_aab0f39bba3ffabaa413494b82da266e3} 
+int {\bfseries indirect\+\_\+block}
+\item 
+\Hypertarget{structInode_a99ce755b3fc23510104f9f5869ca82e6}\label{structInode_a99ce755b3fc23510104f9f5869ca82e6} 
+int {\bfseries inode\+\_\+pere}
+\item 
+\Hypertarget{structInode_ac148ac50c5d184e97e4a1417f88b45dd}\label{structInode_ac148ac50c5d184e97e4a1417f88b45dd} 
+time\+\_\+t {\bfseries date\+\_\+creation}
+\item 
+\Hypertarget{structInode_a38b5ce9fe51c8a889948681f80ac6f9c}\label{structInode_a38b5ce9fe51c8a889948681f80ac6f9c} 
+time\+\_\+t {\bfseries date\+\_\+modification}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Structure représentant un inode dans le système de fichiers. 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Bib/Bib.\+h\end{DoxyCompactItemize}

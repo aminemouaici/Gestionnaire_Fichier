@@ -1,0 +1,645 @@
+\doxysection{Bib/\+Bib.c File Reference}
+\hypertarget{Bib_8c}{}\label{Bib_8c}\index{Bib/Bib.c@{Bib/Bib.c}}
+
+
+Code pour la gestion d\textquotesingle{}un système de fichiers avec allocation d\textquotesingle{}inodes et de blocs.  
+
+
+{\ttfamily \#include "{}Bib.\+h"{}}\newline
+Include dependency graph for Bib.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{Bib_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{Bib_8c_a38e79e8010672fa029b1102a215bb6a7}{allouer\+\_\+inode}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs)
+\begin{DoxyCompactList}\small\item\em Alloue un inode dans le système de fichiers. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{Bib_8c_ab0d825342274442d4db6fc1f6e1c9acf}{allouer\+\_\+bloc}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs)
+\begin{DoxyCompactList}\small\item\em Alloue un bloc dans le système de fichiers. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{Bib_8c_a2ed4f0ce08043dd1ccc07df0507b6d1e}{initialiser\+\_\+systeme\+\_\+fichier}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs)
+\begin{DoxyCompactList}\small\item\em Initialise le système de fichiers. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{Bib_8c_a5012aed05a4bfa90d127a9471f4fe743}{sauvegarder\+\_\+systeme\+\_\+fichier}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs)
+\begin{DoxyCompactList}\small\item\em Sauvegarde le système de fichiers dans un fichier. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{Bib_8c_a25af3052c2c236a2e3abfe7cc14bf808}{charger\+\_\+systeme\+\_\+fichier}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs)
+\begin{DoxyCompactList}\small\item\em Charge le système de fichiers depuis un fichier. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{Bib_8c_abe688d5f957e8214df3260cdd79e573a}{trouver\+\_\+inode\+\_\+par\+\_\+chemin}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}chemin)
+\item 
+void \mbox{\hyperlink{Bib_8c_aa9b88feb35eda0e02a072b8cfd7b1cce}{create\+\_\+file\+\_\+rep}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}chemin, int est\+\_\+repertoire)
+\item 
+int \mbox{\hyperlink{Bib_8c_acd374d9c45f083550aa40fc5fdd79808}{trouver\+\_\+inode\+\_\+par\+\_\+chemin\+Cd}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}chemin)
+\begin{DoxyCompactList}\small\item\em Trouve l\textquotesingle{}inode correspondant à un chemin pour la commande "{}cd"{}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{Bib_8c_aaa02395d5b46071d2504cea138fe17b8}{cd}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}chemin)
+\begin{DoxyCompactList}\small\item\em Change le répertoire courant du système de fichiers. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{Bib_8c_a5af7424da4c3a69cf1f298d1c72b1df8}{droit}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}chemin, const char \texorpdfstring{$\ast$}{*}droits)
+\begin{DoxyCompactList}\small\item\em Modifie les droits d\textquotesingle{}un fichier ou d\textquotesingle{}un répertoire. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{Bib_8c_ab5c456787d26f596c8e8ddf8e05aaa8c}{afficher\+\_\+ls\+\_\+chemin}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}chemin)
+\begin{DoxyCompactList}\small\item\em Affiche le contenu d\textquotesingle{}un répertoire spécifié par un chemin. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{Bib_8c_aabf7189761a3b6218a5b61bda0bbe483}{supprimer\+\_\+fichier}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}chemin)
+\begin{DoxyCompactList}\small\item\em Supprime un fichier du système de fichiers. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{Bib_8c_a4b69113b83c8439542d9bd7735e10e1b}{supprimer\+\_\+repertoire}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}chemin)
+\begin{DoxyCompactList}\small\item\em Supprime un répertoire du système de fichiers. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{Bib_8c_a89077d98d74da6a610c8369718b1f6ca}{verifier\+\_\+permissions}} (\mbox{\hyperlink{structInode}{Inode}} \texorpdfstring{$\ast$}{*}inode, int mode)
+\begin{DoxyCompactList}\small\item\em Vérifie si un inode a les permissions spécifiées. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{Bib_8c_aee3ff908c0fb9e4fc88dc11dff55c269}{open\+\_\+file}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}chemin, int mode)
+\begin{DoxyCompactList}\small\item\em Ouvre un fichier en fonction du chemin et du mode. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{Bib_8c_a65687d9a4ca77f43973e5ff731999c2d}{close\+\_\+file}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, int descripteur)
+\begin{DoxyCompactList}\small\item\em Ferme un fichier. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{Bib_8c_afcf889d4bb9845e129543a40f0411e18}{ecrire\+\_\+fichier}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}chemin)
+\begin{DoxyCompactList}\small\item\em Écrit dans un fichier. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{Bib_8c_a102ea6ce784d542b355894b9fdb6a890}{lire\+\_\+fichier}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}chemin)
+\begin{DoxyCompactList}\small\item\em Lit le contenu d\textquotesingle{}un fichier. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{Bib_8c_a5374a1c668ff140bf59789f7a1259bda}{creer\+\_\+lien\+\_\+symbolique}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}chemin, const char \texorpdfstring{$\ast$}{*}cible)
+\begin{DoxyCompactList}\small\item\em Crée un lien symbolique dans un système de fichiers. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{Bib_8c_a4546e2ca5bd43d03be5a3894a057ba99}{resoudre\+\_\+lien\+\_\+symbolique}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}chemin)
+\begin{DoxyCompactList}\small\item\em Résout un lien symbolique et retourne son inode. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{Bib_8c_aeaf3c239993d3358b9146426994483b1}{afficher\+\_\+cible\+\_\+lien\+\_\+symbolique}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}chemin\+\_\+lien)
+\begin{DoxyCompactList}\small\item\em Affiche la cible d\textquotesingle{}un lien symbolique. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{Bib_8c_a73b18a3381a0fb2b930471a21c9192e0}{mv}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}source, const char \texorpdfstring{$\ast$}{*}destination)
+\begin{DoxyCompactList}\small\item\em Déplace un fichier ou un répertoire d\textquotesingle{}un emplacement source vers un emplacement de destination. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{Bib_8c_acc5830e0eb4bca1e9868ac76b77466de}{cp}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}source, const char \texorpdfstring{$\ast$}{*}destination)
+\begin{DoxyCompactList}\small\item\em Copie un fichier ou un répertoire d\textquotesingle{}un emplacement source vers un emplacement de destination. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{Bib_8c_a0f2a66eea0b8afd53b12588e45d20ccd}{pwd}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs)
+\begin{DoxyCompactList}\small\item\em Affiche le chemin absolu du répertoire courant. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{Bib_8c_accfa8a1bf78e2a0ce07ab37b20ff6600}{creer\+\_\+lien\+\_\+hard}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}chemin\+\_\+source, const char \texorpdfstring{$\ast$}{*}chemin\+\_\+cible)
+\begin{DoxyCompactList}\small\item\em Crée un lien dur vers un fichier existant dans un répertoire cible. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{Bib_8c_a6c35d51eade90689ef9596cc6a8e7896}{est\+\_\+repertoire\+\_\+par\+\_\+chemin}} (\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}fs, const char \texorpdfstring{$\ast$}{*}chemin)
+\begin{DoxyCompactList}\small\item\em Vérifie si l\textquotesingle{}inode, représenté par son chemin, est un répertoire. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Code pour la gestion d\textquotesingle{}un système de fichiers avec allocation d\textquotesingle{}inodes et de blocs. 
+
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{Bib_8c_aeaf3c239993d3358b9146426994483b1}\label{Bib_8c_aeaf3c239993d3358b9146426994483b1} 
+\index{Bib.c@{Bib.c}!afficher\_cible\_lien\_symbolique@{afficher\_cible\_lien\_symbolique}}
+\index{afficher\_cible\_lien\_symbolique@{afficher\_cible\_lien\_symbolique}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{afficher\_cible\_lien\_symbolique()}{afficher\_cible\_lien\_symbolique()}}
+{\footnotesize\ttfamily void afficher\+\_\+cible\+\_\+lien\+\_\+symbolique (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{chemin\+\_\+lien }\end{DoxyParamCaption})}
+
+
+
+Affiche la cible d\textquotesingle{}un lien symbolique. 
+
+Cette fonction affiche la cible d\textquotesingle{}un lien symbolique. Elle vérifie d\textquotesingle{}abord que le fichier spécifié est bien un lien symbolique avant d\textquotesingle{}afficher sa cible. Si le fichier n\textquotesingle{}est pas un lien symbolique, la fonction affiche un message d\textquotesingle{}erreur.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Le système de fichiers contenant le lien symbolique. \\
+\hline
+{\em chemin\+\_\+lien} & Le chemin du lien symbolique dont la cible doit être affichée. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{Bib_8c_ab5c456787d26f596c8e8ddf8e05aaa8c}\label{Bib_8c_ab5c456787d26f596c8e8ddf8e05aaa8c} 
+\index{Bib.c@{Bib.c}!afficher\_ls\_chemin@{afficher\_ls\_chemin}}
+\index{afficher\_ls\_chemin@{afficher\_ls\_chemin}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{afficher\_ls\_chemin()}{afficher\_ls\_chemin()}}
+{\footnotesize\ttfamily void afficher\+\_\+ls\+\_\+chemin (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{chemin }\end{DoxyParamCaption})}
+
+
+
+Affiche le contenu d\textquotesingle{}un répertoire spécifié par un chemin. 
+
+Cette fonction parcourt le système de fichiers pour afficher le contenu d\textquotesingle{}un répertoire donné. Le chemin peut être absolu ou relatif. Si le répertoire est vide, un message sera affiché.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Pointeur vers le système de fichiers. \\
+\hline
+{\em chemin} & Le chemin du répertoire dont le contenu doit être affiché. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{Bib_8c_ab0d825342274442d4db6fc1f6e1c9acf}\label{Bib_8c_ab0d825342274442d4db6fc1f6e1c9acf} 
+\index{Bib.c@{Bib.c}!allouer\_bloc@{allouer\_bloc}}
+\index{allouer\_bloc@{allouer\_bloc}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{allouer\_bloc()}{allouer\_bloc()}}
+{\footnotesize\ttfamily int allouer\+\_\+bloc (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs }\end{DoxyParamCaption})}
+
+
+
+Alloue un bloc dans le système de fichiers. 
+
+Cette fonction recherche un bloc libre dans le bitmap des blocs et l\textquotesingle{}alloue en mettant à jour le bitmap et le superbloc. Elle renvoie l\textquotesingle{}indice du bloc alloué ou -\/1 si aucun bloc libre n\textquotesingle{}est disponible.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Pointeur vers le système de fichiers. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+L\textquotesingle{}indice du bloc alloué, ou -\/1 si aucun bloc n\textquotesingle{}est disponible. 
+\end{DoxyReturn}
+\Hypertarget{Bib_8c_a38e79e8010672fa029b1102a215bb6a7}\label{Bib_8c_a38e79e8010672fa029b1102a215bb6a7} 
+\index{Bib.c@{Bib.c}!allouer\_inode@{allouer\_inode}}
+\index{allouer\_inode@{allouer\_inode}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{allouer\_inode()}{allouer\_inode()}}
+{\footnotesize\ttfamily int allouer\+\_\+inode (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs }\end{DoxyParamCaption})}
+
+
+
+Alloue un inode dans le système de fichiers. 
+
+Appels des fonctions définies dans {\ttfamily bib.\+c}.
+
+Cette fonction recherche un inode libre dans le bitmap des inodes et l\textquotesingle{}alloue en mettant à jour le bitmap et le superbloc. Elle renvoie l\textquotesingle{}indice de l\textquotesingle{}inode alloué ou -\/1 si aucun inode libre n\textquotesingle{}est disponible.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Pointeur vers le système de fichiers. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+L\textquotesingle{}indice de l\textquotesingle{}inode alloué, ou -\/1 si aucun inode n\textquotesingle{}est disponible. 
+\end{DoxyReturn}
+\Hypertarget{Bib_8c_aaa02395d5b46071d2504cea138fe17b8}\label{Bib_8c_aaa02395d5b46071d2504cea138fe17b8} 
+\index{Bib.c@{Bib.c}!cd@{cd}}
+\index{cd@{cd}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{cd()}{cd()}}
+{\footnotesize\ttfamily void cd (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{chemin }\end{DoxyParamCaption})}
+
+
+
+Change le répertoire courant du système de fichiers. 
+
+Cette fonction permet de naviguer dans le système de fichiers simulé en changeant le répertoire courant. Elle prend en compte les chemins relatifs et absolus ainsi que les commandes spéciales comme \textquotesingle{}.\textquotesingle{} (répertoire courant) et \textquotesingle{}..\textquotesingle{} (répertoire parent).
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Pointeur vers le système de fichiers. \\
+\hline
+{\em chemin} & Le chemin du répertoire cible. Peut être un chemin relatif ou absolu. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{Bib_8c_a25af3052c2c236a2e3abfe7cc14bf808}\label{Bib_8c_a25af3052c2c236a2e3abfe7cc14bf808} 
+\index{Bib.c@{Bib.c}!charger\_systeme\_fichier@{charger\_systeme\_fichier}}
+\index{charger\_systeme\_fichier@{charger\_systeme\_fichier}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{charger\_systeme\_fichier()}{charger\_systeme\_fichier()}}
+{\footnotesize\ttfamily int charger\+\_\+systeme\+\_\+fichier (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs }\end{DoxyParamCaption})}
+
+
+
+Charge le système de fichiers depuis un fichier. 
+
+Cette fonction charge un système de fichiers sauvegardé à partir d\textquotesingle{}un fichier binaire. Si le fichier n\textquotesingle{}existe pas, elle retourne 0 et signale que le système de fichiers doit être initialisé.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Pointeur vers le système de fichiers à charger. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+1 si le système de fichiers a été chargé avec succès, 0 sinon. 
+\end{DoxyReturn}
+\Hypertarget{Bib_8c_a65687d9a4ca77f43973e5ff731999c2d}\label{Bib_8c_a65687d9a4ca77f43973e5ff731999c2d} 
+\index{Bib.c@{Bib.c}!close\_file@{close\_file}}
+\index{close\_file@{close\_file}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{close\_file()}{close\_file()}}
+{\footnotesize\ttfamily void close\+\_\+file (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{int}]{descripteur }\end{DoxyParamCaption})}
+
+
+
+Ferme un fichier. 
+
+Cette fonction libère le descripteur de fichier, le marquant comme disponible pour d\textquotesingle{}autres ouvertures.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Le système de fichiers contenant le fichier à fermer. \\
+\hline
+{\em descripteur} & Le descripteur de fichier à fermer. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{Bib_8c_acc5830e0eb4bca1e9868ac76b77466de}\label{Bib_8c_acc5830e0eb4bca1e9868ac76b77466de} 
+\index{Bib.c@{Bib.c}!cp@{cp}}
+\index{cp@{cp}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{cp()}{cp()}}
+{\footnotesize\ttfamily int cp (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{source,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{destination }\end{DoxyParamCaption})}
+
+
+
+Copie un fichier ou un répertoire d\textquotesingle{}un emplacement source vers un emplacement de destination. 
+
+Cette fonction copie un fichier ou répertoire dans le système de fichiers. La source est dupliquée dans le répertoire de destination sans supprimer l\textquotesingle{}original dans son répertoire d\textquotesingle{}origine.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Le système de fichiers sur lequel l\textquotesingle{}opération est effectuée. \\
+\hline
+{\em source} & Le chemin du fichier/répertoire source à copier. \\
+\hline
+{\em destination} & Le chemin du répertoire de destination.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Retourne 0 si la copie a réussi, sinon -\/1 en cas d\textquotesingle{}erreur.
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Cette fonction vérifie que la destination est bien un répertoire et que le répertoire parent de la source existe avant de procéder. 
+\end{DoxyNote}
+\Hypertarget{Bib_8c_aa9b88feb35eda0e02a072b8cfd7b1cce}\label{Bib_8c_aa9b88feb35eda0e02a072b8cfd7b1cce} 
+\index{Bib.c@{Bib.c}!create\_file\_rep@{create\_file\_rep}}
+\index{create\_file\_rep@{create\_file\_rep}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{create\_file\_rep()}{create\_file\_rep()}}
+{\footnotesize\ttfamily void create\+\_\+file\+\_\+rep (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{chemin,  }\item[{int}]{est\+\_\+repertoire }\end{DoxyParamCaption})}
+
+Crée un fichier ou un répertoire dans le système de fichiers.
+
+Cette fonction crée un fichier ou un répertoire à un emplacement spécifié par un chemin. Si le chemin est relatif, il est résolu à partir du répertoire courant. La fonction alloue un inode et un bloc pour le fichier ou répertoire, puis ajoute ce dernier dans le répertoire parent.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Le système de fichiers dans lequel la création doit avoir lieu. \\
+\hline
+{\em chemin} & Le chemin du fichier ou répertoire à créer. \\
+\hline
+{\em est\+\_\+repertoire} & Indicateur si le nouvel objet est un répertoire (1) ou un fichier (0). \\
+\hline
+\end{DoxyParams}
+\Hypertarget{Bib_8c_accfa8a1bf78e2a0ce07ab37b20ff6600}\label{Bib_8c_accfa8a1bf78e2a0ce07ab37b20ff6600} 
+\index{Bib.c@{Bib.c}!creer\_lien\_hard@{creer\_lien\_hard}}
+\index{creer\_lien\_hard@{creer\_lien\_hard}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{creer\_lien\_hard()}{creer\_lien\_hard()}}
+{\footnotesize\ttfamily int creer\+\_\+lien\+\_\+hard (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{chemin\+\_\+source,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{chemin\+\_\+cible }\end{DoxyParamCaption})}
+
+
+
+Crée un lien dur vers un fichier existant dans un répertoire cible. 
+
+Cette fonction crée un lien dur pour un fichier dans le répertoire cible, ce qui signifie que plusieurs noms de fichiers (chemins) peuvent pointer vers le même fichier dans le système de fichiers.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Le système de fichiers sur lequel l\textquotesingle{}opération est effectuée. \\
+\hline
+{\em chemin\+\_\+source} & Le chemin du fichier source pour lequel le lien dur sera créé. \\
+\hline
+{\em chemin\+\_\+cible} & Le chemin du fichier cible où le lien dur sera créé.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Retourne 0 si la création du lien dur a réussi, sinon -\/1 en cas d\textquotesingle{}erreur.
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Cette fonction vérifie que le fichier source n\textquotesingle{}est pas un répertoire et que le répertoire parent cible existe avant de créer le lien dur. Le compteur de liens de l\textquotesingle{}inode source est également mis à jour. 
+\end{DoxyNote}
+\Hypertarget{Bib_8c_a5374a1c668ff140bf59789f7a1259bda}\label{Bib_8c_a5374a1c668ff140bf59789f7a1259bda} 
+\index{Bib.c@{Bib.c}!creer\_lien\_symbolique@{creer\_lien\_symbolique}}
+\index{creer\_lien\_symbolique@{creer\_lien\_symbolique}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{creer\_lien\_symbolique()}{creer\_lien\_symbolique()}}
+{\footnotesize\ttfamily void creer\+\_\+lien\+\_\+symbolique (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{chemin,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{cible }\end{DoxyParamCaption})}
+
+
+
+Crée un lien symbolique dans un système de fichiers. 
+
+Cette fonction permet de créer un lien symbolique dans le répertoire spécifié par le chemin. Un inode est alloué pour le lien symbolique, les vérifications sont effectuées pour s\textquotesingle{}assurer que le lien n\textquotesingle{}existe pas déjà, et le lien est ajouté au répertoire parent. Le lien symbolique pointe vers un fichier cible.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Le système de fichiers dans lequel le lien symbolique doit être créé. \\
+\hline
+{\em chemin} & Le chemin complet où le lien symbolique doit être créé. \\
+\hline
+{\em cible} & Le chemin du fichier ou répertoire vers lequel le lien symbolique pointe. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{Bib_8c_a5af7424da4c3a69cf1f298d1c72b1df8}\label{Bib_8c_a5af7424da4c3a69cf1f298d1c72b1df8} 
+\index{Bib.c@{Bib.c}!droit@{droit}}
+\index{droit@{droit}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{droit()}{droit()}}
+{\footnotesize\ttfamily void droit (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{chemin,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{droits }\end{DoxyParamCaption})}
+
+
+
+Modifie les droits d\textquotesingle{}un fichier ou d\textquotesingle{}un répertoire. 
+
+Cette fonction permet de modifier les droits d\textquotesingle{}un fichier ou d\textquotesingle{}un répertoire spécifié par le chemin donné. Les droits doivent être spécifiés en format octal à 3 chiffres (ex\+: 744, 755).
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Pointeur vers le système de fichiers. \\
+\hline
+{\em chemin} & Le chemin du fichier ou du répertoire dont les droits doivent être modifiés. \\
+\hline
+{\em droits} & Une chaîne de caractères représentant les nouveaux droits au format octal (ex\+: "{}755"{}). \\
+\hline
+\end{DoxyParams}
+\Hypertarget{Bib_8c_afcf889d4bb9845e129543a40f0411e18}\label{Bib_8c_afcf889d4bb9845e129543a40f0411e18} 
+\index{Bib.c@{Bib.c}!ecrire\_fichier@{ecrire\_fichier}}
+\index{ecrire\_fichier@{ecrire\_fichier}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{ecrire\_fichier()}{ecrire\_fichier()}}
+{\footnotesize\ttfamily void ecrire\+\_\+fichier (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{chemin }\end{DoxyParamCaption})}
+
+
+
+Écrit dans un fichier. 
+
+Cette fonction ouvre un fichier en mode écriture, vérifie les permissions d\textquotesingle{}écriture, et permet à l\textquotesingle{}utilisateur d\textquotesingle{}ajouter des données au fichier. Si la taille du fichier dépasse la capacité d\textquotesingle{}un bloc, plusieurs blocs seront alloués pour contenir les données.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Le système de fichiers dans lequel le fichier doit être modifié. \\
+\hline
+{\em chemin} & Le chemin du fichier à modifier. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{Bib_8c_a6c35d51eade90689ef9596cc6a8e7896}\label{Bib_8c_a6c35d51eade90689ef9596cc6a8e7896} 
+\index{Bib.c@{Bib.c}!est\_repertoire\_par\_chemin@{est\_repertoire\_par\_chemin}}
+\index{est\_repertoire\_par\_chemin@{est\_repertoire\_par\_chemin}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{est\_repertoire\_par\_chemin()}{est\_repertoire\_par\_chemin()}}
+{\footnotesize\ttfamily int est\+\_\+repertoire\+\_\+par\+\_\+chemin (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{chemin }\end{DoxyParamCaption})}
+
+
+
+Vérifie si l\textquotesingle{}inode, représenté par son chemin, est un répertoire. 
+
+Cette fonction prend en entrée un chemin de fichier ou de répertoire, cherche l\textquotesingle{}inode correspondant dans le système de fichiers, et vérifie si cet inode est un répertoire.
+
+Si l\textquotesingle{}inode existe et est un répertoire, la fonction retourne 1. Sinon, elle retourne 0.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Le système de fichiers sur lequel l\textquotesingle{}opération est effectuée. \\
+\hline
+{\em chemin} & Le chemin du fichier ou répertoire à vérifier. Il s\textquotesingle{}agit du chemin absolu ou relatif à partir de la racine.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+1 si l\textquotesingle{}inode est un répertoire, 0 sinon.
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Cette fonction dépend de la présence d\textquotesingle{}une fonction externe {\ttfamily trouver\+\_\+inode\+\_\+par\+\_\+chemin} pour localiser l\textquotesingle{}inode à partir du chemin fourni. 
+\end{DoxyNote}
+\Hypertarget{Bib_8c_a2ed4f0ce08043dd1ccc07df0507b6d1e}\label{Bib_8c_a2ed4f0ce08043dd1ccc07df0507b6d1e} 
+\index{Bib.c@{Bib.c}!initialiser\_systeme\_fichier@{initialiser\_systeme\_fichier}}
+\index{initialiser\_systeme\_fichier@{initialiser\_systeme\_fichier}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{initialiser\_systeme\_fichier()}{initialiser\_systeme\_fichier()}}
+{\footnotesize\ttfamily void initialiser\+\_\+systeme\+\_\+fichier (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs }\end{DoxyParamCaption})}
+
+
+
+Initialise le système de fichiers. 
+
+Cette fonction initialise le système de fichiers en configurant les bitmaps, le superbloc, et en allouant les ressources nécessaires, y compris l\textquotesingle{}inode et le bloc pour le répertoire racine. Elle crée également les entrées de répertoire pour le répertoire courant.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Pointeur vers le système de fichiers. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{Bib_8c_a102ea6ce784d542b355894b9fdb6a890}\label{Bib_8c_a102ea6ce784d542b355894b9fdb6a890} 
+\index{Bib.c@{Bib.c}!lire\_fichier@{lire\_fichier}}
+\index{lire\_fichier@{lire\_fichier}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{lire\_fichier()}{lire\_fichier()}}
+{\footnotesize\ttfamily void lire\+\_\+fichier (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{chemin }\end{DoxyParamCaption})}
+
+
+
+Lit le contenu d\textquotesingle{}un fichier. 
+
+Cette fonction permet de lire un fichier en vérifiant que le fichier existe, qu\textquotesingle{}il n\textquotesingle{}est pas un répertoire, et que l\textquotesingle{}utilisateur a les permissions nécessaires pour le lire. Le contenu du fichier est affiché à l\textquotesingle{}écran.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Le système de fichiers dans lequel le fichier doit être lu. \\
+\hline
+{\em chemin} & Le chemin du fichier à lire. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{Bib_8c_a73b18a3381a0fb2b930471a21c9192e0}\label{Bib_8c_a73b18a3381a0fb2b930471a21c9192e0} 
+\index{Bib.c@{Bib.c}!mv@{mv}}
+\index{mv@{mv}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{mv()}{mv()}}
+{\footnotesize\ttfamily int mv (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{source,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{destination }\end{DoxyParamCaption})}
+
+
+
+Déplace un fichier ou un répertoire d\textquotesingle{}un emplacement source vers un emplacement de destination. 
+
+Cette fonction déplace un fichier ou répertoire dans le système de fichiers. Si la destination est un répertoire, elle ajoutera le fichier/répertoire à ce répertoire, tout en retirant le fichier/répertoire de son répertoire parent.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Le système de fichiers sur lequel l\textquotesingle{}opération est effectuée. \\
+\hline
+{\em source} & Le chemin du fichier/répertoire source à déplacer. \\
+\hline
+{\em destination} & Le chemin du répertoire de destination.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Retourne 0 si le déplacement a réussi, sinon -\/1 en cas d\textquotesingle{}erreur.
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Cette fonction vérifie que la destination est bien un répertoire et que le répertoire parent de la source existe avant de procéder.
+\end{DoxyNote}
+Déplace un fichier ou un répertoire d\textquotesingle{}un emplacement à un autre.
+
+Cette fonction déplace un fichier ou un répertoire depuis un chemin source vers un chemin de destination. Le fichier ou répertoire source est retiré de son répertoire parent et ajouté au répertoire de destination. Si la destination n\textquotesingle{}est pas un répertoire ou si des erreurs surviennent, un message d\textquotesingle{}erreur est affiché.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Le système de fichiers contenant les fichiers à déplacer. \\
+\hline
+{\em source} & Le chemin du fichier/répertoire source à déplacer. \\
+\hline
+{\em destination} & Le chemin du répertoire destination où le fichier/répertoire sera déplacé.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 si le déplacement a réussi, -\/1 en cas d\textquotesingle{}erreur. 
+\end{DoxyReturn}
+\Hypertarget{Bib_8c_aee3ff908c0fb9e4fc88dc11dff55c269}\label{Bib_8c_aee3ff908c0fb9e4fc88dc11dff55c269} 
+\index{Bib.c@{Bib.c}!open\_file@{open\_file}}
+\index{open\_file@{open\_file}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{open\_file()}{open\_file()}}
+{\footnotesize\ttfamily int open\+\_\+file (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{chemin,  }\item[{int}]{mode }\end{DoxyParamCaption})}
+
+
+
+Ouvre un fichier en fonction du chemin et du mode. 
+
+Cette fonction cherche l\textquotesingle{}inode du fichier à partir du chemin donné, vérifie les permissions d\textquotesingle{}accès et cherche un espace libre pour ouvrir le fichier. Le fichier est associé à un descripteur qui est retourné.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Le système de fichiers dans lequel le fichier doit être ouvert. \\
+\hline
+{\em chemin} & Le chemin d\textquotesingle{}accès du fichier à ouvrir. \\
+\hline
+{\em mode} & Le mode d\textquotesingle{}ouverture du fichier (lecture ou écriture).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Le descripteur de fichier en cas de succès, -\/1 en cas d\textquotesingle{}erreur. 
+\end{DoxyReturn}
+\Hypertarget{Bib_8c_a0f2a66eea0b8afd53b12588e45d20ccd}\label{Bib_8c_a0f2a66eea0b8afd53b12588e45d20ccd} 
+\index{Bib.c@{Bib.c}!pwd@{pwd}}
+\index{pwd@{pwd}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{pwd()}{pwd()}}
+{\footnotesize\ttfamily void pwd (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs }\end{DoxyParamCaption})}
+
+
+
+Affiche le chemin absolu du répertoire courant. 
+
+Cette fonction affiche le chemin complet du répertoire courant dans le système de fichiers, en remontant à partir du répertoire courant jusqu\textquotesingle{}à la racine.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Le système de fichiers sur lequel l\textquotesingle{}opération est effectuée.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Aucune valeur n\textquotesingle{}est retournée. L\textquotesingle{}affichage se fait directement dans la sortie standard.
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Cette fonction gère le cas particulier de la racine du système de fichiers. 
+\end{DoxyNote}
+\Hypertarget{Bib_8c_a4546e2ca5bd43d03be5a3894a057ba99}\label{Bib_8c_a4546e2ca5bd43d03be5a3894a057ba99} 
+\index{Bib.c@{Bib.c}!resoudre\_lien\_symbolique@{resoudre\_lien\_symbolique}}
+\index{resoudre\_lien\_symbolique@{resoudre\_lien\_symbolique}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{resoudre\_lien\_symbolique()}{resoudre\_lien\_symbolique()}}
+{\footnotesize\ttfamily int resoudre\+\_\+lien\+\_\+symbolique (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{chemin }\end{DoxyParamCaption})}
+
+
+
+Résout un lien symbolique et retourne son inode. 
+
+Cette fonction résout récursivement un lien symbolique en suivant la chaîne de cibles jusqu\textquotesingle{}à ce qu\textquotesingle{}un fichier ou répertoire normal soit trouvé. Cela permet de retrouver le fichier ou répertoire réel vers lequel le lien symbolique pointe, en résolvant tous les liens symboliques intermédiaires le cas échéant.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Le système de fichiers contenant le lien symbolique. \\
+\hline
+{\em chemin} & Le chemin du lien symbolique à résoudre.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+L\textquotesingle{}inode du fichier ou répertoire pointé par le lien symbolique, ou -\/1 en cas d\textquotesingle{}erreur. 
+\end{DoxyReturn}
+\Hypertarget{Bib_8c_a5012aed05a4bfa90d127a9471f4fe743}\label{Bib_8c_a5012aed05a4bfa90d127a9471f4fe743} 
+\index{Bib.c@{Bib.c}!sauvegarder\_systeme\_fichier@{sauvegarder\_systeme\_fichier}}
+\index{sauvegarder\_systeme\_fichier@{sauvegarder\_systeme\_fichier}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{sauvegarder\_systeme\_fichier()}{sauvegarder\_systeme\_fichier()}}
+{\footnotesize\ttfamily void sauvegarder\+\_\+systeme\+\_\+fichier (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs }\end{DoxyParamCaption})}
+
+
+
+Sauvegarde le système de fichiers dans un fichier. 
+
+Cette fonction sauvegarde l\textquotesingle{}état du système de fichiers dans un fichier binaire pour persister les données entre les exécutions du programme.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Pointeur vers le système de fichiers à sauvegarder. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{Bib_8c_aabf7189761a3b6218a5b61bda0bbe483}\label{Bib_8c_aabf7189761a3b6218a5b61bda0bbe483} 
+\index{Bib.c@{Bib.c}!supprimer\_fichier@{supprimer\_fichier}}
+\index{supprimer\_fichier@{supprimer\_fichier}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{supprimer\_fichier()}{supprimer\_fichier()}}
+{\footnotesize\ttfamily void supprimer\+\_\+fichier (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{chemin }\end{DoxyParamCaption})}
+
+
+
+Supprime un fichier du système de fichiers. 
+
+Cette fonction supprime un fichier spécifié par son chemin. Elle cherche d\textquotesingle{}abord le répertoire parent, puis trouve le fichier dans ce répertoire. Ensuite, elle libère l\textquotesingle{}inode et le bloc du fichier, et met à jour la table des fichiers du répertoire parent.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Pointeur vers le système de fichiers. \\
+\hline
+{\em chemin} & Le chemin absolu ou relatif du fichier à supprimer. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{Bib_8c_a4b69113b83c8439542d9bd7735e10e1b}\label{Bib_8c_a4b69113b83c8439542d9bd7735e10e1b} 
+\index{Bib.c@{Bib.c}!supprimer\_repertoire@{supprimer\_repertoire}}
+\index{supprimer\_repertoire@{supprimer\_repertoire}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{supprimer\_repertoire()}{supprimer\_repertoire()}}
+{\footnotesize\ttfamily void supprimer\+\_\+repertoire (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{chemin }\end{DoxyParamCaption})}
+
+
+
+Supprime un répertoire du système de fichiers. 
+
+Cette fonction supprime un répertoire spécifié par son chemin. Si le répertoire n\textquotesingle{}est pas vide, elle supprime récursivement tous les fichiers et sous-\/répertoires qu\textquotesingle{}il contient avant de libérer l\textquotesingle{}inode et le bloc du répertoire. Si aucun chemin n\textquotesingle{}est donné, le répertoire courant est supprimé.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Pointeur vers le système de fichiers. \\
+\hline
+{\em chemin} & Le chemin absolu ou relatif du répertoire à supprimer (peut être vide pour le répertoire courant). \\
+\hline
+\end{DoxyParams}
+\Hypertarget{Bib_8c_abe688d5f957e8214df3260cdd79e573a}\label{Bib_8c_abe688d5f957e8214df3260cdd79e573a} 
+\index{Bib.c@{Bib.c}!trouver\_inode\_par\_chemin@{trouver\_inode\_par\_chemin}}
+\index{trouver\_inode\_par\_chemin@{trouver\_inode\_par\_chemin}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{trouver\_inode\_par\_chemin()}{trouver\_inode\_par\_chemin()}}
+{\footnotesize\ttfamily int trouver\+\_\+inode\+\_\+par\+\_\+chemin (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{chemin }\end{DoxyParamCaption})}
+
+Trouve l\textquotesingle{}inode correspondant à un chemin donné.
+
+Cette fonction permet de trouver l\textquotesingle{}inode associé à un chemin dans le système de fichiers. Elle prend en compte les répertoires et fichiers ainsi que les cas spéciaux "{}."{} (répertoire courant) et "{}.."{} (répertoire parent).
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Le système de fichiers dans lequel la recherche doit être effectuée. \\
+\hline
+{\em chemin} & Le chemin du fichier ou répertoire à trouver. Il peut être absolu ou relatif. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+L\textquotesingle{}inode correspondant au chemin spécifié, ou -\/1 si le chemin est invalide. 
+\end{DoxyReturn}
+\Hypertarget{Bib_8c_acd374d9c45f083550aa40fc5fdd79808}\label{Bib_8c_acd374d9c45f083550aa40fc5fdd79808} 
+\index{Bib.c@{Bib.c}!trouver\_inode\_par\_cheminCd@{trouver\_inode\_par\_cheminCd}}
+\index{trouver\_inode\_par\_cheminCd@{trouver\_inode\_par\_cheminCd}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{trouver\_inode\_par\_cheminCd()}{trouver\_inode\_par\_cheminCd()}}
+{\footnotesize\ttfamily int trouver\+\_\+inode\+\_\+par\+\_\+chemin\+Cd (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structSystemeFichier}{Systeme\+Fichier}} \texorpdfstring{$\ast$}{*}}]{fs,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{chemin }\end{DoxyParamCaption})}
+
+
+
+Trouve l\textquotesingle{}inode correspondant à un chemin pour la commande "{}cd"{}. 
+
+Cette fonction permet de trouver l\textquotesingle{}inode associé à un chemin dans le système de fichiers. Elle gère les répertoires, ainsi que les cas spéciaux comme "{}."{} pour le répertoire courant et "{}.."{} pour le répertoire parent. Elle retourne l\textquotesingle{}inode correspondant au chemin final ou -\/1 si le chemin est invalide.
+
+
+\begin{DoxyParams}{Parameters}
+{\em fs} & Le système de fichiers dans lequel la recherche doit être effectuée. \\
+\hline
+{\em chemin} & Le chemin du fichier ou répertoire à trouver. Il peut être absolu ou relatif. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+L\textquotesingle{}inode correspondant au chemin spécifié, ou -\/1 si le chemin est invalide. 
+\end{DoxyReturn}
+\Hypertarget{Bib_8c_a89077d98d74da6a610c8369718b1f6ca}\label{Bib_8c_a89077d98d74da6a610c8369718b1f6ca} 
+\index{Bib.c@{Bib.c}!verifier\_permissions@{verifier\_permissions}}
+\index{verifier\_permissions@{verifier\_permissions}!Bib.c@{Bib.c}}
+\doxysubsubsection{\texorpdfstring{verifier\_permissions()}{verifier\_permissions()}}
+{\footnotesize\ttfamily int verifier\+\_\+permissions (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structInode}{Inode}} \texorpdfstring{$\ast$}{*}}]{inode,  }\item[{int}]{mode }\end{DoxyParamCaption})}
+
+
+
+Vérifie si un inode a les permissions spécifiées. 
+
+Cette fonction vérifie si un inode a les permissions adéquates pour une opération donnée. Les modes valides sont {\ttfamily MODE\+\_\+\+READ} (lecture) et {\ttfamily MODE\+\_\+\+WRITE} (écriture).
+
+
+\begin{DoxyParams}{Parameters}
+{\em inode} & Pointeur vers l\textquotesingle{}inode dont les permissions doivent être vérifiées. \\
+\hline
+{\em mode} & Le mode de vérification des permissions (lecture ou écriture).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+1 si l\textquotesingle{}inode a les permissions nécessaires, 0 sinon. 
+\end{DoxyReturn}

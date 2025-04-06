@@ -1,0 +1,139 @@
+\doxysection{Bib.\+h}
+\hypertarget{Bib_8h_source}{}\label{Bib_8h_source}\index{Bib/Bib.h@{Bib/Bib.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ BIB\_H\_INCLUDED}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ BIB\_H\_INCLUDED}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{comment}{/**************************inclusions*******************************/}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <time.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <ctype.h>}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{comment}{/**************************definitions******************************/}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ MAX\_INODES\ 100\ \ \ }\textcolor{comment}{//\ Nombre\ maximal\ d'inodes}}
+\DoxyCodeLine{00028\ \#define\ MAX\_BLOCKS\ 1024\ \ \textcolor{comment}{//\ Nombre\ maximal\ de\ blocs\ de\ données}}
+\DoxyCodeLine{00033\ \#define\ BLOCK\_SIZE\ 4096\ \ \textcolor{comment}{//\ Taille\ d'un\ bloc\ en\ octets}}
+\DoxyCodeLine{00038\ \#define\ MAX\_LINKS\ 10\ \ \textcolor{comment}{//\ Nombre\ maximal\ de\ liens\ physiques}}
+\DoxyCodeLine{00043\ \#define\ NUM\_DIRECT\_BLOCKS\ 12\ \ \textcolor{comment}{//\ Nombre\ de\ blocs\ directs\ par\ inode\ (comme\ dans\ Unix)}}
+\DoxyCodeLine{00048\ \#define\ INDIRECT\_BLOCKS\ 1\ \ \ \ \ \textcolor{comment}{//\ Nombre\ de\ blocs\ indirects\ par\ inode}}
+\DoxyCodeLine{00053\ \#define\ MAX\_FILES\ 32\ \ \textcolor{comment}{//\ Nombre\ max\ de\ fichiers\ dans\ un\ répertoire}}
+\DoxyCodeLine{00058\ \#define\ NAME\_SIZE\ 32\ \ \textcolor{comment}{//\ Taille\ max\ d'un\ nom\ de\ fichier}}
+\DoxyCodeLine{00063\ \#define\ MAX\_PATH\_LENGTH\ 256\ \textcolor{comment}{//\ Longueur\ max\ du\ chemin\ du\ lien}}
+\DoxyCodeLine{00068\ \#define\ MAX\_OPEN\_FILES\ 16\ \ \textcolor{comment}{//\ Nombre\ maximal\ de\ fichiers\ ouverts}}
+\DoxyCodeLine{00073\ \#define\ Max\_SIZE\_PARAM\ 500\ \ \textcolor{comment}{//taille\ maximal\ d'un\ paramétre}}
+\DoxyCodeLine{00078\ \#define\ PARTITION\_NAME\ "{}mnt.fs"{}\ \textcolor{comment}{//\ Nom\ du\ fichier\ de\ la\ partition}}
+\DoxyCodeLine{00083\ \#define\ PARTITION\_SIZE\ (MAX\_BLOCKS\ /\ 4\ *\ BLOCK\_SIZE)\ \textcolor{comment}{//\ Taille\ allouée\ à\ la\ partition}}
+\DoxyCodeLine{00088\ \#define\ MODE\_READ\ 0}
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\#define\ MODE\_WRITE\ 1}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \textcolor{comment}{/***********************structures\_definitions**********************/}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00101\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{int}\ taille\_fs;\ \ \ \ \textcolor{comment}{//taille\ de\ la\ partition}}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{int}\ nb\_inodes;\ \ \ \ \textcolor{comment}{//nombre\ maximal\ d'inodes\ dans\ la\ partition\ }}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordtype}{int}\ nb\_blocs;\ \ \ \ \ \textcolor{comment}{//nombre\ maximal\ de\ blocs\ dans\ la\ partition\ }}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{int}\ inode\_libres;\ \ \textcolor{comment}{//nombre\ d'inode\ non\ utilisés\ dans\ la\ partiton\ }}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{int}\ blocs\_libres;\ \ \ \textcolor{comment}{//nombre\ d'inode\ non\ utilisés\ dans\ la\ partiton\ }}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{int}\ premier\_bloc\_libre;\ \ \ \textcolor{comment}{//\ numéro\ du\ premier\ bloc\ libre}}
+\DoxyCodeLine{00108\ \}\ \mbox{\hyperlink{structSuperbloc}{Superbloc}};}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00114\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ inodes[(MAX\_INODES\ +\ 7)\ /\ 8];\ \ \textcolor{comment}{//\ Aligné\ sur\ 8}}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ blocs[(MAX\_BLOCKS\ +\ 7)\ /\ 8];\ \ \ \textcolor{comment}{//\ Aligné\ sur\ 8}}
+\DoxyCodeLine{00117\ \}\ \mbox{\hyperlink{structBitmap}{Bitmap}};}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \textcolor{comment}{//\ Définit\ une\ macro\ pour\ activer\ (mettre\ à\ 1)\ le\ bit\ à\ la\ position\ "{}pos"{}\ dans\ la\ variable\ "{}byte"{}}}
+\DoxyCodeLine{00121\ \textcolor{preprocessor}{\#define\ BIT\_SET(byte,\ pos)\ (byte\ |=\ (1\ <<\ pos))}}
+\DoxyCodeLine{00122\ \textcolor{comment}{//\ -\/\ (1\ <<\ pos)\ décale\ le\ bit\ "{}1"{}\ vers\ la\ gauche\ de\ "{}pos"{}\ positions\ (ex.\ :\ pos\ =\ 2\ donne\ 00000100)}}
+\DoxyCodeLine{00123\ \textcolor{comment}{//\ -\/\ |=\ effectue\ un\ OU\ binaire\ avec\ le\ byte\ d'origine\ →\ cela\ place\ le\ bit\ à\ 1\ sans\ toucher\ aux\ autres}}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \textcolor{comment}{//\ Définit\ une\ macro\ pour\ désactiver\ (mettre\ à\ 0)\ le\ bit\ à\ la\ position\ "{}pos"{}\ dans\ la\ variable\ "{}byte"{}}}
+\DoxyCodeLine{00126\ \textcolor{preprocessor}{\#define\ BIT\_CLEAR(byte,\ pos)\ (byte\ \&=\ \string~(1\ <<\ pos))}}
+\DoxyCodeLine{00127\ \textcolor{comment}{//\ -\/\ (1\ <<\ pos)\ crée\ un\ masque\ avec\ un\ 1\ à\ la\ position\ souhaitée}}
+\DoxyCodeLine{00128\ \textcolor{comment}{//\ -\/\ \string~\ inverse\ tous\ les\ bits\ (donc\ un\ 0\ à\ "{}pos"{},\ 1\ ailleurs)}}
+\DoxyCodeLine{00129\ \textcolor{comment}{//\ -\/\ \&=\ applique\ ce\ masque\ en\ conservant\ les\ bits\ sauf\ celui\ à\ "{}pos"{}\ qui\ est\ mis\ à\ 0}}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \textcolor{comment}{//\ Définit\ une\ macro\ pour\ tester\ si\ le\ bit\ à\ la\ position\ "{}pos"{}\ est\ à\ 1\ dans\ "{}byte"{}}}
+\DoxyCodeLine{00132\ \textcolor{preprocessor}{\#define\ BIT\_CHECK(byte,\ pos)\ (byte\ \&\ (1\ <<\ pos))}}
+\DoxyCodeLine{00133\ \textcolor{comment}{//\ -\/\ (1\ <<\ pos)\ crée\ un\ masque\ avec\ un\ 1\ à\ la\ position\ "{}pos"{}}}
+\DoxyCodeLine{00134\ \textcolor{comment}{//\ -\/\ \&\ vérifie\ si\ ce\ bit\ est\ activé\ →\ renvoie\ une\ valeur\ non\ nulle\ si\ le\ bit\ est\ à\ 1,\ 0\ sinon}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00141\ \ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordtype}{int}\ id;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Identifiant\ unique\ de\ l'inode\ (permet\ de\ l’identifier\ dans\ la\ table\ des\ inodes)}}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keywordtype}{int}\ taille;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Taille\ du\ fichier\ ou\ répertoire\ (en\ octets)\ }}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keywordtype}{int}\ est\_repertoire;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Booléen\ :\ 1\ si\ c’est\ un\ répertoire,\ 0\ si\ c’est\ un\ fichier\ classique}}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keywordtype}{int}\ permissions;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Permissions\ d’accès\ (lecture,\ écriture,\ exécution)\ codées\ sur\ 3\ chiffre\ (755)}}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keywordtype}{int}\ liens;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Nombre\ de\ liens\ physiques\ (hard\ links)\ pointant\ vers\ cet\ inode}}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordtype}{int}\ est\_lien;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Booléen\ :\ 1\ si\ c’est\ un\ lien\ symbolique,\ 0\ sinon}}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keywordtype}{int}\ blocs[NUM\_DIRECT\_BLOCKS];\ \ \ \textcolor{comment}{//\ Tableau\ de\ blocs\ de\ données\ directs\ (stockage\ direct\ des\ données\ du\ fichier)}}
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keywordtype}{int}\ indirect\_block;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Adresse\ d’un\ bloc\ indirect\ (pointeur\ vers\ d’autres\ blocs\ si\ les\ blocs\ directs\ sont\ pleins)}}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keywordtype}{int}\ inode\_pere;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ID\ de\ l’inode\ parent\ (utile\ pour\ la\ navigation\ dans\ la\ hiérarchie)}}
+\DoxyCodeLine{00151\ \ \ \ \ time\_t\ date\_creation;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Date\ de\ création\ de\ l’inode\ (format\ time\_t)}}
+\DoxyCodeLine{00152\ \ \ \ \ time\_t\ date\_modification;\ \ \ \ \ \ \ \textcolor{comment}{//\ Date\ de\ la\ dernière\ modification\ des\ données\ associées\ à\ cet\ inode}}
+\DoxyCodeLine{00153\ \}\ \mbox{\hyperlink{structInode}{Inode}};}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00160\ \ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keywordtype}{int}\ inode\_id;\ \ \textcolor{comment}{//\ ID\ de\ l'inode\ associé\ à\ ce\ répertoire\ (lui-\/même\ représenté\ dans\ la\ table\ des\ inodes)}}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ nom[NAME\_SIZE];\ \ \textcolor{comment}{//\ Nom\ du\ fichier\ ou\ sous-\/répertoire\ (limité\ à\ NAME\_SIZE\ caractères)}}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ inode\_id;\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ID\ de\ l’inode\ pointant\ vers\ le\ fichier\ ou\ répertoire\ réel}}
+\DoxyCodeLine{00166\ \ \ \ \ \}\ fichiers[MAX\_FILES];\ \ \ \ \textcolor{comment}{//\ Tableau\ contenant\ jusqu’à\ MAX\_FILES\ fichiers\ ou\ sous-\/répertoires}}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keywordtype}{int}\ nb\_fichiers;\ \ \textcolor{comment}{//\ Nombre\ actuel\ d’entrées\ (fichiers\ ou\ sous-\/répertoires)\ dans\ le\ répertoire}}
+\DoxyCodeLine{00169\ \}\ \mbox{\hyperlink{structRepertoire}{Repertoire}};}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00177\ \ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{keywordtype}{int}\ inode\_id;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ID\ de\ l’inode\ du\ lien\ symbolique\ lui-\/même}}
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keywordtype}{char}\ cible[MAX\_PATH\_LENGTH];\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Chemin\ absolu\ ou\ relatif\ vers\ la\ cible\ du\ lien}}
+\DoxyCodeLine{00180\ \}\ \mbox{\hyperlink{structLienSymbolique}{LienSymbolique}};}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00186\ \ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00187\ \ \ \ \ \mbox{\hyperlink{structSuperbloc}{Superbloc}}\ superbloc;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Structure\ contenant\ les\ métadonnées\ globales\ du\ système\ de\ fichiers\ (taille,\ nombre\ de\ blocs,\ etc.)}}
+\DoxyCodeLine{00188\ \ \ \ \ \mbox{\hyperlink{structBitmap}{Bitmap}}\ bitmap;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Structure\ représentant\ la\ carte\ des\ blocs\ libres/occupés\ (bitmap\ pour\ la\ gestion\ de\ l’espace\ disque)}}
+\DoxyCodeLine{00189\ \ \ \ \ \mbox{\hyperlink{structInode}{Inode}}\ inodes[MAX\_INODES];\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Tableau\ contenant\ tous\ les\ inodes\ du\ système\ (chaque\ inode\ représente\ un\ fichier\ ou\ un\ répertoire)}}
+\DoxyCodeLine{00190\ \ \ \ \ \mbox{\hyperlink{structRepertoire}{Repertoire}}\ racine;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Répertoire\ racine\ du\ système\ de\ fichiers,\ point\ d’entrée\ principal}}
+\DoxyCodeLine{00191\ \ \ \ \ \textcolor{keywordtype}{char}\ data[PARTITION\_SIZE];\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Zone\ de\ données\ contenant\ les\ blocs\ où\ sont\ stockés\ les\ fichiers\ et\ répertoires\ (simulation\ de\ l’espace\ disque)}}
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keywordtype}{int}\ repertoire\_courant;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Inode\ du\ répertoire\ courant\ (utilisé\ pour\ suivre\ le\ dossier\ actif\ lors\ de\ la\ navigation)}}
+\DoxyCodeLine{00193\ \}\ \mbox{\hyperlink{structSystemeFichier}{SystemeFichier}};}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \textcolor{comment}{/****************************Fonctions****************************/}}
+\DoxyCodeLine{00231\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{Bib_8c_a38e79e8010672fa029b1102a215bb6a7}{allouer\_inode}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs);}
+\DoxyCodeLine{00232\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{Bib_8c_ab0d825342274442d4db6fc1f6e1c9acf}{allouer\_bloc}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs);}
+\DoxyCodeLine{00233\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{Bib_8c_a2ed4f0ce08043dd1ccc07df0507b6d1e}{initialiser\_systeme\_fichier}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs);}
+\DoxyCodeLine{00234\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{Bib_8c_a5012aed05a4bfa90d127a9471f4fe743}{sauvegarder\_systeme\_fichier}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs);}
+\DoxyCodeLine{00235\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{Bib_8c_a25af3052c2c236a2e3abfe7cc14bf808}{charger\_systeme\_fichier}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs);}
+\DoxyCodeLine{00236\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{Bib_8c_abe688d5f957e8214df3260cdd79e573a}{trouver\_inode\_par\_chemin}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chemin);}
+\DoxyCodeLine{00237\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{Bib_8c_aa9b88feb35eda0e02a072b8cfd7b1cce}{create\_file\_rep}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chemin,\ \textcolor{keywordtype}{int}\ est\_repertoire);}
+\DoxyCodeLine{00238\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{Bib_8c_acd374d9c45f083550aa40fc5fdd79808}{trouver\_inode\_par\_cheminCd}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chemin);}
+\DoxyCodeLine{00239\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{Bib_8c_aaa02395d5b46071d2504cea138fe17b8}{cd}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chemin);}
+\DoxyCodeLine{00240\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{Bib_8c_a5af7424da4c3a69cf1f298d1c72b1df8}{droit}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chemin,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *droits)\ ;}
+\DoxyCodeLine{00241\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{Bib_8c_ab5c456787d26f596c8e8ddf8e05aaa8c}{afficher\_ls\_chemin}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chemin);}
+\DoxyCodeLine{00242\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{Bib_8c_aabf7189761a3b6218a5b61bda0bbe483}{supprimer\_fichier}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chemin);}
+\DoxyCodeLine{00243\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{Bib_8c_a4b69113b83c8439542d9bd7735e10e1b}{supprimer\_repertoire}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chemin);}
+\DoxyCodeLine{00244\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{Bib_8c_a89077d98d74da6a610c8369718b1f6ca}{verifier\_permissions}}(\mbox{\hyperlink{structInode}{Inode}}\ *inode,\ \textcolor{keywordtype}{int}\ mode);}
+\DoxyCodeLine{00245\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{Bib_8c_aee3ff908c0fb9e4fc88dc11dff55c269}{open\_file}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chemin,\ \textcolor{keywordtype}{int}\ mode);}
+\DoxyCodeLine{00246\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{Bib_8c_a65687d9a4ca77f43973e5ff731999c2d}{close\_file}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs,\ \textcolor{keywordtype}{int}\ descripteur);}
+\DoxyCodeLine{00247\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{Bib_8c_afcf889d4bb9845e129543a40f0411e18}{ecrire\_fichier}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chemin);}
+\DoxyCodeLine{00248\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{Bib_8c_a102ea6ce784d542b355894b9fdb6a890}{lire\_fichier}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chemin);}
+\DoxyCodeLine{00249\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{Bib_8c_a5374a1c668ff140bf59789f7a1259bda}{creer\_lien\_symbolique}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chemin,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *cible);}
+\DoxyCodeLine{00250\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{Bib_8c_a4546e2ca5bd43d03be5a3894a057ba99}{resoudre\_lien\_symbolique}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chemin);}
+\DoxyCodeLine{00251\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{Bib_8c_aeaf3c239993d3358b9146426994483b1}{afficher\_cible\_lien\_symbolique}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chemin\_lien);}
+\DoxyCodeLine{00252\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{Bib_8c_a73b18a3381a0fb2b930471a21c9192e0}{mv}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *source,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *destination);}
+\DoxyCodeLine{00253\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{Bib_8c_acc5830e0eb4bca1e9868ac76b77466de}{cp}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *source,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *destination);}
+\DoxyCodeLine{00254\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{Bib_8c_a0f2a66eea0b8afd53b12588e45d20ccd}{pwd}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs);}
+\DoxyCodeLine{00255\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{Bib_8c_accfa8a1bf78e2a0ce07ab37b20ff6600}{creer\_lien\_hard}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chemin\_source,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chemin\_cible)\ ;}
+\DoxyCodeLine{00256\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{Bib_8c_a6c35d51eade90689ef9596cc6a8e7896}{est\_repertoire\_par\_chemin}}(\mbox{\hyperlink{structSystemeFichier}{SystemeFichier}}\ *fs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *chemin);}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ BIB\_H\_INCLUDED}}
+
+\end{DoxyCode}

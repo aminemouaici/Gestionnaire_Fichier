@@ -1,0 +1,15 @@
+<map id="Bib/Bib.c" name="Bib/Bib.c">
+<area shape="rect" id="Node000001" title="Code pour la gestion d&#39;un système de fichiers avec allocation d&#39;inodes et de blocs." alt="" coords="185,5,263,31"/>
+<area shape="rect" id="Node000002" href="$Bib_8h_source.html" title=" " alt="" coords="197,79,251,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="227,31,227,65,221,65,221,31"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,152,72,177"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="198,106,82,150,80,145,196,101"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="97,152,167,177"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="211,106,159,146,156,141,208,102"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="192,152,256,177"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="227,104,227,138,221,138,221,104"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="281,152,351,177"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="240,102,292,141,289,146,237,106"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="375,152,446,177"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="252,101,369,145,367,150,251,106"/>
+</map>
