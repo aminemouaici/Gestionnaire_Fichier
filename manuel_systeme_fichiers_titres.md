@@ -102,15 +102,6 @@ ls /dossier1
 
 ---
 
-### 🔹 `link nom_lien`
-Afficher la cible du lien symbolique dont le chemin est nom_lien
-
-```bash
-
-ls -l /chemin/vers/lien
-```
-
----
 
 ### 🔹 `mkdir chemin_vers_répertoire`
 Crée un répertoire.

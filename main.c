@@ -1,3 +1,9 @@
+/*
+   - Amine MOUAICI: 33.33%
+   - Leticia ZAID: 33.33%
+   - Samy Islem OULED-YOUNES 33.33%
+*/
+
 /**
  * @file main.c
  * @brief Système de fichiers simulé - Interface utilisateur en ligne de commande
@@ -75,7 +81,6 @@ int main() {
             printf("  rm nom               - Supprime un fichier ou répertoire\n");
             printf("  ln -s src dst        - Crée un lien symbolique\n");
             printf("  ln  src dst          - Crée un lien physique\n");
-            printf("  link  lien           - Affiche la cible du lien symbolique  \n");
             printf("  chmod mode nom       - Change les permissions d'un fichier (mode en octal)\n");
             printf("  pwd                  - Affiche le chemin courant\n");
             printf("  cp src dst           - Copie un fichier\n");
@@ -130,16 +135,6 @@ int main() {
                 sscanf(command + 3, "%s", param1);    //récuperation du paramétre
                 cd(&fs,param1);                      //execution de la commande cd
                 memset(param1, 0, sizeof(param1));  //réanitialiser le parametre
-            } else {
-                printf("Erreur : Syntaxe incorrect.\n");
-            }
-
-        }
-        else if (strncmp(command, "link", 4) == 0) {
-            if (command[4] == ' ') {                        // Vérifie qu'il y a bien un espace après "cd"
-                sscanf(command + 5, "%s", param1);           //récuperation du paramétre
-                afficher_cible_lien_symbolique(&fs,param1);  //execution de la commande ls -l
-                memset(param1, 0, sizeof(param1));      //réanitialiser le parametre
             } else {
                 printf("Erreur : Syntaxe incorrect.\n");
             }
